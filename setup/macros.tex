@@ -117,14 +117,18 @@
 \makeatother
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Meta text environment
+% Text environments
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \newenvironment{chaptermeta}%
-{}
+{\noindent}
 {}
 
 \newenvironment{sectionmeta}%
-{\begin{itshape}}
+{\noindent\begin{itshape}}
 {\end{itshape}\vspace{1em}}
+
+\newenvironment{problemstatement}%
+{\noindent\rule{\textwidth}{1pt}\\\begin{itshape}}
+{\end{itshape}\rule{\textwidth}{1pt}}
 
 \NoIndentAfterEnv{sectionmeta}
