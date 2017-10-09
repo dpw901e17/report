@@ -1,4 +1,27 @@
 \section{Problem Statement}\label{sec:problem_statement}
 \begin{sectionmeta}
-\todo[inline]{Write metatext}
+We recollect and examine the evidence presented in the previous sections.
+That evidence is then used to define an area of interest, which the rest of the report is going to be about.
 \end{sectionmeta}
+
+\todo[inline]{Summarize evidence from the previous sections.}
+
+\begin{problemstatement}
+	Modern graphics APIs, Vulkan & Direct3D 12, are becoming more low level as to get around driver overhead.
+	We suspect that this risks sacrificing programmability for graphic performance. 
+	To look into this, we will compare the APIs on performance and programmability.
+	This comparison should give us an insight into modern APIs as well as lay the groundwork for a new API, which builds on top of either Direct3D 12 or Vulkan.
+\end{problemstatement}
+
+\todo[inline]{Transition from problem statement to strategy}
+
+\begin{itemize}
+	\item How do Direct3D 12 and Vulkan compare on Performance and Programmability?
+	\item How does Direct3D 12 and Vulcan try to improve on graphics processing, and are they succeeding?
+	\begin{itemize}
+		\item Where are they different and why?
+		\item Where are their improvements similar? 
+		How does the similar parts of the APIs compare to each other?
+	\end{itemize}
+	%\item (How would it be possible to abstract DX12/Vulkan to a higher level?)
+\end{itemize}
