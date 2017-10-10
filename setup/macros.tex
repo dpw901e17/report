@@ -120,8 +120,8 @@
 % Text environments
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \newenvironment{chaptermeta}%
-{\noindent}
 {}
+{\vspace{1em}}
 
 \newenvironment{sectionmeta}%
 {\noindent\begin{itshape}}
@@ -132,3 +132,4 @@
 {\end{itshape}\rule{\textwidth}{1pt}}
 
 \NoIndentAfterEnv{sectionmeta}
+\NoIndentAfterEnv{chaptermeta}
