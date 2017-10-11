@@ -1,4 +1,37 @@
 \section{Graphics APIs}\label{sec:graphics_apis}
 \begin{sectionmeta}
-\todo[inline]{Write metatext}
+In this section we should introduce, why APIs are important to use, the basics on what graphics APIs are and finally what direction moderns APIs are taking.
 \end{sectionmeta}
+\glspl{api} are an instance of information hiding.
+By hiding implementation behind an interface, the amount of dependencies in a code base is decreased.  
+They allow access to an already implemented code base, such that developers may focus on the specifics of the task at hand rather than writing the entire backend themselves.
+In addition, implementation details may be abstracted away when working through an interface,  decreasing the amount of knowledge needed by the developer.
+These factors make \glspl{api} a very popular tool in professional development, as they have a positive impact on productivity. 
+
+Today graphics APIs exist at different levels of abstraction. 
+\glspl{api} are classified as being either low-level, e.g. OpenGL \& Direct3D, or high-level, e.g. OpenSceneGraph \& Aardvark.
+In this report we focus on low-level graphics \glspl{api} as they are often used for performance-intensive applications such as video games.
+Furthermore, the high-level \glspl{api} are usually build on top of low-level \glspl{api}.  
+Therefore a lot of applications depend on these \glspl{api}APIs in some way.
+When it comes to modern low-level graphics \glspl{api}, the interface itself and the specific implementation are handled by separate entities. 
+One company designs the \gls{api} and its functionality, and GPU manufacturers can then support interfaces by including implementations of them in their device drivers.
+
+Since the 90s, the most popular low-level graphics \glspl{api} have been Microsoft’s Direct3D, part of the DirectX multimedia API collection, and Khrono’s OpenGL. 
+Direct3D, while an open standard, is designed to be used exclusively on the Microsoft Windows platform.
+The \gls{api} is partially implemented by Microsoft in a closed common runtime, which communicates with a 3rd party GPU driver through a device driver interface.
+On the other hand, OpenGL requires that manufacturers write the entire driver themselves.
+This allows OpenGL to be cross-platform, being supported on Windows as well as also Unix-based systems like macOS, iOS, Linux and Android, if the device manufacturer has written a driver. However, looking at Valve Corporations hardware and software survey from 2017, made by querying users of their digital distribution platform steam,  almost 99\% of users ran windows with some version of direct3D installed \cite{steamsurvey}.  \todo[inline]{Find a better source and discuss it}
+
+The technology trajectory of the aforementioned \glspl{api} has been moving in a direction of increasing complexity.
+In the 00s, there was a move from a fixed function graphics pipeline to a programmable pipeline.
+This meant that developers now had to program their own GPU programs, shaders, to be run as part of the pipeline. 
+The addition allowed for more flexibility and supported the rendering of more realistic scenes.
+This trend seems to continue with the next generation of \glspl{api}, Khrono’s Vulkan and Microsoft’s DirectX 12. 
+Developers are now required to write code formerly implemented as part of the driver. 
+This is supposed to allow developers to squeeze more performance out of their applications,  in return of additional complexity. 
+In addition, these new APIs claim that they are designed with modern CPU/GPU architectures in mind.  \todo[inline]{Find some source for this for both Vulkan and DX12}
+Therefore, they support features such as multi-threaded draw calls from the CPU, which is supported by the trend of multicore CPUs. 
+There is also the promise of stateless graphics programming, where the rendering context on the GPU is made fully explicit to developers through \glspl{pso}. 
+This stands in contrast to earlier \glspl{api}, where the state is implicit and it can be changed at runtime. 
+\glspl{pso} are made at compile time, promising for faster switches between render states.
+This is promising news, as state switching is  one of the biggest performance-issues within graphics programming \cite{worister2013lazy}.
