@@ -1,10 +1,28 @@
 \chapter{Introduction}\label{ch:introduction}
-\begin{chaptermeta}
-\todo[inline]{Write metatext}
-\end{chaptermeta}
 
-\input{mainmatter/introduction/initial_problem/index.tex}
-\input{mainmatter/introduction/short_history/index.tex}
+Computers and applications are no longer the niche market it was in its early days, and from that comes a need for intuitive interfaces for users. 
+Around the 1970s the first computers with Graphical User Interfaces (GUIs) started to appear to improve the user experience.
+But to develop these GUIs, developers use a lot of time working with the graphics Application Programming Interfaces (APIs).
+Developers have used these APIs to create incredible things, such as realtime graphics seen in games on top of the more graphically demanding GUIs in modern operating systems.
+
+As hardware improves, so must the API to better use the improvements.
+Another function of the API is to make it easier for the developers to use the hardware so improvement in that area is also interesting for the API developers.
+But there is limited research into how to evaluate this kind of improvement on APIs.
+And even if the newer APIs supports operations that improve performance, if the feature is too hard to use most developers will ignore it.
+
+With the release of the most recent graphics APIs; Vulkan and Direct3D 12, there has been a push towards a more low level API which gives the programmer more control over the graphics pipeline.
+Much of the functionallity that was handled by the driver, is now handled by the application. 
+This has some advantages which will be described in later sections. \todo{insert sections referencer.}
+But the argument that lower levels of abstraction means better API would suggest that writing in binary or assembly would give the best APIs.
+
+Therefore, we are instested in where the newer APIs decided to go low level, and what advantages and disadvantages that approach has both on performance and programability.
+The aim is to generate insight into the graphics APIs; Direct3D 12 and Vulkan, and to generate tools for future developers that can be used to evaluate and improve their APIs.
+
+The reason why Direct3D 12 and Vulkan was decided upon was because they are released close to eachother (2015 and 2016 respecively), and have some overlapping ideas on how to improve graphics APIs, such as better thread support.
+The predesessors to these APIs (Direct3D 11 and OpenGL 4.5) are some of the most broadly used graphics APIs for realtime rendering, and we suspect that Direct3D 12 and Vulkan will have similar success.
+
+\todo[inline]{insert overgang til næste sektion}
+
 \input{mainmatter/introduction/graphics_hardware/index.tex}
 \input{mainmatter/introduction/graphics_apis/index.tex}
 \input{mainmatter/introduction/related_work/index.tex}
