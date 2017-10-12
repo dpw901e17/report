@@ -26,13 +26,13 @@
 % 3: figure text
 % 4: percent of textwidth [0-1]
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
-\newcommand{\figure}[4][0]{
+\newcommand{\fig}[4]{
 	\begin{figure}[H] \centering \em %H / h!
 		\includegraphics[width=#4\textwidth]{#1}
 		\caption{#2}\label{fig:#3}
 	\end{figure}
 }
-
+%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
 %Creates a Tikz figure with parameters:
 % 1: input
