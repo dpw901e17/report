@@ -1,4 +1,41 @@
 \section{Graphics Hardware}\label{sec:graphics_hardware}
+
+\newcommand{\gls}[1]{#1}
+
+\todo{delete above \\newcommand}
+
+
 \begin{sectionmeta}
-\todo[inline]{Write metatext}
+	
+	This section will introduce the \gls{GPU} from a hardware standpoint. 
+	First the overall concept of a \gls{GPU} will be described - what it is, what it does, and how it achieve its purpose.
+	
+	\cite{intro_to_gpu_arch} describes the architecture and components of a \gls{GPU} as the result of three ideas.
+	
+	These ideas will be presented here.
+	Lastly, different terminology for the individual components will be presented as they are used by the \gls{GPU} vendors NVidia and AMD.  
+	
 \end{sectionmeta}
+
+
+\subsection{\gls{GPU} as a concept}
+The \gls{GPU} has been developed with a specific domain in mind, as opposed to the CPU, which is for general purposes. 
+The domain of the \gls{GPU} was originally only image manipulation - a field, where a \gls{SIMD} architecture has proven useful.
+%In recent years, however, there has been a focus on using the \gls{GPU} for a broader spectrum of applications, the socalled \gls{GPGPU}. 
+
+\fig{figures/graphics_hdw_cpu_style_core}{\gls{CPU} style core}{cpu_style_core}{1}
+
+\ref{cpu_style_core} shows a visual representation of a \gls{CPU} style core. 
+The red boxes "Out-of-order control logic", "Fancy branch predictor" and "Memory pre-fetcher" all have to do with predicting/preventing stalls in the \gls{CPU}.
+These features are not too important for the \gls{GPU}, since it's main focus is throughput \todo{citation needed}. 
+Furthermore, a big cache would limit the amount of cores a single chip could hold, so this is not desireable for a \gls{GPU} either.
+The remaining components is described below.
+
+
+
+
+\subsection{Fetch component}
+
+\subsection{ALU component}
+
+\subsection{Context component}
