@@ -1,0 +1,35 @@
+\section{Problem Statement}\label{sec:problem_statement}
+\begin{sectionmeta}
+\todo[inline]{Write metatext}
+Whilst looking for related works it was discovered we were hardly the first once to wonder on how GPU progamming works.
+
+Let's Fix OpenGL [ref] is a journal article that attempts to expose the shortcommings of OpenGL, and suggests what can be done in order to make OpenGL better. 
+The issues mentioned in the article also applies to DirectX according to the author. 
+Let's Fix OpenGL [ref] identifies six issues: 
+Programmers must juggle between C/C++ and HLSL/GLSL, 
+The communication between CPU and GPU is brittle,
+Lack of meta-programming tools when it comes to shaders,
+Different semantics for each shader stage,
+No type system for vectors when converting between spaces,
+Difficlt to verify correctness of a graphics application.
+In the conclusion the article mentions Vulkan and that it might be the solution to the issues of OpenGL. Additionally, it also encourages development of new frameworks to rival OpenGL.
+This is article is of value as it highlights the issues this projects might need to be on the look out for when comparing Vulkan and DirectX12. 
+However the issues that were highligthed is just the opinion of the author based on his experience with programming in OpenGL, and therefor very likely to be subjective. 
+The identified issues should be taken with a grain of salt.
+
+Direct3D 11 vs 12 A Performance Comparison Using Basic Geometry [ref] is a master thesis that makes an attempt at comparring Direct3D version 11 and 12. 
+The results of this comparison were that Direct3D 11 had better performance than 12. 
+However this is because the author wrote the Direct3D12 driver almost the same as the Direct3D11 driver for his test application, instead of fully utilizing the capabilities of Direct3D12. 
+The article concludes with what the author could have done differently in the comparison in order to achieve better results in Direct3D12.
+Despite the unfortunate results that were reached in this master thesis, it is still of value to this project as it provides an example of how not to compare graphics API's. 
+Meaning if a comparision is to be done between different abstraction leveled graphics API, something should be used to raise the abstraction level  (e.g, a game-engine could be used for benchmarking). 
+Addtionally the code should be as optimized as possible for both graphics API's and not only for one of them.
+
+An Exploratory Study Of High Performance Graphics Application Programming Interfaces [ref] is a master thesis which examines the performance of Vulkan with its predecesor; OpenGL. 
+This is done by examining what is new in Vulkan and then running performance benchmark tests on both Vulkan and OpenGL.
+In conclusion the thesis states that Vulkan indeed can provide better performance than OpenGL.
+However this comes at the cost of having more overhead to take care of than before aswell, and thus makes it more difficult to transition to Vulkan from OpenGL.
+The value in this article lies in how descriptive it is in how to transition from OpenGL to Vulkan. 
+It mentions the details and new additions to Vulkan that a developer needs to be aware of when wanting to start out with programming with Vulkan.
+
+\end{sectionmeta}
