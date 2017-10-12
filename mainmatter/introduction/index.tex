@@ -1,10 +1,36 @@
 \chapter{Introduction}\label{ch:introduction}
-\begin{chaptermeta}
-\todo[inline]{Write metatext}
-\end{chaptermeta}
+\chapter{Introduction}\label{ch:introduction}
+In the early days of consumer electronics, computer visuals were mainly displayed as text.
+Yet, with the combined rise of microcomputers and \glspl{GUI} in the 80's, graphics and visuals became a hot topic for both developers and consumers.  
+In the 90's, highly parallel graphics hardware in the form of GPUs were introduced to render 3D models in real time.
+This piece of hardware has become a stable in modern consumer computers, either as individual components or integrated the CPU.
 
-\input{mainmatter/introduction/initial_problem/index.tex}
-\input{mainmatter/introduction/short_history/index.tex}
+%Computers and applications are no longer the niche market it was in its early days, and from that comes a need for intuitive interfaces for users. 
+%Around the 1970s the first computers with \glspl{GUI} started to appear to improve the user experience.
+To ease development of graphical applications, graphics \glspl{API} have been created. 
+These allow developers to work with the GPU at a more abstract level, through an interface.
+%But to develop these \glspl{GUI}, developers use a lot of time working with the graphics \glspl{API}.
+Developers have used these \glspl{API} to create impressive applications, such as modern video games, which render graphics in real time at 60 frames per second, as well as the graphically demanding \glspl{GUI} of modern operating systems.
+
+%As hardware improves, so must the \gls{API} to better use the improvements.
+%Another function of the \gls{API} is to make it easier for the developers to use the hardware so improvement in that area is also interesting for the \gls{API} developers.
+Graphics \gls{API} have to evolve alongside the modern CPU and GPU architectures, to take advantage of new features. 
+Yet, academic research into the evaluation of \glspl{API} and how to improve them is limited.
+Even if the newer \glspl{API} supports operations that improve performance, if the feature is too hard to use most developers will ignore it.
+
+With the release of the most recent graphics \glspl{API}; Vulkan and Direct3D 12, there has been a push towards a more low level API design, which gives the programmer more control over the graphics pipeline.
+Much of the functionallity that was previously handled by the driver, is now handled by application developers. 
+This has some advantages, which will be described in later sections. \todo{insert sections referencer.}
+But the argument that lower levels of abstraction means better \glspl{API} would suggest that writing in binary or assembly would give the best \glspl{API}.
+
+In this report, we are instested in how the newer \glspl{API} lower their abstraction-level, and what advantages and disadvantages that approach has both on performance and programability.
+The aim is to generate insight into the graphics \glspl{API}; Direct3D 12 and Vulkan, and to generate tools for future developers that can be used to evaluate and improve their \glspl{API}.
+
+Direct3D 12 and Vulkan are chosen, because they are released close to eachother (2015 and 2016 respecively), and have some overlapping ideas on how to improve graphics \glspl{API}, such as better multithread support on the CPU.
+The predesessors to these \glspl{API} (Direct3D 11 and OpenGL 4.5) are some of the most broadly used graphics \glspl{API} for realtime rendering, and we suspect that Direct3D 12 and Vulkan will have similar success.
+
+\todo[inline]{insert overgang til næste sektion}
+
 \input{mainmatter/introduction/graphics_hardware/index.tex}
 \input{mainmatter/introduction/graphics_apis/index.tex}
 \input{mainmatter/introduction/related_work/index.tex}
