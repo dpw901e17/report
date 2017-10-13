@@ -1,4 +1,33 @@
 \section{Graphics APIs}\label{sec:graphics_apis}
 \begin{sectionmeta}
-\todo[inline]{Write metatext}
+In this section we should introduce, why APIs are important to use, the basics on what graphics APIs are and finally what direction moderns APIs are taking.
 \end{sectionmeta}
+
+Application Programming Interfaces (APIs) are an instance of information hiding.
+By hiding implementation behind an interface, the amount of dependencies in a code base is decreased.  
+They also allow developers access to an already implemented code base, so that they may focus on the specifics on the task at hand rather than writing the entire backend themselves.
+In addition, working through an interface implementation details may be abstracted away, decreasing the amount of knowledge needed by the developer.
+These factors make APIs a very popular tool in professional development, as they have a positive impact on productivity. 
+
+Today many graphics APIs exist \& at different levels of abstraction. 
+Traditionally we categorize APIs as being low-level, e.g. OpenGL \& Direct3D, or high-level, e.g. OpenSceneGraph \& Aardvark.
+In this report we focus on low-level graphics APIs as they are often used in performance-intensive applications such as video games.
+Furthermore, the high-level APIs are usually build on top of low-level APIs.  
+When it comes to the work surrounding modern low-level graphics APIs, the interface itself and the implementation are handled by separate entities. 
+One company designs the interface and its functionality, and GPU manufacturers can then support interfaces by including implementations of them in their device drivers.
+
+Since the 90s the most popular low-level graphics APIs have been Microsoft’s Direct3D, part of the DirectX multimedia API collection, and Khrono’s OpenGL. 
+Direct3D, while an open standard, is designed to be used exclusively on the Microsoft Windows platform.
+The API is partially implemented by Microsoft in a closed common runtime, which communicates with a 3rd party GPU driver through a device driver interface (DDI).
+On the other hand, OpenGL requires that manufacturers write the whole driver themselves.
+This allows OpenGL to be cross-platform, being supported on Windows as well as also Unix-based systems like macOS, iOS, Linux and Android if the device manufacturer has written a driver. 
+(Here it would be nice to have some info on Direct3D and OpenGL marketshare).
+
+The technology trajectory of the aforementioned APIs has been moving in a direction of becoming more complex. 
+In the 00’s there was a move from a fixed function graphics pipeline to a programmable pipeline, where developers could program their own shaders to be run on the GPU.
+This trend seems to continue with the next generation of APIs, Khrono’s Vulkan, based on AMD’s deprecated Mantle API, and Microsoft’s DirectX 12. 
+Developers are now required to write code formerly implemented as part of the driver. 
+This gives developers a deeper consider the mechanics of graphics programming, and allows them to write more efficient code.
+In return for the added complexity.
+In addition, these new APIs claim that they are designed with modern CPU/GPU architectures in mind. (Kilde)
+Therefore, they support features such as multi-threaded draw calls from the CPU, which is supported by the trend of multicore CPUs. (More new things) 
