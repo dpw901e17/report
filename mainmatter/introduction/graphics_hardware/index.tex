@@ -1,9 +1,5 @@
 \section{Graphics Hardware}\label{sec:graphics_hardware}
 
-%\newcommand{\gls}[1]{#1}
-
-\todo{delete above \\newcommand}
-
 
 \begin{sectionmeta}
 	
@@ -23,19 +19,28 @@ The \gls{GPU} has been developed with a specific domain in mind, as opposed to t
 The domain of the \gls{GPU} was originally only image manipulation - a field, where a \gls{SIMD} architecture has proven useful.
 %In recent years, however, there has been a focus on using the \gls{GPU} for a broader spectrum of applications, the socalled \gls{GPGPU}. 
 
-\fig{figures/graphics_hdw_cpu_style_core}{\gls{CPU} style core}{cpustylecore}{1}
+\fig{figures/graphics_hdw_cpu_style_core}{\gls{CPU} style core - \cite{intro_to_gpu_arch} p. 14}{cpuStyleCore}{1}
 
-\ref{cpustylecore} shows a visual representation of a \gls{CPU} style core. 
+\ref{fig:cpuStyleCore} shows a visual representation of a \gls{CPU} style core. 
 The red boxes "Out-of-order control logic", "Fancy branch predictor" and "Memory pre-fetcher" all have to do with predicting/preventing stalls in the \gls{CPU}.
 These features are not too important for the \gls{GPU}, since it's main focus is throughput \todo{citation needed}. 
-Furthermore, a big cache would limit the amount of cores a single chip could hold, so this is not desireable for a \gls{GPU} either.
-The remaining components is described below.
+Furthermore, a big cache would limit the amount of cores a single chip could hold, so this is not desirable for a \gls{GPU} either.
+The remaining components - Fetch/Decode, ALU and Execution Context - is described below.
 
+\subsection{Fetch/Decode component}
+The Fetch/Decode component is responsible for retrieving data from memory and storing it in the Execution Context.
 
+\subsection{\gls{ALU} component}
+The \gls{ALU} component performs the actual computations on the fetched data. Any temporary variables or conditions (when handling branches) are stored/retrieved from the Execution Context.
 
+\subsection{Execution Context component}
+The Execution Context component contains local data, e.g. variables and conditions, needed to perform the current computation.
 
-\subsection{Fetch component}
+\subsection{The first idea}
+As previously described, there are components in the \gls{CPU} style core which are not needed for the \gls{GPU} to achieve a high throughput.
+So the first idea presented in \cite{intro_to_gpu_arch} is to "slim down" the core by getting rid of these components.
 
-\subsection{ALU component}
+\fig{figures/graphics_hdw_two_cores}{Two slimmed down cores - \cite{intro_to_gpu_arch} p. 16}{twoSlimCores}{1}
 
-\subsection{Context component}
+\ref{fig:twoSlimCores} presents two such cores running two fragments in parallel. Each core runs the same code, but since the contents of the Execution Contexts are different, we achieve the desired \gls{SIMD} effect.
+
