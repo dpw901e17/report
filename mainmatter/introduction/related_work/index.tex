@@ -1,9 +1,45 @@
 \section{Related Works}\label{sec:problem_statement}
-\begin{sectionmeta}
-\todo[inline]{Write metatext}
-Whilst looking for related works it was discovered we were hardly the first once to wonder on how GPU progamming works.
+Related Works
 
-Let's Fix OpenGL [ref] is a journal article that attempts to expose the shortcommings of OpenGL, and suggests what can be done in order to make OpenGL better. 
+During the search of related works within this project it was discovered we wiere hardly the first once to wonder how graphics API's function. A GPU is used for two kinds of operation: as a GPGPU, meaning using the GPU for general purpose programing and utilize its parallarism which the CPU lacks. 
+The second purpose for the GPU is for rendering graphics, this is mostly used in video game software, but it is also used for more "serious" applications e.g simulation software.
+
+\subsection{GPGPU}
+This section will describe related work as to what a GPU is, and what GPGPU is, and why it is related to the project.
+
+The GPU Computing Era \cite{gpu_computing_era} is a article discusesses the benefits of utilizing GPU parallarism to run applications that previously were deemed too time consuming to use in practice. 
+Meaning the article claims that single-threaded applications are no longer good enough, and the industry should adapt to GPGPU technology. 
+It also mentions how that the GPU becomes more powerful all the time by doubling up on its transistors for every 18th month that passes. 
+One way of utilizing GPGPU is through CUDA.
+CUDA programs are very scalable according to the article, and is thus an excellent tool to utilize GPGPU functionality, and encourages more ussage of GPGPU. It is important to note that the authors of this article are from Nvidia and are likely biased towards how important they believe GPGPU is, and how good their CUDA framework tool is. 
+
+This article is relevant as it gives an introduction to how a GPU might work, it specifically meantions how the Fermi architecture works and how it is possible to achieve parallarism.
+
+Higher Level GPGPU's:
+	Firepile (Scala) \cite{2011_firepile}
+	OCaml GPGPU \cite{bourgoin_2017_high}
+	PyCuda and PyOpenCL \cite{2012_pycuda_pyopencl}
+	Chestnut \cite{stromme_2012_chestnut}
+There have been made several attempts at taking GPGPU progrmmaing to a higher abstraction level. 
+In order to make it easier and less error prone to utilize GPGPU for less skilled developers. 
+The value in these articles lies in how the developers exposed the lower level API's to a custom made higher level API, and wheter or not they are user to use than their lower-level counterparts. Addtionally, it's also interesting to see how well these higher level abstraction compare performance wise to the lower level once.
+
+Designing efficient sorting algorithms for Manycore GPUs \cite{satish_2009_designing}
+
+Debunking the 100x GPU vs. CPU Myth \cite{lee_2010_debunking}
+
+This aritcle claims that GPGPU's are not that much better than CPUs. 
+It references several papers that claim they are, and attempts to debunk them. 
+With the data that the article collects it concludes that GPU's are only 2x times better on average than the CPU. 
+The testing was done by writing algorithm implementations for both the GPU and CPU, running the algorithms, observe performance, and then compare the results. 
+However the CPU implementation is highly optimized as the authors  from Intel, whilst the GPGPU implementation for the algorithms is not optimized to its fullest. 
+Data from a article like this would have been more meaningful if the GPGPU implementation was written some of the best people from Nvidia or AMD instead of someone from Intel.
+
+\subsection{Graphics}
+This section will describe how GPU's usually are used in terms of rendering graphics
+
+
+Let's Fix OpenGL \cite{fix_opengl} is a journal article that attempts to expose the shortcommings of OpenGL, and suggests what can be done in order to make OpenGL better. 
 The issues mentioned in the article also applies to DirectX according to the author. 
 Let's Fix OpenGL [ref] identifies six issues: 
 Programmers must juggle between C/C++ and HLSL/GLSL, 
@@ -13,11 +49,16 @@ Different semantics for each shader stage,
 No type system for vectors when converting between spaces,
 Difficlt to verify correctness of a graphics application.
 In the conclusion the article mentions Vulkan and that it might be the solution to the issues of OpenGL. Additionally, it also encourages development of new frameworks to rival OpenGL.
-This is article is of value as it highlights the issues this projects might need to be on the look out for when comparing Vulkan and DirectX12. 
-However the issues that were highligthed is just the opinion of the author based on his experience with programming in OpenGL, and therefor very likely to be subjective. 
-The identified issues should be taken with a grain of salt.
+This is article is of value as it highlights the issues this projects might need to be on the look out for when comparing Vulkan with DirectX12.
 
-Direct3D 11 vs 12 A Performance Comparison Using Basic Geometry [ref] is a master thesis that makes an attempt at comparring Direct3D version 11 and 12. 
+An Incremental Rendering VM \cite{haaser_2015_incremental}
+
+Reducing Driver Overhead in OpenGL, Direct3D and Mantle  \cite{dobersberger_2015_reducing}
+
+\subsection{Comparrison}
+There are several options in terms of what GPU API that can be used when a developer needs to render graphics in a application. This section discusses articles that compare GPU API's against one another, and why and when certain API's should be chosen over others.
+
+Direct3D 11 vs 12 A Performance Comparison Using Basic Geometry \cite{2016_direct3d} is a master thesis that makes an attempt at comparring Direct3D version 11 and 12. 
 The results of this comparison were that Direct3D 11 had better performance than 12. 
 However this is because the author wrote the Direct3D12 driver almost the same as the Direct3D11 driver for his test application, instead of fully utilizing the capabilities of Direct3D12. 
 The article concludes with what the author could have done differently in the comparison in order to achieve better results in Direct3D12.
@@ -25,11 +66,10 @@ Despite the unfortunate results that were reached in this master thesis, it is s
 Meaning if a comparision is to be done between different abstraction leveled graphics API, something should be used to raise the abstraction level  (e.g, a game-engine could be used for benchmarking). 
 Addtionally the code should be as optimized as possible for both graphics API's and not only for one of them.
 
-An Exploratory Study Of High Performance Graphics Application Programming Interfaces [ref] is a master thesis which examines the performance of Vulkan with its predecesor; OpenGL. 
-This is done by examining what is new in Vulkan and then running performance benchmark tests on both Vulkan and OpenGL.
-In conclusion the thesis states that Vulkan indeed can provide better performance than OpenGL.
-However this comes at the cost of having more overhead to take care of than before aswell, and thus makes it more difficult to transition to Vulkan from OpenGL.
-The value in this article lies in how descriptive it is in how to transition from OpenGL to Vulkan. 
-It mentions the details and new additions to Vulkan that a developer needs to be aware of when wanting to start out with programming with Vulkan.
+An Exploratory Study Of High Performance Graphics Application Programming Interfaces \cite{2016_exploratory_gpu_api} is a master thesis which examines...
 
-\end{sectionmeta}
+Evaluation of multi-threading in Vulkan \cite{blackert_2016_evaluation} is a master thesis that attempts at evaluating the multi-threading performance of Vulkan. It does so by comparing with its predescor; OpenGL. 
+Additionally it also evaluates the programmability of Vulkan. 
+In the conclusion the thesis states that Vulkan can give more throughput than OpenGL, although it is worth noting that the performance increase is dependent on what kind of hardware is used. Additionally not all applications will gain a significant performance boost with using Vulkan over OpenGL. 
+This would be in cases where multi-threading is not needed, or if the application isn't CPU bound. 
+No methodology was used in evaluating the programmability of Vulkan, it is based on the personal experience of the author, which isn't a good enough method to evaluate an API on.
