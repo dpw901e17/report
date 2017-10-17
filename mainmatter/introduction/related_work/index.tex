@@ -18,7 +18,11 @@ There have been made a number of tools in order to make utilization of GPGU easi
 These tools were made in order to make it easier and less error prone to utilize GP\gls{GPU} for less skilled developers. As it can be difficult to work with OpenCL and CUDA alone.
 The value in these articles lies in how the developers exposed the lower level \gls{API}'s to a custom made higher level \gls{API}, and wheter or not they are user to use than their lower-level counterparts. Addtionally, it's also interesting to see how well these higher level abstraction compare performance wise to the lower level once. However, a pitfall the four papers has is that they don't have a proper methodology to test out the programmability of these \gls{API}'s, which is highly desired when the goal of these tools is to be easier and more intuitive to use than their lower-level counterpart.
 
-Designing efficient sorting algorithms for Manycore \gls{GPU}s \cite{satish_2009_designing}
+Designing efficient sorting algorithms for Manycore GPUs \cite{satish_2009_designing} is a article describes the development of a custom implemented radix and merge sort, and proove the capabilites of CUDA and GPGPU parallarism which is run several Nvidia \gls{GPU}'s for comparrison. 
+This article demonstrates how much throughput there is to be gained from GP\gls{GPU}'s and how a comparison can be done. 
+A critique of the paper though is that mege sort and radix sort starts to show strange performance spike patterns when working with large workload. 
+This is never explained as to why, it should have been elaborated.
+Or at the very least hazard a guess.
 
 Debunking the 100x \gls{GPU} vs. CPU Myth \cite{lee_2010_debunking} claims that GP\gls{GPU}'s are not that much better than CPUs. 
 It references several papers that claim \gls{GPU}'s can be 100 (or more) times better than a CPU, and attempts to debunk them. 
