@@ -1,33 +1,106 @@
 \section{Graphics APIs}\label{sec:graphics_apis}
-\begin{sectionmeta}
-In this section we should introduce, why APIs are important to use, the basics on what graphics APIs are and finally what direction moderns APIs are taking.
-\end{sectionmeta}
+An \gls{API} is an interface, which developers use to access some underlying code library.
+It allows developers to reuse code made by others, decreasing the amount of time spent on individual projects.
+In addition, by forcing developers to access the library through an interface, the risk of creating a large amount of code dependencies in a project is lowered.
+These factors make \glspl{API} a popular development tool. 
+An important element of \gls{API} design is the scale of abstraction, which is provided.
+In graphics, \glspl{API} and their associated libraries are categorized as being either low-level or high-level \cite{wikiGraphicsLibs}.
+The low-level \glspl{API} include OpenGL and Direct3D. Developers using these \glspl{API} are required to have an understanding about the inner-workings of the graphics pipeline, and how it is executed on the \gls{GPU}.
+High-level \glspl{API} abstract away hardware details, and allow graphics to be developed according to other programming models.
+Examples include the Aardvark platform \cite{aardvark}, where graphics can be programmed in a functional first manner in F\#, or OpenSceneGraph \cite{openSceneGraph}, which uses the concept of scene graphs as its underlying programming model. 
 
-Application Programming Interfaces (APIs) are an instance of information hiding.
-By hiding implementation behind an interface, the amount of dependencies in a code base is decreased.  
-They also allow developers access to an already implemented code base, so that they may focus on the specifics on the task at hand rather than writing the entire backend themselves.
-In addition, working through an interface implementation details may be abstracted away, decreasing the amount of knowledge needed by the developer.
-These factors make APIs a very popular tool in professional development, as they have a positive impact on productivity. 
+\subsection{Modern APIs}
+This report focuses on low-level \glspl{API}, as they are often used in real-time performance-intensive applications such as video games.
+In addition, the high-level \glspl{API} most often use the low-level \glspl{API} to do the heavy lifting.
+Therefore, the developments at the lower level have wide spread consequences.
+Today the development of graphics \glspl{API} and the underlying driver libraries is done be separate companies.
+Often one company designs the \gls{API}, and hardware manufacturers can then decide to support the \gls{API} on their \glspl{GPU}.
+To add support for an \gls{API} on a specific \gls{GPU}, the manufacturer includes a library implementation as part of the device driver.
+Usually the driver must pass some tests and requirements, for the \gls{API} to be officially supported on the device.   
 
-Today many graphics APIs exist \& at different levels of abstraction. 
-Traditionally we categorize APIs as being low-level, e.g. OpenGL \& Direct3D, or high-level, e.g. OpenSceneGraph \& Aardvark.
-In this report we focus on low-level graphics APIs as they are often used in performance-intensive applications such as video games.
-Furthermore, the high-level APIs are usually build on top of low-level APIs.  
-When it comes to the work surrounding modern low-level graphics APIs, the interface itself and the implementation are handled by separate entities. 
-One company designs the interface and its functionality, and GPU manufacturers can then support interfaces by including implementations of them in their device drivers.
+The most popular low-level graphics \glspl{API} during the last game console generation, lasting from 2005 to about 2017, have been Microsoft’s Direct3D, part of the DirectX multimedia API collection, and Khronos’ OpenGL. 
+Direct3D is designed by Microsoft to be used exclusively on the Microsoft Windows platform. 
+The underlying library is partially implemented by Microsoft in a closed common runtime, which communicates with the \gls{GPU} driver through a device \gls{DDI}.
+On the other hand, OpenGL is designed by several hardware and software vendors in coorperation, and requires that manufacturers write their own library from scratch. \cite{wikiDXOpenGLCompare}
 
-Since the 90s the most popular low-level graphics APIs have been Microsoft’s Direct3D, part of the DirectX multimedia API collection, and Khrono’s OpenGL. 
-Direct3D, while an open standard, is designed to be used exclusively on the Microsoft Windows platform.
-The API is partially implemented by Microsoft in a closed common runtime, which communicates with a 3rd party GPU driver through a device driver interface (DDI).
-On the other hand, OpenGL requires that manufacturers write the whole driver themselves.
-This allows OpenGL to be cross-platform, being supported on Windows as well as also Unix-based systems like macOS, iOS, Linux and Android if the device manufacturer has written a driver. 
-(Here it would be nice to have some info on Direct3D and OpenGL marketshare).
+A benefit of OpenGL is that manufacturers may provide extensions to the \gls{API} to give developers access to new hardware features \cite{openGLExtensions}.
+With Direct3D, new hardware features are only provided to developers, when a new version of the \gls{API} is released by Microsoft. 
+One of the big differences between the two \glspl{API} is the extent of their platform support.
+Direct3D 11, being one of the latest releases, is supported on PCs running the Windows \gls{OS}, smartphones running the Windows Phone \gls{OS} as well as on Microsoft’s Xbox One.
+OpenGL, with OpenGL 4 being the latest major release, is considered cross platform.
+If a driver has been written, there is support for it on both Windows and Unix-based systems like macOS, iOS, Linux and Android. 
 
-The technology trajectory of the aforementioned APIs has been moving in a direction of becoming more complex. 
-In the 00’s there was a move from a fixed function graphics pipeline to a programmable pipeline, where developers could program their own shaders to be run on the GPU.
-This trend seems to continue with the next generation of APIs, Khrono’s Vulkan, based on AMD’s deprecated Mantle API, and Microsoft’s DirectX 12. 
-Developers are now required to write code formerly implemented as part of the driver. 
-This gives developers a deeper consider the mechanics of graphics programming, and allows them to write more efficient code.
-In return for the added complexity.
-In addition, these new APIs claim that they are designed with modern CPU/GPU architectures in mind. (Kilde)
-Therefore, they support features such as multi-threaded draw calls from the CPU, which is supported by the trend of multicore CPUs. (More new things) 
+Getting a clear picture of the market share of the two \glspl{API} is rather difficult.
+Though it seems that for many years Direct3D has had and upper hand.
+The people behind the popular Unity game engine collect system specifications on Unity users, as to help developers figure out what system configurations their games should support.
+Looking at the statistics from March 2017, only about 1\% of users use a non-Windows \gls{OS} \cite{unityStats}.
+Similar statistics are collected by Valve Corporation from users of their digital distribution platform, Steam.
+This shows a similar 3\% statistic for non-windows users\cite{steamStats}, meaning that a large portion of gamers play on systems with some version of Direct3D enabled.
+
+This seems to indicate that Direct3D is a defacto-standard for graphics in games. 
+Exemplifying this, Wikipedia lists a total of \~200 games with OpenGL support \cite{wikiOpenGLGames}, while a total of \~500 games is listed with Direct3D 11 support \cite{wikiDX11Games}. 
+Note that these lists are incomplete, mostly limited to major titles, while the OpenGL list refers to games supporting any version of OpenGL.
+As opposed to the Direct3D list, which only contains games supporting Direct3D 11, which was released in 2009.
+Compiling the list of games supporting any Direct3D version would most likely lead to a tally of a couple of thousand games, depending on how they are counted.
+   
+Numbers like these have raised claims that manufacturers do not have the same incentive to maintain and optimize their OpenGL implementations.
+Rich Geldreich, a developer a Valve, describes how a vast landscape of drivers of varying quality, makes it difficult to ship AAA games using OpenGL \cite{openGLDriverQuality}.
+ 
+Despite this, many popular game engines, which are used to develop games, offer support for both Direct3D and OpenGL.
+This includes Valve’s Source engine \cite{sourceEngine}, the Unity engine \cite{ unityEngine} and Epic Game’s Unreal engine\cite{unrealEngine}.
+There is even Id Software’s Id Tech series of engines, which supports OpenGL exclusively in its recent iterations \cite{idTech}.
+Yet, even with this kind of support, OpenGL development has still not managed to catch on with game developers in the same way as Direct3D.  
+
+Not much solid academic work has been published comparing OpenGL and Direct3D.
+A lot of \gls{API} benchmarks performed by consumers are available online, yet they are not always performed with hard scientific rigor, and give only uncertain glimpses of gls{API} performance.
+Examples include a performance benchmark between OpenGL 3.2 and Direct3D 12, \glspl{API} released 6 years apart and with different underlying design philosophies \cite{geek3DBenchmark}.
+Another is the author not disclosing the specifications of the benchmark hardware \cite{gTrucBenchmark}.
+Even Valve have released a comparison of Direct3D and OpenGL, without disclosing the version used for any of the \glspl{API} \cite{valveBenchmark}.
+In the end, this lack of rigor and transparency leaves behind a lot of data of questionable quality.
+
+\subsection{The Next Generation}
+In the previous subjection it was clear that Direct3D had an upper hand, when it came to the number of games using it.
+OpenGL’s cross-platform support does not matter to most gamer’s, as they mainly use Windows systems.
+Yet, this dynamic may change with the introduction of new \glspl{API}.
+
+Microsoft introduced the next version of Direct3D, Direct3D 12, alongside Windows 10 in 2015.
+As of now, this \gls{API} is exclusively supported on Windows 10 and Xbox One.
+According to a 2014 entry from the DirectX developer blog, this new version introduces a programming model that is “closer to the metal” and up to date with modern graphics hardware \cite{directXBlog}.
+Working at a lower level of abstraction, developers now must do a lot of work previously done by the graphics driver.
+Some applications are negatively affected by driver overhead, introduced by runtime error handling and memory allocation.
+By giving the developers more flexibility in return for lowering the level of abstraction, the hope is that they can squeeze more performance out of modern hardware.
+  
+According to the same blog entry, Direct3D 12 promises to increase the performance of CPU-bound applications.
+An application is said to be \gls{CPU}-bound, if the \gls{GPU} completes tasks faster than it can receive draw calls from the \gls{CPU}.
+This leaves the \gls{GPU} idle in periods, where it would otherwise be able to render draw calls.
+This problem is alleviated by introducing multithreaded draw calls, taking advantage of the parallel architecture of modern \glspl{CPU}.
+Each draw call is defined in a command list, and each \gls{CPU} thread may submit command lists to a common command queue, which is shipped for execution on the \gls{GPU}.
+Parallel draw calls such as these are difficult to perform in Direct3D 11, as that \gls{API} has an implicit rendering state.
+The render state of a \gls{GPU} contains all the information that the device needs to transform a mesh into a shaded figure on screen.
+The state includes, amongst others, the compiled shaders, textures and allocated buffers.
+By keeping it implicit in Direct3D 11, the exact render state is only known when the draw call is made, meaning that the \gls{GPU} has no opportunity to pre-compute any commands in preparation.
+In Direct3D 12, the state is made explicit with a \glspl{PSO}, which contains all the state information.
+As each command list is associated with a \gls{PSO}, the \gls{GPU} may do pre-computations to gain performance.
+A downside is that each \gls{PSO} must be specified at compile time, meaning that the developer must have some foresight regarding the states being used.
+Yet, this allows for \gls{GPU} instructions and state to be set up at compile time, resulting in fast switches between states at runtime.  
+
+While Direct3D 12 builds on top of Direct3D 11, Khronos decided to create a whole new \gls{API} from scratch for very low-level graphics programming, Vulkan.
+This \gls{API} was released in early 2016 to compete with Direct3D 12.
+From the official overview released by Khronos at launch, Vulkan seems to follow the same design philosophy as Direct3D 12 \cite{vulkanPresentationFeb2016}.
+That is, making the developer responsible for more tasks in return for more flexibility.
+It too aims to lower driver overhead, allows for asynchronous draw calls, pushing computation to compile time, and making the render state explicit.
+
+Like OpenGL, Vulkan also focuses on cross-platform support.
+As of October 2017, it now supports Android 7, Windows 7, 8 \& 10 as well as Ubuntu\cite{vulkanConformance}.
+The support for older versions of windows is important, as according to the steam survey referred to in the last subsection, only ~46\% of steam users have windows 10 installed out of the ~97\% that run Windows\cite{steamStats}.
+Especially Windows 7 remains popular at ~44\%. Interestingly enough, according to the survey ~84\% of users have modern \glspl{GPU} with Direct3D 12 support.
+This means that there is a sizeable portion of non-windows 10 users, who need to turn to Vulkan to get the best performance out of their modern \glspl{GPU} on newer games.
+Vulkan seems to be up for the task, already being supported on many \glspl{GPU} \cite{wikiVulkan}.
+Additionally, companies like Valve have started backing Vulkan, because of its support for older windows versions along with Unix-based systems \cite{siggraph2015}.
+The amount of games supported by Direct3D 12 and Vulkan is also about the same according to Wikipedia listings, at about 30 games each \gls{API} \cite{wikiVulkanGames} \cite{wikiDX12Games}.
+
+Yet, the small amount of games in each case suggests a slow adoption of both \glspl{API}.
+This may be because the tools are at a very low-level of abstraction, and the performance that they grant is only needed for certain intensive games.
+At the same time Khronos continues development on OpenGL, releasing OpenGL 4.6 in July of 2017 \cite{wikiOpenGL}.
+They state that Vulkan is a tool for high-performance applications that risk being CPU-bound \cite{vulkanPresentationFeb2016}. 
+In the next section we will consider related works, especially publications trying to compare \glspl{API}. 
