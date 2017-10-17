@@ -20,8 +20,8 @@ Usually the driver must pass some tests and requirements, for the \gls{API} to b
 
 The most popular low-level graphics \glspl{API} during the last game console generation, lasting from 2005 to about 2017, have been Microsoft’s Direct3D, part of the DirectX multimedia API collection, and Khronos’ OpenGL. 
 Direct3D is designed by Microsoft to be used exclusively on the Microsoft Windows platform. 
-The underlying library is partially implemented by Microsoft in a closed common runtime, which communicates with the \gls{GPU} driver through a device \gls{DDI}.
-On the other hand, OpenGL is designed by several hardware and software vendors in coorperation, and requires that manufacturers write their own library from scratch. \cite{wikiDXOpenGLCompare}
+The underlying driver is partially implemented by Microsoft in a closed common runtime, which communicates with the hardware vendors actual \gls{GPU} driver through the Direct3D \gls{DDI}\cite{dxDDI}.
+On the other hand, OpenGL is designed by several hardware and software vendors in coorperation, and requires that manufacturers write their own library from scratch. 
 
 A benefit of OpenGL is that manufacturers may provide extensions to the \gls{API} to give developers access to new hardware features \cite{openGLExtensions}.
 With Direct3D, new hardware features are only provided to developers, when a new version of the \gls{API} is released by Microsoft. 
@@ -38,7 +38,8 @@ Similar statistics are collected by Valve Corporation from users of their digita
 This shows a similar 3\% statistic for non-windows users\cite{steamStats}, meaning that a large portion of gamers play on systems with some version of Direct3D enabled.
 
 This seems to indicate that Direct3D is a defacto-standard for graphics in games. 
-Exemplifying this, Wikipedia lists a total of \~200 games with OpenGL support \cite{wikiOpenGLGames}, while a total of \~500 games is listed with Direct3D 11 support \cite{wikiDX11Games}. 
+Exemplifying this, Wikipedia lists a total of \~200 games with OpenGL support \cite{wikiOpenGLGames}, while a total of \~500 games is listed with Direct3D 11 support \cite{
+DX11Games}. 
 Note that these lists are incomplete, mostly limited to major titles, while the OpenGL list refers to games supporting any version of OpenGL.
 As opposed to the Direct3D list, which only contains games supporting Direct3D 11, which was released in 2009.
 Compiling the list of games supporting any Direct3D version would most likely lead to a tally of a couple of thousand games, depending on how they are counted.
@@ -47,11 +48,11 @@ Numbers like these have raised claims that manufacturers do not have the same in
 Rich Geldreich, a developer a Valve, describes how a vast landscape of drivers of varying quality, makes it difficult to ship AAA games using OpenGL \cite{openGLDriverQuality}.
  
 Despite this, many popular game engines, which are used to develop games, offer support for both Direct3D and OpenGL.
-This includes Valve’s Source engine \cite{sourceEngine}, the Unity engine \cite{ unityEngine} and Epic Game’s Unreal engine\cite{unrealEngine}.
+This includes Valve’s Source engine 2 \cite{sourceEngine}, the Unity engine \cite{unityEngine} and Epic Game’s Unreal engine\cite{unrealEngine}.
 There is even Id Software’s Id Tech series of engines, which supports OpenGL exclusively in its recent iterations \cite{idTech}.
 Yet, even with this kind of support, OpenGL development has still not managed to catch on with game developers in the same way as Direct3D.  
 
-Not much solid academic work has been published comparing OpenGL and Direct3D.
+ work has been published comparing OpenGL and Direct3D.
 A lot of \gls{API} benchmarks performed by consumers are available online, yet they are not always performed with hard scientific rigor, and give only uncertain glimpses of gls{API} performance.
 Examples include a performance benchmark between OpenGL 3.2 and Direct3D 12, \glspl{API} released 6 years apart and with different underlying design philosophies \cite{geek3DBenchmark}.
 Another is the author not disclosing the specifications of the benchmark hardware \cite{gTrucBenchmark}.
@@ -95,7 +96,7 @@ As of October 2017, it now supports Android 7, Windows 7, 8 \& 10 as well as Ubu
 The support for older versions of windows is important, as according to the steam survey referred to in the last subsection, only ~46\% of steam users have windows 10 installed out of the ~97\% that run Windows\cite{steamStats}.
 Especially Windows 7 remains popular at ~44\%. Interestingly enough, according to the survey ~84\% of users have modern \glspl{GPU} with Direct3D 12 support.
 This means that there is a sizeable portion of non-windows 10 users, who need to turn to Vulkan to get the best performance out of their modern \glspl{GPU} on newer games.
-Vulkan seems to be up for the task, already being supported on many \glspl{GPU} \cite{wikiVulkan}.
+Vulkan seems to be up for the task, already being supported on many \glspl{GPU} \cite{vulkanConformance}.
 Additionally, companies like Valve have started backing Vulkan, because of its support for older windows versions along with Unix-based systems \cite{siggraph2015}.
 The amount of games supported by Direct3D 12 and Vulkan is also about the same according to Wikipedia listings, at about 30 games each \gls{API} \cite{wikiVulkanGames} \cite{wikiDX12Games}.
 
