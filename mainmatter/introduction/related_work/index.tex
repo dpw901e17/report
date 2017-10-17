@@ -1,42 +1,42 @@
 \section{Related Works}\label{sec:problem_statement}
-During the search of related works within this project it was discovered we were hardly the first once to wonder how graphics API's function. From these papers it was discovered that a GPU is used for two kinds of operation: as a GPGPU, meaning using the GPU for general purpose programing and utilize its parallarism which the CPU lacks. 
-The second purpose for the GPU is for rendering graphics, this is mostly used in video game software. The following sections will further explain the related works, and why they are relevant.
+During the search of related works within this project it was discovered we were hardly the first once to wonder how graphics \gls{API}'s function. From these papers it was discovered that a \gls{GPU} is used for two kinds of operation: as a GP\gls{GPU}, meaning using the \gls{GPU} for general purpose programing and utilize its parallarism which the CPU lacks. 
+The second purpose for the \gls{GPU} is for rendering graphics, this is mostly used in video game software. The following sections will further explain the related works, and why they are relevant.
 
-\subsection{GPGPU}
-This section will describe related work as to what GPGPU are, what they are used for, and how they relate to the project.
+\subsection{GP\gls{GPU}}
+This section will describe related work as to what GP\gls{GPU} are, what they are used for, and how they relate to the project.
 
-The GPU Computing Era \cite{gpu_computing_era} is an article which discusesses the benefits of utilizing GPU parallarism to run applications that previously were deemed too time consuming to use in practice. 
-Meaning the article claims that single-threaded applications are no longer good enough, and the industry should adapt to GPGPU technology. 
-It also mentions how that the GPU becomes more powerful all the time by doubling up on its transistors for every 18th month that passes. 
-One way of utilizing GPGPU is through CUDA.
-CUDA programs are very scalable according to the article, and is thus an excellent tool to utilize GPGPU functionality, and encourages more ussage of GPGPU. It is important to note that the authors of this article are from Nvidia and are likely biased towards how important they believe GPGPU is, and how good their CUDA framework tool is. 
+The GPU Computing Era \cite{gpu_computing_era} is an article which discusesses the benefits of utilizing \gls{GPU} parallarism to run applications that previously were deemed too time consuming to use in practice. 
+Meaning the article claims that single-threaded applications are no longer good enough, and the industry should adapt to GP\gls{GPU} technology. 
+It also mentions how that the \gls{GPU} becomes more powerful all the time by doubling up on its transistors for every 18th month that passes. 
+One way of utilizing GP\gls{GPU} is through CUDA.
+CUDA programs are very scalable according to the article, and is thus an excellent tool to utilize GP\gls{GPU} functionality, and encourages more ussage of GP\gls{GPU}. It is important to note that the authors of this article are from Nvidia and are likely biased towards how important they believe GP\gls{GPU} is, and how good their CUDA framework tool is. 
 
-This article is relevant as it gives an introduction to how a GPU might work, it specifically meantions how the Fermi architecture works and how it is possible to achieve parallarism.
+This article is relevant as it gives an introduction to how a \gls{GPU} might work, it specifically meantions how the Fermi architecture works and how it is possible to achieve parallarism.
 
-There have been made a number of tools in order to make utilization of GPGU easier, these Higher Level GPGPU's tool includes the following: Firepile (Scala) \cite{2011_firepile}, OCaml GPGPU \cite{bourgoin_2017_high}, PyCuda and PyOpenCL \cite{2012_pycuda_pyopencl} and Chestnut \cite{stromme_2012_chestnut}.
+There have been made a number of tools in order to make utilization of GPGU easier, these Higher Level GP\gls{GPU}'s tool includes the following: Firepile (Scala) \cite{2011_firepile}, OCaml GP\gls{GPU} \cite{bourgoin_2017_high}, PyCuda and PyOpenCL \cite{2012_pycuda_pyopencl} and Chestnut \cite{stromme_2012_chestnut}.
 
-These tools were made in order to make it easier and less error prone to utilize GPGPU for less skilled developers. As it can be difficult to work with OpenCL and CUDA alone.
-The value in these articles lies in how the developers exposed the lower level API's to a custom made higher level API, and wheter or not they are user to use than their lower-level counterparts. Addtionally, it's also interesting to see how well these higher level abstraction compare performance wise to the lower level once. However, a pitfall the four papers has is that they don't have a proper methodology to test out the programmability of these API's, which is highly desired when the goal of these tools is to be easier and more intuitive to use than their lower-level counterpart.
+These tools were made in order to make it easier and less error prone to utilize GP\gls{GPU} for less skilled developers. As it can be difficult to work with OpenCL and CUDA alone.
+The value in these articles lies in how the developers exposed the lower level \gls{API}'s to a custom made higher level \gls{API}, and wheter or not they are user to use than their lower-level counterparts. Addtionally, it's also interesting to see how well these higher level abstraction compare performance wise to the lower level once. However, a pitfall the four papers has is that they don't have a proper methodology to test out the programmability of these \gls{API}'s, which is highly desired when the goal of these tools is to be easier and more intuitive to use than their lower-level counterpart.
 
-Designing efficient sorting algorithms for Manycore GPUs \cite{satish_2009_designing}
+Designing efficient sorting algorithms for Manycore \gls{GPU}s \cite{satish_2009_designing}
 
-Debunking the 100x GPU vs. CPU Myth \cite{lee_2010_debunking} claims that GPGPU's are not that much better than CPUs. 
-It references several papers that claim GPU's can be 100 (or more) times better than a CPU, and attempts to debunk them. 
-With the data that the article collects it concludes that GPU's are only 2x times better on average than the CPU. 
-The testing was done by writing several algorithms and implement them for both the GPU and CPU, running the algorithms, observe the performance, and then compare the results. 
-However the CPU implementation is highly optimized as the authors and software writers are from Intel, whilst the GPGPU implementation for the algorithms is not optimized to its fullest. 
-Data from a article like this would have been more meaningful if the GPGPU implementation was written some of the best people from Nvidia (since they tested with a Nvidia card) instead of someone from Intel.
+Debunking the 100x \gls{GPU} vs. CPU Myth \cite{lee_2010_debunking} claims that GP\gls{GPU}'s are not that much better than CPUs. 
+It references several papers that claim \gls{GPU}'s can be 100 (or more) times better than a CPU, and attempts to debunk them. 
+With the data that the article collects it concludes that \gls{GPU}'s are only 2x times better on average than the CPU. 
+The testing was done by writing several algorithms and implement them for both the \gls{GPU} and CPU, running the algorithms, observe the performance, and then compare the results. 
+However the CPU implementation is highly optimized as the authors and software writers are from Intel, whilst the GP\gls{GPU} implementation for the algorithms is not optimized to its fullest. 
+Data from a article like this would have been more meaningful if the GP\gls{GPU} implementation was written some of the best people from Nvidia (since they tested with a Nvidia card) instead of someone from Intel.
 
 \subsection{Graphics}
-This section will describe how GPU's usually are used in terms of rendering graphics. And elaborate on what kind of issues that can be encountered whilst working with rendering graphics.
+This section will describe how \gls{GPU}'s usually are used in terms of rendering graphics. And elaborate on what kind of issues that can be encountered whilst working with rendering graphics.
 
 Let's Fix OpenGL \cite{fix_opengl} is a journal article that attempts to expose the shortcommings of OpenGL, and suggests what can be done in order to make OpenGL better. 
 The issues mentioned in the article also applies to DirectX according to the author. 
 Let's Fix OpenGL  \cite{fix_opengl} identifies six issues: 
-\paragraph 1 Programmers must juggle between C/C++ and HLSL/GLSL.
+\paragraph 1 Programmers must juggle between C/C++ and HLSL and GLSL.
 Meaning they have to switch between coding the rendere and coding the shaders in different programming languages.
 
-\paragraph 2 The communication between CPU and GPU is brittle. 
+\paragraph 2 The communication between CPU and \gls{GPU} is brittle. 
 They communicate through commands written in the application, which is a very error-prone approach.
 
 \paragraph 3 Lack of meta-programming tools when it comes to shaders. 
@@ -55,14 +55,14 @@ In the conclusion the article mentions Vulkan and that it might be the solution 
 Additionally, it also encourages development of new frameworks to rival OpenGL. 
 However a shortcomming of the article is that all the listed issues is only based on the authors opinion that he has discussed with his collegues, and not used a proper methodology to collect this data. 
 
-The value of this article is that it gives insight as to how a good graphics API should work, it's good arguements to take into consideration when trying to evaluate an API.
+The value of this article is that it gives insight as to how a good graphics \gls{API} should work, it's good arguements to take into consideration when trying to evaluate an \gls{API}.
 
 An Incremental Rendering VM \cite{haaser_2015_incremental} 
 
 Reducing Driver Overhead in OpenGL, Direct3D and Mantle  \cite{dobersberger_2015_reducing}
 
 \subsection{Comparrison}
-There are several options in terms of what GPU API that can be used when a developer needs to render graphics in a application. This section discusses articles that compare GPU API's against one another, and why and when certain API's should be chosen over others.
+There are several options in terms of what \gls{GPU} \gls{API} that can be used when a developer needs to render graphics in a application. This section discusses articles that compare \gls{GPU} \gls{API}'s against one another, and why and when certain \gls{API}'s should be chosen over others.
 
 Direct3D 11 vs 12 A Performance Comparison Using Basic Geometry \cite{2016_direct3d} is a master thesis...
 
@@ -70,11 +70,11 @@ Direct3D 11 vs 12 A Performance Comparison Using Basic Geometry \cite{2016_direc
 Evaluation of multi-threading in Vulkan \cite{blackert_2016_evaluation} is a master thesis that attempts at evaluating the multi-threading performance of Vulkan. It does so by comparing with its predescor; OpenGL. 
 Additionally it also evaluates the programmability of Vulkan. 
 In the conclusion the thesis states that Vulkan can give more throughput than OpenGL, although it is worth noting that the performance increase is dependent on what kind of hardware is used. Additionally not all applications will gain a significant performance boost with using Vulkan over OpenGL. 
-This would be in cases where multi-threading is not needed, or if the application isn't CPU bound. No methodology was used in evaluating the programmability of Vulkan, it is based on the personal experience of the author, which isn't a good enough method to evaluate an API on. 
+This would be in cases where multi-threading is not needed, or if the application isn't CPU bound. No methodology was used in evaluating the programmability of Vulkan, it is based on the personal experience of the author, which isn't a good enough method to evaluate an \gls{API} on. 
 It only states that Vulkan is more difficult to work with than OpenGL because there is more overhead. 
-For future work the thesis encourages to further evaluate the performance of Vulkan multi-threading  capabilities by comparing it to DirectX 12, and testing the portability of Vulkan on various operating systems and different GPU manufactoreres.
+For future work the thesis encourages to further evaluate the performance of Vulkan multi-threading  capabilities by comparing it to DirectX 12, and testing the portability of Vulkan on various operating systems and different \gls{GPU} manufactoreres.
 
 \paragraph{}
-From these sources it is possible to form a better overview of what is currently going on in the graphics department of the scientific community. Based on these sources it can be concluded that there are not many articles that are looking into the programmability of GPU API's, and the thesis papers evaluation method is flawed as they typically compare a low-level API like Vulkan with a higher level one, and do nothing to counter the abstraction level mismatch between the API's.
+From these sources it is possible to form a better overview of what is currently going on in the graphics department of the scientific community. Based on these sources it can be concluded that there are not many articles that are looking into the programmability of \gls{GPU} \gls{API}'s, and the thesis papers evaluation method is flawed as they typically compare a low-level \gls{API} like Vulkan with a higher level one, and do nothing to counter the abstraction level mismatch between the \gls{API}'s.
 
-Aditionally there seems to be a lack on papers discussing DirectX12 and Vulkan, and should therefor be considered a field that is worthwhile looking into.
+Aditionally there seems to be a lack on papers discussing DirectX12 and Vulkan(Besides the master thesis' there are none), and should therefor be considered a field that is worthwhile looking into.
