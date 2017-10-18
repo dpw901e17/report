@@ -13,55 +13,58 @@
 \end{sectionmeta}
 
 
-\subsection{GPU as a concept}
+\subsection{GPU as a Concept}
 The \gls{GPU} has been developed with a specific domain in mind, as opposed to the CPU, which is for general purposes. 
 The domain of the \gls{GPU} was originally only image manipulation - a field, where a \gls{SIMD} architecture has proven useful.
 %In recent years, however, there has been a focus on using the \gls{GPU} for a broader spectrum of applications, the socalled \gls{GPGPU}. 
 
-\fig{figures/graphics_hdw_cpu_style_core}{\gls{CPU} style core - \cite{intro_to_gpu_arch} p. 14}{cpuStyleCore}{1}
+\fig{figures/graphics_hdw_cpu_style_core}{\gls{CPU} style core \cite[p. 14]{intro_to_gpu_arch}}{cpuStyleCore}{1}
 
-\ref{fig:cpuStyleCore} shows a visual representation of a \gls{CPU} style core. 
+Figure \ref{fig:cpuStyleCore} shows a visual representation of a \gls{CPU} style core. 
 The red boxes "Out-of-order control logic", "Fancy branch predictor" and "Memory pre-fetcher" all have to do with predicting/preventing stalls in the \gls{CPU}.
-These features are not too important for the \gls{GPU}, since it's main focus is throughput \todo{citation needed}. 
+These features are not too important for the \gls{GPU}, since its main focus is throughput \todo{citation needed}. 
 Furthermore, a big cache would limit the amount of cores a single chip could hold, so this is not desirable for a \gls{GPU} either.
-The remaining components - Fetch/Decode, ALU and Execution Context - is described below.
+The remaining components -- Fetch/Decode, \gls{ALU} and Execution Context -- is described below.
 
-\paragraph{The Fetch/Decode component} is responsible for retrieving data from memory and storing it in the Execution Context.
+\paragraph{The Fetch/Decode Component} is responsible for retrieving data from memory and storing it in the Execution Context.
 
-\paragraph{The \gls{ALU} component} performs the actual computations on the fetched data. Any temporary variables or conditions (when handling branches) are stored/retrieved from the Execution Context.
+\paragraph{The \gls{ALU}} performs the actual computations on the fetched data. Any temporary variables or conditions (when handling branches) are stored/retrieved from the Execution Context.
 
-\paragraph{The Execution Context component} contains local data, e.g. variables and conditions, needed to perform the current computation.
+\paragraph{The Execution Context} contains local data, e.g. variables and conditions, needed to perform the current computation.
 
-\subsection{The first idea}
+\subsection{\arcshort{CPU} Style Core}
 As previously described, there are components in the \gls{CPU} style core which are not needed for the \gls{GPU} to achieve a high throughput.
-So the first idea presented in \cite{intro_to_gpu_arch} is to "slim down" the core by getting rid of these components.
+So the first idea presented by \citet{intro_to_gpu_arch} is to "slim down" the core by getting rid of these components.
+The result of slimming down the core can be seen in Figure \ref{twoSlimCores}.
 
-\fig{figures/graphics_hdw_two_cores}{Two slimmed down cores - \cite{intro_to_gpu_arch} p. 16}{twoSlimCores}{1}
+\fig{figures/graphics_hdw_two_cores}{Two slimmed down cores \cite[p. 16]{intro_to_gpu_arch}}{twoSlimCores}{1}
 
-Figure \ref{fig:twoSlimCores} presents two such cores running two fragments in parallel. 
+Figure \ref{fig:twoSlimCores} presents two slimmed down cores running two fragments in parallel. 
 Each core runs the same code, but since the contents of the Execution Contexts are different, we achieve the desired \gls{SIMD} effect.
 
-\subsection{The second idea}
+\subsection{Slimmed Down Core}
 Fetching data and instructions are a relatively time-costly activity for the core \todo{citation needed}.
-The second idea to further the throughput of the \gls{GPU} is to let multiple \glspl{ALU} share a single Fetch component.
+The second idea, to further the throughput of the \gls{GPU}, is to let multiple \glspl{ALU} share a single Fetch component.
 This way, the component need to retrieve more information at a time, less times, which is not as costly as retrieving small bits of information (data and instructions) for a single \gls{ALU}.
 
-\fig{figures/graphics_hdw_shared_fetch}{Fetch component shared by eight \glspl{ALU}. Note the instructions need to change to use vector operations on vector data as well - \cite{intro_to_gpu_arch} p. 24}{sharedFetch}{1}
+\fig{figures/graphics_hdw_shared_fetch}{Fetch component shared by eight \glspl{ALU}. Note the instructions need to change to use vector operations on vector data as well \cite[p. 24]{intro_to_gpu_arch}}{sharedFetch}{1}
 
 Figure \ref{fig:sharedFetch} shows an example of a core with eight \glspl{ALU} sharing a single instruction stream (i.e. Fetch component).
-Since the instructions need to be carried out on a vector of data (each element in the vector corresponding to data for a single \gls{ALU}), the instructions need to reflect this change from single data to vector of data - hence the change from "mul" and "madd" from \ref{fig:twoSlimCores} to "VEC8\_mul" and "VEC8\_madd" in \ref{fig:sharedFetch} in the shader.
+Since the instructions need to be carried out on a vector of data (each element in the vector corresponding to data for a single \gls{ALU}).
+The instructions need to reflect this change from single data to vector of data -- hence the change from "mul" and "madd" from \ref{fig:twoSlimCores} to "VEC8\_mul" and "VEC8\_madd" in Figure \ref{fig:sharedFetch} in the shader.
 
 Since the core now contains multiple contexts, the Execution Context component will now be referred to as the \textbf{Shared Context component}.
 
-\subsection{The third idea}
+\subsection{Hiding Stalling}
 The final thing \glspl{GPU} do to achieve a high throughput is to hide stalling by storing multiple contexts for different fragments on a single core. 
 This allows the core to switch which fragment it works on once the current fragment stalls.
-Stalling occurs when the processing of a fragment group is dependent on another fragment group which is not done processing itself (recall the \glspl{ALU} each works on its own fragment as per idea number two - the fragments being worked on by the \glspl{ALU} at the same time constitutes a fragment group).
+Stalling occurs when the processing of a fragment group is dependent on another fragment group which is not done processing itself (recall the \glspl{ALU} each work on its own fragment, as per the slimmed down cores. 
+The fragments being worked on by the \glspl{ALU} at the same time constitutes a fragment group).
 This latency hiding through interleaving execution of groups of fragments is done because the first idea \todo{ref?} stripped the core of the means the \gls{CPU} uses to hide stalling.
 
-\fig{figures/graphics_hdw_hiding_stalls_1}{The shared context data is split up to match the (here four) different fragment groups. - \cite{intro_to_gpu_arch} p. 35}{hidingStalls1}{1}
+\fig{figures/graphics_hdw_hiding_stalls_1}{The shared context data is split up to match the (here four) different fragment groups \cite[p. 35]{intro_to_gpu_arch}}{hidingStalls1}{1}
 
-\fig{figures/graphics_hdw_hiding_stalls_2}{When one fragment stalls, the \gls{GPU} switches to another stored context and continues on another fragment. - \cite{intro_to_gpu_arch} p. 37}{hidingStalls2}{1}
+\fig{figures/graphics_hdw_hiding_stalls_2}{When one fragment stalls, the \gls{GPU} switches to another stored context and continues on another fragment \cite[p. 37]{intro_to_gpu_arch}}{hidingStalls2}{1}
 
 The figures \ref{fig:hidingStalls1} and \ref{fig:hidingStalls2} shows the \gls{GPU} latency hiding process.
 First the Shared Context component is divided into the number of fragment groups the core shall be able to process - four in this example.
@@ -72,7 +75,7 @@ The idea is: Once all fragment groups have been cycled trough, the cause of the 
 \subsection{Branching in \glspl{GPU}}
 One last thing worth noting from \cite{intro_to_gpu_arch} is how \glspl{GPU} handle branching.
 
-\fig{figures/graphics_hdw_branching}{How \glspl{GPU} handle branching. - \cite{intro_to_gpu_arch} p. 29}{branching}{1}
+\fig{figures/graphics_hdw_branching}{How \glspl{GPU} handle branching \cite[p. 29]{intro_to_gpu_arch}}{branching}{1}
 
 Figure \ref{fig:branching} shows how branching is handled within a single core: The instructions for both branches are executed (on different \glspl{ALU}), and later the correct result will be chosen.
  
