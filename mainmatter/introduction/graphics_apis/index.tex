@@ -2,7 +2,7 @@
 An \gls{API} is an interface, which developers use to access some underlying code library.
 It allows developers to reuse code made by others, decreasing the amount of time spent on individual projects.
 In addition, by forcing developers to access the library through an interface, the risk of creating a large amount of code dependencies in a project is lowered.
-These factors make \glspl{API} a popular development tool. 
+These factors make \glspl{API} a common development tool today.\cite{apiEvaluation}
 An important element of \gls{API} design is the scale of abstraction, which is provided.
 In graphics, \glspl{API} and their associated libraries are categorized as being either low-level or high-level \cite{wikiGraphicsLibs}.
 The low-level \glspl{API} include OpenGL and Direct3D. Developers using these \glspl{API} are required to have an understanding about the inner-workings of the graphics pipeline, and how it is executed on the \gls{GPU}.
@@ -13,7 +13,7 @@ Examples include the Aardvark platform \cite{aardvark}, where graphics can be pr
 This report focuses on low-level \glspl{API}, as they are often used in real-time performance-intensive applications such as video games.
 In addition, the high-level \glspl{API} most often use the low-level \glspl{API} to do the heavy lifting.
 Therefore, the developments at the lower level have wide spread consequences.
-Today the development of graphics \glspl{API} and the underlying driver libraries is done be separate companies.
+Today the development of graphics \glspl{API} and the underlying driver libraries is done be separate companies, such as AMD or Nvidia.
 Often one company designs the \gls{API}, and hardware manufacturers can then decide to support the \gls{API} on their \glspl{GPU}.
 To add support for an \gls{API} on a specific \gls{GPU}, the manufacturer includes a library implementation as part of the device driver.
 Usually the driver must pass some tests and requirements, for the \gls{API} to be officially supported on the device.   
@@ -30,12 +30,12 @@ Direct3D 11, being one of the latest releases, is supported on PCs running the W
 OpenGL, with OpenGL 4 being the latest major release, is considered cross platform.
 If a driver has been written, there is support for it on both Windows and Unix-based systems like macOS, iOS, Linux and Android. 
 
-Getting a clear picture of the market share of the two \glspl{API} is rather difficult.
+Getting a clear picture of the market share of the two \glspl{API} is difficult.
 Though it seems that for many years Direct3D has had an upper hand.
 The people behind the popular Unity game engine collect system specifications on Unity users, as to help developers figure out what system configurations their games should support.
 Looking at the statistics from March 2017, only about 1\% of users use a non-Windows \gls{OS} \cite{unityStats}.
 Similar statistics are collected by Valve Corporation from users of their digital distribution platform, Steam.
-This shows a similar 3\% statistic for non-windows users\cite{steamStats}, meaning that a large portion of gamers play on systems with some version of Direct3D enabled.
+This shows a similar 3\% statistic for non-windows users\cite{steamStats}, implying that a large portion of gamers play on systems with some version of Direct3D enabled.
 
 This seems to indicate that Direct3D is a defacto-standard for graphics in games. 
 Exemplifying this, Wikipedia lists a total of \~200 games with OpenGL support \cite{wikiOpenGLGames}, while a total of \~500 games is listed with Direct3D 11 support \cite{
@@ -96,7 +96,7 @@ As of October 2017, it now supports Android 7, Windows 7, 8 \& 10 as well as Ubu
 The support for older versions of windows is important, as according to the steam survey referred to in the last subsection, only ~46\% of steam users have windows 10 installed out of the ~97\% that run Windows\cite{steamStats}.
 Especially Windows 7 remains popular at ~44\%. Interestingly enough, according to the survey ~84\% of users have modern \glspl{GPU} with Direct3D 12 support.
 This means that there is a sizeable portion of non-windows 10 users, who need to turn to Vulkan to get the best performance out of their modern \glspl{GPU} on newer games.
-Vulkan seems to be up for the task, already being supported on many \glspl{GPU} \cite{vulkanConformance}.
+Vulkan seems to be up for the task, already being supported on many \glspl{GPU}, including devices released by Intel, AMD and Nvidia \cite{vulkanConformance}.
 Additionally, companies like Valve have started backing Vulkan, because of its support for older windows versions along with Unix-based systems \cite{siggraph2015}.
 The amount of games supported by Direct3D 12 and Vulkan is also about the same according to Wikipedia listings, at about 30 games each \gls{API} \cite{wikiVulkanGames} \cite{wikiDX12Games}.
 
@@ -104,5 +104,6 @@ Yet, the small amount of games in each case suggests a slow adoption of both \gl
 This may be because the tools are at a very low-level of abstraction, and the performance that they grant is only needed for certain intensive games.
 At the same time Khronos continues development on OpenGL, releasing OpenGL 4.6 in July of 2017 \cite{wikiOpenGL}.
 They state that Vulkan is a tool for high-performance applications that risk being CPU-bound \cite{vulkanPresentationFeb2016}. 
+The fact that AAA games take several years to develop also seems to be a factor in the slow adoption of these new technologies.
 In the next section we will consider related works, especially publications trying to compare \glspl{API}. 
 
