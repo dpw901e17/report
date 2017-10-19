@@ -16,7 +16,7 @@
 
 \subsection{GPU as a concept}
 The \gls{GPU} has been developed with a specific domain in mind, as opposed to the CPU, which is for general purposes. 
-The domain of the \gls{GPU} was originally only image manipulation - a field, where a \gls{SIMD} architecture has proven useful.
+The domain of the \gls{GPU} was originally only image manipulation - a field, where a \gls{SIMD} architecture has proven useful \todo{citation needed}.
 %In recent years, however, there has been a focus on using the \gls{GPU} for a broader spectrum of applications, the socalled \gls{GPGPU}. 
 
 \fig{figures/graphics_hdw_cpu_style_core}{\gls{CPU} style core - \cite{intro_to_gpu_arch} p. 14}{cpuStyleCore}{1}
@@ -40,7 +40,7 @@ So the first idea presented in \cite{intro_to_gpu_arch} is to "slim down" the co
 \fig{figures/graphics_hdw_two_cores}{Two slimmed down cores - \cite{intro_to_gpu_arch} p. 16}{twoSlimCores}{1}
 
 Figure \ref{fig:twoSlimCores} presents two such cores running two fragments in parallel. 
-Each core runs the same code, but since the contents of the Execution Contexts are different, we achieve the desired \gls{SIMD} effect.
+Each core runs the same code, but since the contents of the Execution Contexts are different, we achieve the desired \gls{SIMD} effect; the two fragments are processed by the same code (Single Instruction), but the code refers to data through registers in the Execution Context, which is different for the two cores (Multiple Data).  
 
 \subsection{The second idea}
 Fetching data and instructions are a relatively time-costly activity for the core \todo{citation needed}.
@@ -116,6 +116,5 @@ We were not able to find a whitepaper or similar report from reliable sources wh
 
 
 \subsubsection{Intel}
-
 
 \subsubsection{AMD}
