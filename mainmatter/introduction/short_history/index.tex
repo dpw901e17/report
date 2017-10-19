@@ -83,37 +83,45 @@ And so the OpenGL and Direct3D became the dominant competitors in the 3D renderi
 \subsection{Modern Graphics \acs{API}s}
 
 The early days of 3D programming was still very verbose and inflexible. 
-Fixed function pipelines were used, which meant you could not change how the pipeline worked \cite{davidovic2014fixedfunction}.
+Fixed function pipelines were used, which meant you could not change how the graphics pipeline worked \cite{davidovic2014fixedfunction}.
 
 In November 2000, Microsoft released their first version of \gls{HLSL} together with DirectX 8 \cite{wikipedia????directx}.
-\Gls{HLSL] is a language for small programs that runs on the \gls{GPU} instead of the \gls{CPU}.
-It is designed as a high level, C like language with extenstions to include some of the most used types such as vectors and matrices.
+\Gls{HLSL} is a language for small programs that runs on the \gls{GPU} instead of the \gls{CPU}.
+It is designed as a high level, C like language with extenstions to include some of the most used types such as vectors and matrices \cite{microsoft????hlsl}.
 It also served as a way to decide which calculations should be performed in which render stages in the pipeline.
-This introduced some much needed flexibility to the pipeline.
+This introduced some flexibility to the graphics pipeline.
 
-OpenGL followed with their own shader language \gls{GLSL} in April 2004.
+OpenGL followed with their own shader language \gls{GLSL} in April 2004 \cite{wikipedia????opengl}.
 Like \gls{HLSL}, \gls{GLSL} is a C like language with some extensions to better support operations common to graphics rendering.
 
+\vspace{1em}
+
+\noindent
 Because OpenGL and Direct3D is in direct competition with eachother, and operate on the same hardware, once a technology, or tool has been developed for one, the other usually follows soon after.
 Therefore, we look at the general graphics \gls{API} improvements in the following sections.
 
-The first improvement to the rendering pipeline was geometry shaders.
-This shader was in between the vertex and fragment shader and operated on primitives; points, lines, or triangles, and returned zero or more primitives for rasterizing.
-Because the geometry shader could see multiple verticies at once, developers were excited for the oppotunities this would give.
+\vspace{1em}
+
+\noindent
+Shaders has since then been improved with more features, such as changing model details with the geometry shader, and generating model details via a tessellation stage.
+
+The geometry shader is placed between the vertex and fragment shader and operated on primitives; points, lines, or triangles, and returned zero or more primitives for rasterizing.
+Because the geometry shader could see multiple verticies at once, developers were excited for the oppotunities this would give \cite{kronos????geometry, microsoft????geometry}.
 A good example of using the geometry shader is particle effects, where the specifics of the four corners of the mesh is less important for the developer than the position of the particle.
 So instead, the developer can send the points of the particles to the \gls{GPU}, and have the geometry shader generate the corners in parallel.
 One big issue with geometry shaders is that their performance overhead is so large that naïvely using it would often hurt performance rather than improving it.
 
-The next change to the rendering pipeline was the introduction of a tesselation stage.
+The next change to the rendering pipeline was the introduction of a tessellation stage.
 This stage involves two shaders; a hull shader and a domain shader.
 It occurs after the vertex shader, but before the geometry shader.
-The tesselation stage generates more details to the model by adding even more vertices.
+The tessellation stage generates more details to the model by adding even more vertices.
 Where the vertices are placed and how many there are, is handled by the shaders.
 
-Later on, tesslation became the big topic, which is way to generate model details on the \gls{GPU}.
-The tesselation stage is a way achieve some of the things developers imagined was possible with geometry shaders, but was not feasable because of the performance overhead the shader had.
+Later on, tessellation became the big topic, which is way to generate model details on the \gls{GPU}.
+The tessellation stage is a way achieve some of the things developers imagined was possible with geometry shaders, but was not feasable because of the performance overhead the shader had.
 
 The most recent trend is to lower the abstraction level of the \glspl{API} to enable more customization.
 This push can be seen in the most recent version of Direct3D; Direct3D 12, and the so called successor to OpenGL; Vulkan.
 The lower level abstract enables the developer to customize the \gls{GPU} usage to their needs.
 Removing this layer of abstraction also has the benefit of enabling multi-threaded \gls{GPU} calls, by eliminating the driver state.
+The drawback is that these lower levels of abstraction are more verbose, and thus increases the complexity of even the simple task of drawing a single triangle on screen.
