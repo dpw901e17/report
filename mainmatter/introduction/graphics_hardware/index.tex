@@ -1,3 +1,7 @@
+\todo{remove temp. command diff}
+\newcommand{\arcshort}[1]{#1}
+
+
 \section{Graphics Hardware}\label{sec:graphics_hardware}
 
 
@@ -15,7 +19,7 @@
 
 \subsection{GPU as a Concept}
 The \gls{GPU} has been developed with a specific domain in mind, as opposed to the CPU, which is for general purposes. 
-The domain of the \gls{GPU} was originally only image manipulation -- a field, where a \gls{SIMD} architecture has proven useful.
+The domain of the \gls{GPU} was originally only image manipulation -- a field, where a \gls{SIMD} architecture has proven useful \todo{citation needed}.
 %In recent years, however, there has been a focus on using the \gls{GPU} for a broader spectrum of applications, the socalled \gls{GPGPU}. 
 
 \fig{figures/graphics_hdw_cpu_style_core}{\gls{CPU} style core \cite[p. 14]{intro_to_gpu_arch}}{cpuStyleCore}{1}
@@ -35,17 +39,22 @@ The remaining components -- Fetch/Decode, \gls{ALU} and Execution Context -- is 
 \subsection{\arcshort{CPU} Style Core}
 As previously described, there are components in the \gls{CPU} style core which are not needed for the \gls{GPU} to achieve a high throughput.
 So the first idea presented by \citet{intro_to_gpu_arch} is to "slim down" the core by getting rid of these components.
-The result of slimming down the core can be seen in Figure \ref{twoSlimCores}.
+The result of slimming down the core can be seen in Figure \ref{fig:twoSlimCores}.
 
-\fig{figures/graphics_hdw_two_cores}{Two slimmed down cores \cite[p. 16]{intro_to_gpu_arch}}{fig:twoSlimCores}{1}
+\fig{figures/graphics_hdw_two_cores}{Two slimmed down cores \cite[p. 16]{intro_to_gpu_arch}}{twoSlimCores}{1}
+
+\fig{figures/graphics_hdw_shader_code}{A closer look at the shader code in \ref{fig:twoSlimCores} - \citet[p. 22]{intro_to_gpu_arch}}{shaderCode}{0.5}
 
 Figure \ref{fig:twoSlimCores} presents two slimmed down cores running two fragments in parallel. 
-Each core runs the same code, but since the contents of the Execution Contexts are different, we achieve the desired \gls{SIMD} effect.
+Each core runs the same code, but since the contents of the Execution Contexts are different, we achieve the desired \gls{SIMD} effect; the two fragments are processed by the same code (Single Instruction), but the code refers to data through registers in the Execution Context, which is different for the two cores (Multiple Data).
+
+Figure \ref{fig:shaderCode} displays the shader code run on fragment 1 and 2 from \ref{fig:twoSlimCores}.
 
 \subsection{Slimmed Down Core}
 Fetching data and instructions are a relatively time-costly activity for the core \todo{citation needed}.
 The second idea, to further the throughput of the \gls{GPU}, is to let multiple \glspl{ALU} share a single Fetch component.
 This way, the component need to retrieve more information at a time, less times, which is not as costly as retrieving small bits of information (data and instructions) for a single \gls{ALU}.
+This means the actual instruction which needs to be run on each \gls{ALU} can be fetched only once per core instead of once per \gls{ALU}.
 
 \fig{figures/graphics_hdw_shared_fetch}{Fetch component shared by eight \glspl{ALU}. Note the instructions need to change to use vector operations on vector data as well \cite[p. 24]{intro_to_gpu_arch}}{sharedFetch}{1}
 
@@ -58,8 +67,9 @@ Since the core now contains multiple contexts, the Execution Context component w
 \subsection{Hiding Stalling}
 The final thing \glspl{GPU} do to achieve a high throughput is to hide stalling by storing multiple contexts for different fragments on a single core. 
 This allows the core to switch which fragment it works on once the current fragment stalls.
-Stalling occurs when the processing of a fragment group is dependent on another fragment group which is not done processing itself (recall the \glspl{ALU} each work on its own fragment, as per the slimmed down cores. 
-The fragments being worked on by the \glspl{ALU} at the same time constitutes a fragment group).
+Stalling occurs when the processing of a fragment group is dependent on another fragment group which is not done processing itself (recall the \glspl{ALU} each work on its own fragment, as per the slimmed down cores.  The fragments being worked on by the \glspl{ALU} at the same time constitutes a fragment group).
+Because switching between contexts is faster than waiting for the context to come out of a stall, the amount of time the \gls{GPU} takes to perform a job is lessened by the hiding of stalls; the latency of the \gls{GPU} caused by stalling has been hidden, which is why this process is also known as latency hiding.
+
 This latency hiding through interleaving execution of groups of fragments is done because the first idea \todo{ref?} stripped the core of the means the \gls{CPU} uses to hide stalling.
 
 \fig{figures/graphics_hdw_hiding_stalls_1}{The shared context data is split up to match the (here four) different fragment groups \cite[p. 35]{intro_to_gpu_arch}}{hidingStalls1}{1}
@@ -78,7 +88,7 @@ One last thing worth noting from \cite{intro_to_gpu_arch} is how \glspl{GPU} han
 \fig{figures/graphics_hdw_branching}{How \glspl{GPU} handle branching \cite[p. 29]{intro_to_gpu_arch}}{branching}{1}
 
 Figure \ref{fig:branching} shows how branching is handled within a single core: The instructions for both branches are executed (on different \glspl{ALU}), and later the correct result will be chosen.
- 
+
 \subsection{Contemporary Graphics Cards}
 This subsection will describe the architecture of  contemporary NVIDIA, Intel and AMD graphics cards and compare the terminology used by these vendors to the terminology presented in this section.
 The selected graphics cards are:
@@ -107,7 +117,7 @@ Even though the two sides share an instruction stream and some memory, they are 
 These sides are what is referred to as "Warps" in NVIDIA terminology.
 
 \fig{figures/graphics_hdw_pascal_gpu}{A 60 \gls{SM} units Pascal GP100 GPU - \cite{nvidia_tesla_p100} p. 10}{pascalGPU}{0.8}
-	
+
 Figure \ref{fig:pascalGPU} shows a complete GP100 GPU in the Pascal Architecture.
 Two \glspl{SM} are grouped into one \glspl{TPC}, and five \glspl{TPC} are grouped together into a \gls{GPC}. \\
 
