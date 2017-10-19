@@ -1,7 +1,7 @@
-\section{The Short History of Graphics \arcshort{API}s}\label{sec:short_history}
+\section{The Short History of Graphics \acs{API}s}\label{sec:short_history}
 \begin{sectionmeta}
-	This section gives an overview of the evolution of graphics with the focus being on the \glspl{API}.
-	First section will look at graphics before graphics \glsps{API}, the example given will be that of a Commodore 64.
+	This section gives an overview of the evolution of computer graphics with the focus being on the \glspl{API}.
+	First section will look at graphics before graphics \glspl{API}, the example given will be that of a Commodore 64.
 	After that, the early competition for getting the graphics \gls{API} market is described.
 	Lastly, we look at some of the more modern improvement that is made to the modern \glspl{API}.
 	
@@ -22,7 +22,7 @@ If the image is using 16 colors then that number would use half of the memory th
 
 The Commodore 64 used the MOS Technology VIC-II graphics chip \cite{commodore1983commodore}.
 The chip supports a 320 by 200 pixels video resolution, 16 colors, and 16 kB memory for screen, character, and sprites \cite{commodore1983commodore}.
-It could handle eight sprites per scanline, each of them 24 by 21 pixels \cite{commodore1983commodore}.
+It could handle a maximum number of eight sprites on each horizontal line of pixels, each sprite was a 24 by 21 pixels, 2 color bitmap with one of colors being transparent \cite{commodore1983commodore}.
 
 But how could it fit 320 by 200 screen with 16 colors into 16 kB of memory? It could not.
 
@@ -36,7 +36,7 @@ Regardless of which mode is used the screen would use 8 kB of memory and palette
 Sprites were a separate system that could be drawn on top of the bitmap.
 The Commodore 64 supported up to eight sprites \cite{commodore1983commodore}.
 
-Other systems such as the Nintendo Gameboy used similar methods with different restrictions \cite{nintendo1999gameboy}.
+Other systems such as the Nintendo Gameboy used similar methods with different restrictions.
 For instance, the Nintendo Gameboy supported 40 sprites, but they had to be 8 by 8 pixels, and only 10 could be on a single scanline \cite{nintendo1999gameboy}. 
 The screen was also smaller, 160 by 144 pixels, and always supported four colors, that had to be the infamous four shades of green \cite{nintendo1999gameboy}.
 
@@ -58,9 +58,9 @@ And advances in 3D rendering had a benificial effect of 2D rendering effeciency.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{The Rise of Graphics \arcshort{API}s} 
+\subsection{The Rise of Graphics \acs{API}s} 
 
-In January of 1992 Silicon Graphics Inc released the first version of OpenGL, which tried to streamline the process of 2D and 3D graphics development \cite{segal1994opengl}.
+In January of 1992 Silicon Graphics, Inc. released the first version of OpenGL, which tried to streamline the process of 2D and 3D graphics development \cite{segal1994opengl}.
 It was based on their own proprietary graphics libary: \gls{IRIS GL}.
 The first version of OpenGL was far from perfect and some of its flaws, such as no texture objects \cite{kronos????history}.
 
@@ -80,26 +80,29 @@ The market share of the Windows operating system gave Microsoft the consumer bas
 So there were some resistance to Direct3D's market dominance, so some developers insisted on using OpenGL.
 And so the OpenGL and Direct3D became the dominant competitors in the 3D rendering 
 
-\subsection{Modern Graphics \arcshort{API}s}
+\subsection{Modern Graphics \acs{API}s}
 
 The early days of 3D programming was still very verbose and inflexible. 
-There were using fixed function pipelines instead of shaders, which ment you could not change how the pipeline worked \cite{davidovic2014fixedfunction}.
-Most of the time 
+Fixed function pipelines were used, which meant you could not change how the pipeline worked \cite{davidovic2014fixedfunction}.
+
 In November 2000, Microsoft released their first version of \gls{HLSL} together with DirectX 8 \cite{wikipedia????directx}.
-\Gls{HLSL} is a high level, C like language which specifies how the \gls{GPU} should render a given model.
-It also served as a way to decide which calculations should be done in which render stages in the pipeline.
+\Gls{HLSL] is a language for small programs that runs on the \gls{GPU} instead of the \gls{CPU}.
+It is designed as a high level, C like language with extenstions to include some of the most used types such as vectors and matrices.
+It also served as a way to decide which calculations should be performed in which render stages in the pipeline.
+This introduced some much needed flexibility to the pipeline.
 
 OpenGL followed with their own shader language \gls{GLSL} in April 2004.
 Like \gls{HLSL}, \gls{GLSL} is a C like language with some extensions to better support operations common to graphics rendering.
 
 Because OpenGL and Direct3D is in direct competition with eachother, and operate on the same hardware, once a technology, or tool has been developed for one, the other usually follows soon after.
-Therefor we look at the general graphics \gls{API} improvements in the following sections.
+Therefore, we look at the general graphics \gls{API} improvements in the following sections.
 
 The first improvement to the rendering pipeline was geometry shaders.
 This shader was in between the vertex and fragment shader and operated on primitives; points, lines, or triangles, and returned zero or more primitives for rasterizing.
 Because the geometry shader could see multiple verticies at once, developers were excited for the oppotunities this would give.
 A good example of using the geometry shader is particle effects, where the specifics of the four corners of the mesh is less important for the developer than the position of the particle.
 So instead, the developer can send the points of the particles to the \gls{GPU}, and have the geometry shader generate the corners in parallel.
+One big issue with geometry shaders is that their performance overhead is so large that naïvely using it would often hurt performance rather than improving it.
 
 The next change to the rendering pipeline was the introduction of a tesselation stage.
 This stage involves two shaders; a hull shader and a domain shader.
@@ -107,10 +110,10 @@ It occurs after the vertex shader, but before the geometry shader.
 The tesselation stage generates more details to the model by adding even more vertices.
 Where the vertices are placed and how many there are, is handled by the shaders.
 
-Later on, tesslation became the big topic, which is another way to generate complexity on the \gls{GPU}.
-The tesselation phase is a way to fix some of the promises that the geometry shader promised but never delivered on.
+Later on, tesslation became the big topic, which is way to generate model details on the \gls{GPU}.
+The tesselation stage is a way achieve some of the things developers imagined was possible with geometry shaders, but was not feasable because of the performance overhead the shader had.
 
 The most recent trend is to lower the abstraction level of the \glspl{API} to enable more customization.
 This push can be seen in the most recent version of Direct3D; Direct3D 12, and the so called successor to OpenGL; Vulkan.
-The lower level abstract enables the developer to customize the \gls{GPU} usage to their or their games needs.
+The lower level abstract enables the developer to customize the \gls{GPU} usage to their needs.
 Removing this layer of abstraction also has the benefit of enabling multi-threaded \gls{GPU} calls, by eliminating the driver state.
