@@ -15,37 +15,38 @@ In the early 80s, dedicated hardware for rendering images started to appear.
 Back then, video cards were not expected to have their own video memory, and instead shared memory with the \gls{CPU} \cite{wikipedia????shared}.
 
 This was a problem because of the limited memory avaliable to the computer.
-For instance, the Commodore 64 had 64 kilo bytes of memory, and supported a 320 by 200 pixels screen \cite{commodore1983commodore}.
+For instance, the Commodore 64 (released in 1984) had 64 kilo bytes of memory, and supported a 320 by 200 pixels screen \cite{commodore1983commodore}.
 This meant that storing a full screen bitmap with four colors would take $$320\times 200\times 2 \text{ bits} = 128,000 \text{ bits} = 16,000 \text{ bytes of memory.}$$
 One quarter of the total 64 kilo bytes of memory for storing the bitmap.
 If the image is using 16 colors then half of the Commodore 64 memory would be used, which would leave little space for the program and I/O, which was memory mapped \cite{commodore1983commodore}.
 
 The Commodore 64 used the MOS Technology VIC-II graphics chip \cite{commodore1983commodore}.
-The chip supports a 320 by 200 pixels video resolution, 16 colors, and 16 kB memory for screen, character, and sprites \cite{commodore1983commodore}.\todo{Not sure if this memory is also shared by the CPU.}
-It could handle a maximum number of eight sprites on each horizontal line of pixels.
-Each sprite was a 24 by 21 pixels, 2 color bitmap with one of colors being transparent \cite{commodore1983commodore}.
+The chip supports a 320 by 200 pixels video resolution, 16 colors, and 16 kB memory for screen, character, and sprites \cite{commodore1983commodore}.
+This means that a quater of the total memory is used by the graphics chip.
 
 But how could it fit 320 by 200 screen with 16 colors into 16 kB of memory?
 Using conventional methods, this was not possible.
 
 Instead, the Commodore 64 used a technique known as color cells \cite{commodore1983commodore}, which were smaller screen segments that used a limited color palette.
-This technique was also used by the Nintendo Entertainment System. 
 The Commodore 64 had two modes for displaying color cells: High resolution mode, where all 320 by 200 pixels were usable, but only two colors; and multi-color mode, where every second pixel was a repeat of the previous \cite{commodore1983commodore}.
 The benefit is that in multi-color mode you can use four colors instead of two.
 This was popular for games since color was more important than resolution \cite{bogdan2014games}.
 Regardless of which mode is used, the screen would use 8 kB of memory and palettes would use 1 kB memory, the rest of the memory was used for sprites \cite{commodore1983commodore}.
 
-Sprites were a separate system that could be drawn on top of the bitmap.
-The Commodore 64 supported up to eight sprites \cite{commodore1983commodore}. \todo{maybe visualize what part of the memory maps to what}
+To overcome the some of the limitations that color cells impose the developer could use sprites.
+Sprites are smaller bitmaps that are rendered independent from the rest of the bitmap, and can be placed anywhere on the screen.
+The Commodore 64s sprites were 24 by 21 pixels, 2 color bitmaps with one of colors being transparent.
+The Commodore 64 could handle a maximum of eight sprites on each horizontal line of pixels \cite{commodore1983commodore}.
+Sprits were often used in games.
 
-Other systems such as the Nintendo Gameboy used similar methods with different restrictions.
+Other systems such as the Nintendo Gameboy (released in Japan in 1989) and Nintendo Entertainment System (released in Japan in 1983) used similar methods with different restrictions.
 The Nintendo Gameboy supported 40 sprites, but they had to be 8 by 8 pixels, and only 10 could be on a single scanline \cite{nintendo1999gameboy}. 
 The screen was also smaller, 160 by 144 pixels, and always supported four colors, that had to be the infamous four shades of green \cite{nintendo1999gameboy}.
 
 To program graphics on the Commodore 64, the programmer would write to and read from the 47 graphics registers in the Commodore 64s address range 53,248 to 53,294 \cite{commodore1983commodore}.
 As an example, if you were to put a sprite into the top left corner of the screen after inserting the sprite data into the memory you would write the following BASIC commands; 
 
-\begin{lstlisting}[caption={Small BASIC program that sets the coordinate of sprite 0 to (0,0) (line 1-3), sets the color to green (line 4), and displays it (line 5).}]
+\begin{lstlisting}[caption={Small BASIC program that sets the coordinate of sprite 0 to (0,0) (line 1-3), sets the color to green (line 4), and enables sprite 0 it (line 5). Line 5 is a bit mask telling the graphics chip which sprits should be shown.}]
 10 POKE 53248,0
 20 POKE 53264,0
 30 POKE 53249,0
@@ -55,22 +56,52 @@ As an example, if you were to put a sprite into the top left corner of the scree
 This is fairly verbose, both because it is written in tha BASIC language, and because you had to write to specific hardcoded registers.
 This was the way it was done before graphics \glspl{API} became prominent.
 
-It was first with the rise of 3D rendering that graphics \glspl{API} became a prominent part of the toolset available to developers.
-And advances in 3D rendering had a benificial effect of 2D rendering effeciency.
+As graphics chips became more capable, and memory became larger the full color and detail of the screen became available to the developers.
+The Commodore Amiga 4000 (released in 1992) had 2 mega bytes of build-in memory and up to 12 mega bytes of additional memory.
+It could also be upgraded by using the different slots.
 
+Wolfenstein 3D simulated 3D on the \gls{CPU} and told the graphics chip the color of each individual pixel.
+This was still done by writing memory addresses that the graphics chip would use when rendering to the screen.
+3D accelerators did exists back then, but was mostly used in acades, so it was not expected that the average consumer had one.
+
+\Citet{helm1986declarative} observed that graphics processing such as the scaling done in Wolfenstein 3D would be better suited for dedicated hardware that worked in parallel.
+The interface to such hardware would then receive abstractions such as vertices instead of pixels, and calculate changed pixels from those.
+
+To program for such hardware, some sort of interface would be needed to ensure that the incoming data is well-formed.
+And so, the need for graphics \glspl{API} was created.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 \subsection{The Rise of Graphics \acs{API}s} 
 
 In January of 1992 Silicon Graphics, Inc. released the first version of OpenGL, which tried to streamline the process of 2D and 3D graphics development \cite{segal1994opengl}.
 It was based on their own proprietary graphics libary: \gls{IRIS GL}.
-The first version of OpenGL was far from perfect and some of its flaws, such as no texture objects \cite{kronos????history}.
+The first version of OpenGL was far from perfect and did not gain popularity until late 1990s when version 1.1 came out \cite{kronos????history}, which introduced concepts such as vertex arrays and texture objects.
+Listing \ref{lst:opengl10} is an example of an OpenGL 1.0 program using the immediate mode.
+OpenGL worked as a statemachine where calls to the \gls{API} modified the state, this is very clear in the Listing \ref{lst:opengl10} on line 7 and 10 where \texttt{glBegin} and \texttt{glEnd} which tells OpenGL to prepare for some triangle data and when it is finished.
 
-When RenderMorphic's Reality Lab started to gain traction, Microsoft bought them in Febuary of 1995 and it became the core for Microsoft's own 3D rendering \gls{API} \cite{1997crushed}; Direct3D.
+\begin{lstlisting}[language={[ANSI]C}, caption={OpenGL 1.0 program written in C, that renders a triangle with different colors on the points, and linear interpolation between the colors. This method uses the fixed pipeline to render the triangle. A method which has been deprecated since OpenGL 3.0.}, label={lst:opengl10}]
+void init() {
+  glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+}
+
+void draw() {
+  glClear(GL_COLOR_BUFFER_BIT);
+  glBegin(GL_TRIANGLES);
+    glColor3f(1.0f, 0.0f, 0.0f); glVertex2f( 0.0f,  0.5f);
+    glColor3f(0.0f, 1.0f, 0.0f); glVertex2f( 0.5f, -0.5f);
+    glColor3f(0.0f, 0.0f, 1.0f); glVertex2f(-0.5f, -0.5f);
+  glEnd();
+  glFlush();
+}
+\end{lstlisting}
+
+RenderMorphic tried to standardize an interface for writing games.
+They called it Reality Lab, and it quickly became one of the main \glspl{API} in the graphics \gls{API} market. 
+Just after a short time on the market, Microsoft bought both the company and the \gls{API} in Febuary of 1995 and it became the core for Microsoft's own 3D rendering \gls{API} \cite{1997crushed}; Direct3D.
 The first version of Direct3D shipped in June 1996 with DirectX 2.0 \cite{wikipedia????directx}. 
 
 Around the same time 3dfx's Brian Hook wrote Glide, a graphics API for the 3dfx Voodoo Graphics Accelerator.
-%Glide was inspired by OpenGL, but focused on features that were useful for realtime 3D rendering.
 Because of the ease of programming to Glide, and the popularity of the Voodoo graphics accelerators, Glide became the dominating graphics \gls{API} in the late 1990's.
 
 Glide's success was in part made possible by Microsoft's involvement in the Talisman project, which took some of resources from the DirectX team.
@@ -127,3 +158,12 @@ This push can be seen in the most recent version of Direct3D; Direct3D 12, and t
 The lower level abstract enables the developer to customize the \gls{GPU} usage to their needs.
 Removing this layer of abstraction also has the benefit of enabling multi-threaded \gls{GPU} calls, by eliminating the driver state.
 The drawback is that these lower levels of abstraction are more verbose, and thus increases the complexity of even the simple task of drawing a single triangle on screen.
+
+For instance, Figure \ref{fig:vulkan_overview} is an overview of all the components that is required to render a similar triangle to the one rendered in Listing \ref{lst:opengl11}.
+The program was written by following a tutorial written by \citet{overvoorde2017vulkan}.
+The resulting program was approximatly 1000 lines of code.
+
+\fig{figures/VulkanTriangleOverview.jpg}{A diagram showing the component involved in displaying a triangle to the screen. Credits: reddit user pipsqueaker117. \todo[inline]{Lav bedre diagram når vi ved mere om vulkan.}}{vulkan_overview}{0.9}
+
+The Vulkan implementation is far bigger than the OpenGL 1.0 version, the reason is because the Vulkan version gives more flexibility to the developer.
+One feature of Vulkan is that is gets rid of the statemachine from OpenGL, because when running multi-threaded applications it is error prone to use globally shared statemachines.
