@@ -123,7 +123,33 @@ The main difference between the two chips is the number of CUDA Cores: The GP100
 We were not able to find a whitepaper or similar report from reliable sources which detailed the GP106 chip, so that is why it is not used as the example. 
 
 
-\subsubsection{Intel}
-
-
 \subsubsection{AMD}
+For this project we have a AMD Sapphire Radeon R9 280 3GB GDDR5 \gls{GPU} at our disposal. 
+It uses the GCN 1.0 Architecture.
+GCN stands for Graphics Core Next, it is the first architecture AMD developed that would allow to use the \glspl{GPU} which were built on it as \glspl{GPGPU}.
+Compared to the previous architecture AMD \glspl{GPU} were built with (VLIW4) GCN is better at handling threads with less cycles going to waste.
+GCN goes chronologically through to check which threads requires the other to finish beforehand, and then decides in which order the threads should be executed.
+This results in less cycles needed in order to finish the tasks a thread can have.
+\todo{I found a white paper that explains AMD GCN much further in detail, but cannot find anything that specificially mentions the graphics cards. Should I go more in depth about the architecture?}
+
+\subsubsection{Intel}
+Traditionally Intel only functioned as a \gls{CPU}, however overtime it was realized there was some performance gain to be had by incorporating inbuilt \glspl{GPU} into Intels \glspl{CPU}.
+Intel introduced its first series of integrated graphics processors in 2010 and have since then kept releasing newer and more powerful once than the last generation. 
+These \glspl{CPU} are called Intel HD Graphics. 
+In 2013 Intel introduced Intel Iris Graphics and the Intel Iris Pro Graphics series in 2013 which also integrated a graphics processor. 
+They are better than their HD Graphics counterpart, they distinguish form their HD Graphics counterpart as they were the first series to include embedded DRAM into their \glspl{CPU}. 
+
+\todo{figure out why they are more powerful in terms of throughput}
+Additionally, Iris \glspl{CPU} are made for desktop computers, whereas HD Graphics \glspl{CPU} are made for laptop computers.
+Regardless of which Intel \glspl{GPU} integrated \glspl{CPU}, the inbuilt processing unit has the advantage of consuming less power than a Nvidia or AMD \glspl{GPU}.
+This comes at the cost of the \gls{GPU} not being able to give as much throughput as Nvidia or AMD. 
+However, there are technologies like Nvidia Optimus that tries to exploit this. 
+If some GPU command does not demand much \gls{GPU} throughput, it can automatically make use of the Intel inbuilt \gls{GPU} instead and thus save power.
+They have support for both Direct3D and OpenGL. Depending on the version, some are also supporting Vulkan.
+
+\todo{specify the Intel GPU’s we have at our diposal, and how they work.}
+%HD Graphics 520 – Skylake %(claus’ cpu)
+%HD Graphics 4000 – Ivy Bridge (michaels cpu)
+%HD Graphics 4600 – Haswell &(anders’ cpu)
+%HD Graphics Family (brandborgs cpu)
+
