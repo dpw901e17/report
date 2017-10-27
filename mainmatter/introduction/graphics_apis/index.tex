@@ -19,7 +19,7 @@ To add support for an \gls{API} on a specific \gls{GPU}, the manufacturer includ
 Usually the driver must pass some tests and requirements, for the \gls{API} to be officially supported on the device.   
 
 The most popular low-level graphics \glspl{API} during the last game console generation, lasting from 2005 to about 2017, have been Microsoft’s Direct3D, part of the DirectX multimedia API collection, and Khronos’ OpenGL. 
-Direct3D is designed by Microsoft to be used exclusively on the Microsoft Windows platform. 
+%Direct3D is designed by Microsoft to be used exclusively on the Microsoft Windows platform. 
 The underlying driver is partially implemented by Microsoft in a closed common runtime, which communicates with the hardware vendors actual \gls{GPU} driver through the Direct3D \gls{DDI}\cite{dxDDI}.
 On the other hand, OpenGL is designed by several hardware and software vendors in coorperation, and requires that manufacturers write their own library from scratch. 
 
@@ -56,7 +56,7 @@ Yet, even with this kind of support, OpenGL development has still not managed to
 Not a lot of academic work has been published comparing OpenGL and Direct3D.
 A lot of \gls{API} benchmarks performed by consumers are available online, yet they are not always performed with hard scientific rigor, and give only uncertain glimpses of \gls{API} performance.
 Examples include a performance benchmark between OpenGL 3.2 and Direct3D 12, \glspl{API} released 6 years apart and with different underlying design philosophies \cite{geek3DBenchmark}.
-Another is the author not disclosing the specifications of the benchmark hardware \cite{gTrucBenchmark}.
+Another example is the author not disclosing the specifications of the benchmark hardware \cite{gTrucBenchmark}.
 Even Valve have released a comparison of Direct3D and OpenGL, without disclosing the version used for any of the \glspl{API} \cite{valveBenchmark}.
 In the end, this lack of rigor and transparency leaves behind a lot of data of questionable quality.
 
@@ -93,7 +93,7 @@ That is, making the developer responsible for more tasks in return for more flex
 It too aims to lower driver overhead, allows for asynchronous draw calls, pushing computation to compile time, and making the render state explicit.
 
 Like OpenGL, Vulkan also focuses on cross-platform support.
-As of October 2017, it now supports Android 7, Windows 7, 8 \& 10 as well as Ubuntu\cite{vulkanConformance}.
+As of October 2017, Vulkan supports Android 7, Windows 7, 8 \& 10 as well as Ubuntu\cite{vulkanConformance}.
 The support for older versions of windows is important, as according to the steam survey referred to in the last subsection, only ~46\% of steam users have windows 10 installed out of the ~97\% that run Windows\cite{steamStats}.
 Especially Windows 7 remains popular at ~44\%. Interestingly enough, according to the survey ~84\% of users have modern \glspl{GPU} with Direct3D 12 support.
 This means that there is a sizeable portion of non-windows 10 users, who need to turn to Vulkan to get the best performance out of their modern \glspl{GPU} on newer games.
