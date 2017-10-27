@@ -1,0 +1,96 @@
+\section{The Graphics Pipeline} \label{sec:pipeline}
+\begin{sectionmeta}
+To understand the following sections it is recommended to gather an understanding of what the graphics pipeline is.
+The following section is based on a mix of the official documentation for the graphics pipelines for Direct3D and OpenGL \cite{khronos????pipeline, microsoft????pipeline}.
+\end{sectionmeta}
+
+The graphics pipeline can be compared to the \gls{CPU} pipeline in the way that it is a number of stages that each command goes through.
+For graphics, that the command is instead an array of vertex data, such as position, texture coordinates, normals, and color, and unlike the \gls{CPU} pipeline, the relationship between the stages are not only one to one.
+
+\begin{figure}[!h]
+  \centering
+  \begin{tikzpicture}[
+      auto, node distance = 2em,
+      every node/.style={font=\footnotesize, align=center},
+      box/.style = {draw, text width=2.3cm, minimum height=3em, drop shadow},
+      fixed stage/.style={box, fill=orange!10},
+      stage/.style={box, rounded corners=1em, fill=blue!10},
+      optional stage/.style={box, fill=blue!5},
+      memory/.style={box, fill=green!10},
+      arrow/.style={draw, ->, thick, >=stealth, shorten >=1pt}]
+      
+    \node[fixed stage](ia){Input\\Assembler};
+    \node[stage, below=of ia](vs){Vertex Shader};
+    \node[fixed stage, below=of vs](pa){Primitive Constructor};
+    \node[optional stage, dashed, below=of pa](t){Tessellation};
+    \node[optional stage, dashed, below=of t](gs){Geometry Shader};
+    \node[fixed stage, below=of gs](r){Rasterizer};
+    \node[stage, below=of r](ps){Fragment Shader};
+    \node[fixed stage, below=of ps](om){Output Merger};
+    
+    \node[memory, fit=(ia)(om), xshift=5cm](m){Memory};
+    
+    \path[arrow] (ia) -- node{Vertex Array} (vs);
+    \path[arrow] (vs) -- node{Vertex Positions} (pa);
+    \path[arrow] (pa) -- node{Primitives} (t);
+    \path[arrow] (t)  -- node{Primitives} (gs);
+    \path[arrow] (gs) -- node{Primitives} (r);
+    \path[arrow] (r)  -- node{Fragment} (ps);
+    \path[arrow] (ps) -- node{Color} (om);
+    
+    \path[arrow] (m.west|-ia) -- (ia);
+    \path[arrow] (m.west|-vs) -- (vs);
+    \path[arrow] (m.west|-pa) -- (pa);
+    \path[arrow] (m.west|-t) -- (t);
+    \path[arrow] (m.west|-gs) -- (gs);
+    \path[arrow] (m.west|-ps) -- (ps);
+    \path[arrow, <->, shorten <=1pt] (m.west|-om) -- (om);
+  \end{tikzpicture}
+  \caption{A view of the graphics pipeline. The orange boxes are fixed functions, the blue boxes with rounded corners are shaders that the developer can replace with their own program, and the large green box is shared memory. Dashed shader stages are optional.}
+  \label{fig:pipeline01}
+\end{figure}
+
+The following paragraph goes through the different stages in the graphics pipeline, show in Figure \ref{fig:pipeline01}.
+
+\paragraph{The Input Assembler} is the first stage. 
+It reads the user provided data and assembles the data into structures that it sends to the next stage in the pipeline.
+These structures include primitive types in the shader languages, such as floats, vectors, matrices, etc.
+
+\paragraph{The Vertex Shader} is the first interchangeable stage in the pipeline.
+Its main responsibility is to take a set of output from the Input Assembler and translate it into vertices in clip-space.
+Clip-space is a space where all verticies that should be displayed are within the x and y coordinates -1 to 1 and z coordinate 0 to 1 or -1 to 1 depending on the \gls{API}.
+It also calculate values that later stages in the pipeline uses.
+
+\paragraph{The Primitive Constructor} takes the vertices and constructs primitives.
+A primitive is either a point, a line, or a triangle.
+Other primitives exists but are \gls{API} specific.
+To enable reuse of vertices, a index buffer can be provided to tell the assembler which vertices makes a primitive.
+The primitive constructor also performs the necessary clipping so that off-screen vertices are not rendered.
+
+\paragraph{The Tessellation Stage} is the first optional stage.
+Its responsibility is to tessellate the primitive, which means dividing the primitive into multiple smaller primitives.
+In the figure it is simplified.
+The tessellation stage consists of three elements: two shader stages, and a fixed function between them.
+The first shader describes how much tessellation should be done, and how.
+The fixed function the generates the desired result and the last shader modifies the generated primitives.
+This modification could include moving vertices according to a mathematical formula, or a texture, to show details that was otherwise not present in the model.
+
+\paragraph{The Geometry Shader} takes in a single primitive and outputs any number of primitives.
+This is used to generate particles from points, or hair and grass on surfaces.
+It can also be used to mask some primitives if necessary.
+
+
+\paragraph{The Rasterizer Stage} takes the primitives and calculates which fragments on the screen it covers.
+Fragments in this context usually refers to pixels either on the screen or on a target render texture.
+
+\paragraph{The Fragment Shader} is responsible for returning the color that should be displayed on each fragment.
+This stage is usually used for texture mapping, and lighting.
+
+\paragraph{The Output Merger Stage} takes the colors from the fragment shader and blends them into the existing framebuffer. 
+The framebuffer can then later be swapped for the image displayed on the screen or used as input to another pipeline.
+
+\vspace{1em}
+
+\noindent There are some differences in the exact implementations of the graphics pipeline in the specific \glspl{API}, but for our purpose a deeper understanding that described is not required.
+Other exceptions include Vulkan, where the pipeline is entirely configurable.
+Vulkan does not provide a pipeline, so the developer is free to design every aspect of how the rendering is performed.
