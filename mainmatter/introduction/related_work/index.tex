@@ -1,55 +1,91 @@
 \section{Related Works}\label{sec:related_works}
+\begin{sectionmeta}
 This section will describe the related works within this project.
 From these papers it was discovered that a \gls{GPU} is used for two kinds of operation: 
 The first purpose for the \gls{GPU} is for rendering graphics, this is used in video games, video rendering and overall graphical visualization in any kind of application. 
 Secondly as a GP\gls{GPU}, meaning using the \gls{GPU} for general purpose programing and utilizing its massive parallelism.
 The following sections will further explain the related works, and why they are relevant.
+\end{sectionmeta}
 
 \subsection{Graphics}
-This section will describe how \glspl{GPU} usually are used in terms of rendering graphics, and elaborate on what kind of issues that can be encountered whilst working with rendering graphics.
+This section will describe how \glspl{GPU} are used in terms of rendering graphics, and elaborate on what kind of issues that can be encountered whilst working with rendering graphics.
 
-Let's Fix OpenGL \cite{fix_opengl} is a article that attempts to expose the shortcommings of OpenGL, and suggests what can be done in order to make OpenGL better. 
-The issues mentioned in the article also applies to DirectX according to the author. 
-The article identifies six issues: 
+\vspace{1em}
 
-\paragraph{1} Programmers must juggle between C/C++ and HLSL and GLSL.
+\subsubsection{Let's Fix OpenGL}
+
+\citet{fix_opengl} attempts to expose the shortcommings of OpenGL, and suggests research topics to improve OpenGL. 
+The issues mentioned also applies to DirectX according to the author. 
+He identifies six issues: 
+
+\begin{enumerate}
+\item Programmers must juggle between C/C++ and \gls{HLSL} and \gls{GLSL}.
 Meaning they have to switch between coding the renderer and coding the shaders in different programming languages.
 
-\paragraph{2} The communication between CPU and \gls{GPU} is brittle. 
+\item The communication between \gls{CPU} and \gls{GPU} is brittle. 
 They communicate to share data through commands written in the application, there is no way to statically check if the variable name in the application and shader match.
 This is a error-prone approach, as such bugs can first be found during runtime of the application.
 
-\paragraph{3} Massive meta-programming. 
+\item Massive meta-programming. 
 There can be generated thousands of varients of a shader program, this is not good as it comes at a performance cost.
 
-\paragraph{4} Different semantics for each shader stage. 
+\item Different semantics for each shader stage. 
 This contributes to the issue of having to keep track of semantics depending on what kind of shader is being worked on.
 It makes more difficult to use OpenGL, and increases the learning curve.
 
-\paragraph{5} No type system for vectors when converting between spaces. 
+\item No type system for vectors when converting between spaces. 
 It has to be done manually, it should be possible to simply standardize such an approach.
 
-\paragraph{6} Diffcult to verify correctness of a graphics application. 
+\item Diffcult to verify correctness of a graphics application. 
 There is no way to test whether whatever an application renders, is the actual desired result.
+\end{enumerate}
 
-In the conclusion, the article mentions Vulkan and that it might be the solution to the issues of OpenGL. 
+In the conclusion, the article mentions Vulkan and that it might be the solution to some of the issues in OpenGL. 
 Additionally, it also encourages development of new frameworks to rival OpenGL. 
 However a shortcomming of the article is that all the listed issues is only based on the authors opinion that he has discussed with his collegues, and not used a proper methodology to collect this data. 
-Although they do reveal that OpenGL is not a API without flaws.
+Although they do reveal that OpenGL is not a \gls{API} without flaws.
 
 The value of this article is that it gives insight as to how a good graphics \gls{API} should work, it's good arguments to take into consideration when trying to evaluate an \gls{API}.
 
-\todo{An Incremental Rendering VM \cite{haaser_2015_incremental}}
+\subsubsection{An Incremental Rendering VM}
 
-\subsection{Comparrison}
+\noindent \citet{haaser_2015_incremental} suggest a new way of looking at rendering.
+They observe that most of the graphics used for one frame remain unchanged for the next frame.
+
+To use this knowledge they develop a high-level abstraction over the draw calls where the render task are organized using a trie, where each leaf is a render state and a bucket of render objects.
+Objects in the same bucket can be rendered without switching between render states.
+
+The program takes this trie and compiles it into virtual machine code, that is translated into OpenGL draw calls.
+The translated OpenGL code is kept between frames, to avoid compiling unchanged code.
+In other words, this is a just-in-time compilation.
+
+The advantage they get from using this intermediate representation, is that they can do optimization on the intermediate representation before tranlating to OpenGL draw-calls.
+This optimization only have to be performed once for every change in the render task.
+And they defragment the representation to reduce cache misses, which increases performance even further.
+
+When changes occurs they group the change into two types: incremental changes and structural changes.
+Incremental changes to a render object, such as changing the color or the entire shader, is handled by moving the object between buckets.
+Structural changes, such as removing and adding render objects to the scene, is handled by adding or removing objects to or from the buckets.
+This moving, adding and removing rendering objects makes the defragmentation vital to ensure performance equal to other rendering methods.
+
+They show in benchmarks that the overhead the virtual machine introduces are negligible, and that rendering speed depended on the size of the change being applied. 
+
+\subsection{Comparison}
 There are several options in terms of what \gls{GPU} \gls{API} that can be used when a developer needs to render graphics in an application. This section discusses articles that compare \gls{GPU} \glspl{API} against one another, and why and when certain \glspl{API} should be chosen over others.
+
+\subsubsection{Direct3D 11 vs 12 A Performance Comparison Using Basic Geometry}
 
 \todo{Direct3D 11 vs 12 A Performance Comparison Using Basic Geometry \cite{2016_direct3d} is a master thesis...}
 
+\subsubsection{Reducing Driver Overhead in OpenGL}
+
 \todo{Reducing Driver Overhead in OpenGL, Direct3D and Mantle  \cite{dobersberger_2015_reducing} is a master thesis...}
+
+\subsubsection{Evaluation of multi-threading in Vulkan}
 
 Evaluation of multi-threading in Vulkan \cite{blackert_2016_evaluation} is a master thesis that attempts at evaluating the multi-threading performance of Vulkan. It does so by comparing it to its predescor; OpenGL. 
 Additionally it also evaluates the programmability of Vulkan. 
+
 In the conclusion, the thesis states that Vulkan can give more throughput than OpenGL.
 Not all applications will gain a significant performance boost with using Vulkan over OpenGL. 
 This would be in cases where multi-threading is not needed, or if the application is not CPU bound. 
