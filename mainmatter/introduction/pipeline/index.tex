@@ -5,8 +5,8 @@ The following section is based on the official documentation for graphics pipeli
 It aims to give the reader a basic understanding in the stages and processes involved in the graphics pipeline.
 \end{sectionmeta}
 
-Graphics pipelines can be compared to the \gls{CPU} pipeline in the way that it is a number of stages that each command goes through.
-For graphics, that the command is instead an array of vertex data, such as position, texture coordinates, normals, and color, and unlike the \gls{CPU} pipeline, the relationship between the stages are not only one to one.
+Graphics pipelines can be compared to the \gls{CPU} pipeline in the way it is a number of stages each command goes through.
+For graphics, the command is instead an array of vertex data, such as position, texture coordinates, normals, and color, and unlike the \gls{CPU} pipeline, the relationship between the stages are not only one to one.
 
 \tikzfig{figures/TikZ/graphics_pipeline.tex}{A view of the graphics pipeline. The orange boxes are fixed functions, the blue boxes with rounded corners are shaders that the developer can replace with their own program, and the large green box is shared memory. Dashed shader stages are optional.}{pipeline01}
 
@@ -19,13 +19,14 @@ These structures include primitive types in the shader languages, such as floats
 \paragraph{The Vertex Shader} is the first interchangeable stage in the pipeline.
 Its main responsibility is to take a set of output from the Input Assembler and translate it into vertices in clip-space.
 Clip-space is a space where all verticies that should be displayed are within the x and y coordinates -1 to 1 and z coordinate 0 to 1 or -1 to 1 depending on the \gls{API}.
-It also calculate values that later stages in the pipeline uses.
+It also calculate or sets values later stages in the pipeline uses.
+These values vary depending on the desired effect, but might contain color, normal vector, lighting, and/or texture coordinate.
 
 \paragraph{The Primitive Constructor} takes the vertices and constructs primitives.
 A primitive is either a point, a line, or a triangle.
 Other primitives exists but are \gls{API} specific.
 To enable reuse of vertices, a index buffer can be provided to tell the assembler which vertices makes a primitive.
-The primitive constructor also performs the necessary clipping so that off-screen vertices are not rendered.
+The primitive constructor also performs the necessary clipping so off-screen vertices are not rendered.
 
 \paragraph{The Tessellation Stage} is the first optional stage.
 Its responsibility is to tessellate the primitive, which means dividing the primitive into multiple smaller primitives.
@@ -41,7 +42,11 @@ It can also be used to mask some primitives if necessary.
 
 
 \paragraph{The Rasterizer Stage} takes the primitives and calculates which fragments on the screen it covers.
-Fragments in this context usually refers to pixels either on the screen or on a target render texture.
+Fragments in this context refers to sample-sized segments.
+When rendering to the screen or texture, this will the size of a single pixel.
+Rasterization might produce more than one fragment for a single pixel, depending on the parameters set, multisampling is one of such parameters.
+
+ to pixels either on the screen or on a target render texture.
 
 \paragraph{The Fragment Shader} is responsible for returning the color that should be displayed on each fragment.
 This stage is usually used for texture mapping, and lighting.
