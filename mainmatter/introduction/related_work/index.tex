@@ -75,7 +75,16 @@ There are several options in terms of what \gls{GPU} \gls{API} that can be used 
 
 \subsubsection{Direct3D 11 vs 12 A Performance Comparison Using Basic Geometry}
 
-\todo{Direct3D 11 vs 12 A Performance Comparison Using Basic Geometry \cite{2016_direct3d} is a master thesis...}
+\citet{2016_direct3d} wrote an intresting article as part of his masters thesis, where he compared Direct3D 11 and 12, and found that Direct3D 11 performed better than Direct3D 12.
+The test were a scene with a number of points where each point has a fixed color.
+Performance is mesured for increasing number of points.
+
+The results he got contradicts other benchmarks and he used the discussion to reflect on why.
+In the discussion he reflects over the implementation, where the Direct3D 12 implementation is modeled after the Direct3D 11 implementation to ensure that it is the \gls{API} implementation that affects the performance and not the newer features.
+This might have been a mistake because he could not use Direct3D 12 to its fullest extent, as he could with Direct3D 11.
+
+He does notize that Direct3D 12 uses less \gls{CPU} time and fewer threads, and theorises that Direct3D 11 does a lot of optimization where Direct3D 12 lets the developer handle optimization.
+The paper ends with the author stating that if the features of Direct3D 12 were better used, it would possibly get better performance than Direct3D 11.
 
 \subsubsection{Reducing Driver Overhead in OpenGL, Direct3D and Mantle}
 
