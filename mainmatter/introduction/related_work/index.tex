@@ -77,9 +77,24 @@ There are several options in terms of what \gls{GPU} \gls{API} that can be used 
 
 \todo{Direct3D 11 vs 12 A Performance Comparison Using Basic Geometry \cite{2016_direct3d} is a master thesis...}
 
-\subsubsection{Reducing Driver Overhead in OpenGL}
+\subsubsection{Reducing Driver Overhead in OpenGL, Direct3D and Mantle}
 
-\todo{Reducing Driver Overhead in OpenGL, Direct3D and Mantle  \cite{dobersberger_2015_reducing} is a master thesis...}
+\citet{dobersberger_2015_reducing} went throught three different graphics \gls{API} as part of his master thesis. 
+He looked at the different ways the \glspl{API} enable the developer to reduce the overhead of using their \gls{API}.
+The then uses that knowledge to conclude something about the individual \glspl{API} such as; Direct3D focuses on multithreaded rendering, and Mantle's low-level api reduces \gls{CPU} usage and memory overhead.
+
+Because Mantle is not released to the public, only OpenGL and Direct3D is compared.
+They are compared by targeting some of the features described in the specific \gls{API} sections, and mesuring the performance when using the feature and when ignoring them.
+If there exist comparable features in both \glspl{API}, then the performance tests are grouped together, to compare the different approaches to the problem.
+In some cases, the results are verified by using third party \gls{API} tests.
+
+The final conclusion states that overhead \glspl{API} introduces is significant, and that developers should be aware of the trade-off they make when using one feature over another.
+Often the trade-off is flexibility for performance.
+The author is optimistic about Vulkan and Direct3D 12, as some of the features proposed are gonna reduce the overhead.
+
+It is releavant to this project \todo{vend det med de andre om vi kalder det et projekt} since both Vulkan and Direct3D 12 tries to reduce the \gls{API} overhead.
+One way that this tries to achive this is by making the developer responsible for defining the pipeline.
+We could continue his work by comparing specific features of Vulkan and Direct3D 12 on how they work and how much they reduce the \gls{API} overhead, if at all.
 
 \subsubsection{Evaluation of multi-threading in Vulkan}
 
