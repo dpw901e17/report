@@ -114,6 +114,7 @@ These sides are what is referred to as "Warps" in NVIDIA terminology.
 
 \fig{figures/graphics_hdw_pascal_gpu}{A 60 \gls{SM} units Pascal GP100 GPU - \cite{nvidia_tesla_p100} p. 10}{pascalGPU}{0.8}
 
+
 Figure \ref{fig:pascalGPU} shows a complete GP100 GPU in the Pascal Architecture.
 Two \glspl{SM} are grouped into one \glspl{TPC}, and five \glspl{TPC} are grouped together into a \gls{GPC}. \\
 
@@ -127,9 +128,11 @@ We were not able to find a whitepaper or similar report from reliable sources wh
 For this project we have a AMD Sapphire Radeon R9 280 3GB GDDR5 \gls{GPU} at our disposal. It uses the \gls{GCN} 1.0 Architecture.
 It is the first architecture AMD developed that would allow to use \glspl{GPU} as \glspl{GPGPU}.
 
-\fig{figures/\gls{GCN}_compute_unit}{Overview of the \gls{GCN} architecture}{\gls{GCN}CU}}{1} 
+\fig{figures/GCN_compute_unit}{Overview of the \gls{GCN} architecture}{GCNCU}{1} 
 
-In \gls{GCN} Compute Units are the basic computational blocks of the \gls{GCN} architecture, Figure \ref{fig:\gls{GCN}CU}} visualizes how each \gls{CU} is structured in \gls{GCN}.
+\todo{figure citation needed}
+
+In \gls{GCN} Compute Units are the basic computational blocks of the \gls{GCN} architecture, Figure \ref{fig:GCNCU} visualizes how each \gls{CU} is structured in \gls{GCN}.
 \todo{make figure of wavefront-simd-CU relation}
 A wavefront consists of 64 threads that can be executed in parallel, these wavefronts are distributed amongst \gls{CU}s. 
 Each \gls{CU} consists of 4 separate SIMD units which all contain their own vector ALU, which is used for vector cal\gls{CU}lations.  
