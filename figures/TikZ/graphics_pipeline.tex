@@ -1,0 +1,37 @@
+\begin{tikzpicture}[
+    auto, node distance = 2em,
+    every node/.style={font=\footnotesize, align=center},
+    box/.style = {draw, text width=2.3cm, minimum height=3em, drop shadow},
+    fixed stage/.style={box, fill=orange!10},
+    stage/.style={box, rounded corners=1em, fill=blue!10},
+    optional stage/.style={box, fill=blue!5},
+    memory/.style={box, fill=green!10},
+    arrow/.style={draw, ->, thick, >=stealth, shorten >=1pt}]
+    
+  \node[fixed stage](ia){Input\\Assembler};
+  \node[stage, below=of ia](vs){Vertex Shader};
+  \node[fixed stage, below=of vs](pa){Primitive Constructor};
+  \node[optional stage, dashed, below=of pa](t){Tessellation};
+  \node[optional stage, dashed, below=of t](gs){Geometry Shader};
+  \node[fixed stage, below=of gs](r){Rasterizer};
+  \node[stage, below=of r](ps){Fragment Shader};
+  \node[fixed stage, below=of ps](om){Output Merger};
+  
+  \node[memory, fit=(ia)(om), xshift=5cm](m){Memory};
+  
+  \path[arrow] (ia) -- node{Vertex Array} (vs);
+  \path[arrow] (vs) -- node{Vertex Positions} (pa);
+  \path[arrow] (pa) -- node{Primitives} (t);
+  \path[arrow] (t)  -- node{Primitives} (gs);
+  \path[arrow] (gs) -- node{Primitives} (r);
+  \path[arrow] (r)  -- node{Fragment} (ps);
+  \path[arrow] (ps) -- node{Color} (om);
+  
+  \path[arrow] (m.west|-ia) -- (ia);
+  \path[arrow] (m.west|-vs) -- (vs);
+  \path[arrow] (m.west|-pa) -- (pa);
+  \path[arrow] (m.west|-t) -- (t);
+  \path[arrow] (m.west|-gs) -- (gs);
+  \path[arrow] (m.west|-ps) -- (ps);
+  \path[arrow, <->, shorten <=1pt] (m.west|-om) -- (om);
+\end{tikzpicture}
