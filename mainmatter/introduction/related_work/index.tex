@@ -14,26 +14,30 @@ This section will describe how \glspl{GPU} are used in terms of rendering graphi
 
 \subsubsection{Let's Fix OpenGL}
 
-\citet{fix_opengl} attempts to expose the shortcommings of OpenGL, and suggests research topics to improve OpenGL. 
-The issues mentioned also applies to DirectX according to the author. 
+\citet{fix_opengl} attempts to expose the shortcommings of OpenGL, and suggests research topics to improve the \gls{API}. 
+The issues mentioned also applies to Direct3D according to the author. 
 He identifies six issues: 
 
 \begin{enumerate}
 \item Programmers must juggle between C/C++ and \gls{HLSL} and \gls{GLSL}.
-Meaning they have to switch between coding the renderer and coding the shaders in different programming languages.
+Meaning they have to switch between coding the renderer in a general purpose language and coding the shaders in a shader language.
 
 \item The communication between \gls{CPU} and \gls{GPU} is brittle. 
 They communicate to share data through commands written in the application, there is no way to statically check if the variable name in the application and shader match.
-This is a error-prone approach, as such bugs can first be found during runtime of the application.
+This is a error-prone approach, as such bugs can first be found during runtime of the application. 
+\todo{This point is a bit vauge. What communication are we talking about?}
 
 \item Massive meta-programming. 
-There can be generated thousands of varients of a shader program, this is not good as it comes at a performance cost.
+There can be generated thousands of varients of a shader program, this is not good as it comes at a performance cost. 
+\todo{We always have to write a lot of shaders, the problem is that there's no support for scaling up}
 
 \item Different semantics for each shader stage. 
 This contributes to the issue of having to keep track of semantics depending on what kind of shader is being worked on.
-It makes more difficult to use OpenGL, and increases the learning curve.
+\todo{Give an example of how semantics are mismatched}
+It makes it more difficult to use OpenGL, and increases the learning curve. 
 
 \item No type system for vectors when converting between spaces. 
+\todo{We have to remember to talk about spaces}
 It has to be done manually, it should be possible to simply standardize such an approach.
 
 \item Diffcult to verify correctness of a graphics application. 
@@ -45,55 +49,56 @@ Additionally, it also encourages development of new frameworks to rival OpenGL.
 However a shortcomming of the article is that all the listed issues is only based on the authors opinion that he has discussed with his collegues, and not used a proper methodology to collect this data. 
 Although they do reveal that OpenGL is not a \gls{API} without flaws.
 
-The value of this article is that it gives insight as to how a good graphics \gls{API} should work, it's good arguments to take into consideration when trying to evaluate an \gls{API}.
+The value of this article is that it gives insight as to how a good graphics \gls{API} should work.
+These are good arguments to take into consideration when trying to evaluate an \gls{API}.
 
-\subsubsection{An Incremental Rendering VM}
+\subsubsection{An Incremental Rendering VM} \todo{The main thing to take away from here is that render order is important, and that building on top of OpenGL is an option. This should perhaps be more clear.}
 
-\noindent \citet{haaser_2015_incremental} suggest a new way of looking at rendering.
-They observe that most of the graphics used for one frame remain unchanged for the next frame.
+\noindent \citet{haaser_2015_incremental} suggest a new way of looking at rendering. 
+They observe that most of the graphics and associated draw commands used for rendering one frame, can be reused for the next frame with great likelihood.
 
-To use this knowledge they develop a high-level abstraction over the draw calls where the render task are organized using a trie, where each leaf is a render state and a bucket of render objects.
+To use this knowledge they develop a high-level abstraction over the draw calls where the render task are organized using a trie, where each leaf is a render state and a bucket of render objects. \todo{Maybe add a picture of the trie?}
 Objects in the same bucket can be rendered without switching between render states.
 
 The program takes this trie and compiles it into virtual machine code, that is translated into OpenGL draw calls.
 The translated OpenGL code is kept between frames, to avoid compiling unchanged code.
 In other words, this is a just-in-time compilation.
 
-The advantage they get from using this intermediate representation, is that they can do optimization on the intermediate representation before tranlating to OpenGL draw-calls.
-This optimization only have to be performed once for every change in the render task.
-And they defragment the representation to reduce cache misses, which increases performance even further.
+The advantage they get from using virtual machine code as an intermediate representation, is that they can do some optimization before translating to OpenGL draw-calls.
+This optimization only has to be performed once for every change in the render task.
+And they defragment the representation to reduce cache misses, which increases performance even further. \todo{Do we need this level of detail?}
 
-When changes occurs they group the change into two types: incremental changes and structural changes.
+When changes occur in the picture to be rendered, they group the change into two types: incremental changes and structural changes.
 Incremental changes to a render object, such as changing the color or the entire shader, is handled by moving the object between buckets.
 Structural changes, such as removing and adding render objects to the scene, is handled by adding or removing objects to or from the buckets.
 This moving, adding and removing rendering objects makes the defragmentation vital to ensure performance equal to other rendering methods.
 
-They show in benchmarks that the overhead the virtual machine introduces are negligible, and that rendering speed depended on the size of the change being applied. 
+They show in benchmarks that the overhead the virtual machine introduces are negligible, and that rendering speed depended on the size of the change being applied. \todo{Need something about how we can build a more abstract API on top of this}
 
-\subsection{Comparison}
-There are several options in terms of what \gls{GPU} \gls{API} that can be used when a developer needs to render graphics in an application. This section discusses articles that compare \gls{GPU} \glspl{API} against one another, and why and when certain \glspl{API} should be chosen over others.
+\subsection{Comparison} \todo{Find out whether to refer to authors directly as he/she}
+There are several options in terms of what \gls{GPU} \gls{API} that can be used when a developer needs to render graphics in an application. This subsection discusses articles that compare \gls{GPU} \glspl{API} against one another, and why and when certain \glspl{API} should be chosen over others.
 
 \subsubsection{Direct3D 11 vs 12 A Performance Comparison Using Basic Geometry}
 
 \citet{2016_direct3d} wrote an intresting article as part of his masters thesis, where he compared Direct3D 11 and 12, and found that Direct3D 11 performed better than Direct3D 12.
 The test were a scene with a number of points where each point has a fixed color.
-Performance is mesured for increasing number of points.
+Performance is measured as the number of points to be rendered is increased.
 
 The results he got contradicts other benchmarks and he used the discussion to reflect on why.
 In the discussion he reflects over the implementation, where the Direct3D 12 implementation is modeled after the Direct3D 11 implementation to ensure that it is the \gls{API} implementation that affects the performance and not the newer features.
 This might have been a mistake because he could not use Direct3D 12 to its fullest extent, as he could with Direct3D 11.
 
-He does notize that Direct3D 12 uses less \gls{CPU} time and fewer threads, and theorises that Direct3D 11 does a lot of optimization where Direct3D 12 lets the developer handle optimization.
-The paper ends with the author stating that if the features of Direct3D 12 were better used, it would possibly get better performance than Direct3D 11.
+He does notice that Direct3D 12 uses less \gls{CPU} time and fewer threads, and theorises that Direct3D 11 does a lot of optimization where Direct3D 12 lets the developer handle optimization.
+The paper ends with the author stating that if the features of Direct3D 12 were better used, it would possibly get better performance than Direct3D 11. \todo{Maybe have a line about how we strive to make a more fair comparison in light of this}
 
 \subsubsection{Reducing Driver Overhead in OpenGL, Direct3D and Mantle}
 
-\citet{dobersberger_2015_reducing} went throught three different graphics \gls{API} as part of his master thesis. 
-He looked at the different ways the \glspl{API} enable the developer to reduce the overhead of using their \gls{API}.
-The then uses that knowledge to conclude something about the individual \glspl{API} such as; Direct3D focuses on multithreaded rendering, and Mantle's low-level api reduces \gls{CPU} usage and memory overhead.
+\citet{dobersberger_2015_reducing} covered three different graphics \gls{API} as part of his master thesis. 
+He looked at the different ways the \glspl{API} enable the developer to reduce the overhead of using their \gls{API}. 
+He then uses that knowledge to conclude something about the individual \glspl{API} such as; Direct3D focuses on multithreaded rendering, and Mantle's low-level api reduces \gls{CPU} usage and memory overhead.
 
-Because Mantle is not released to the public, only OpenGL and Direct3D is compared.
-They are compared by targeting some of the features described in the specific \gls{API} sections, and mesuring the performance when using the feature and when ignoring them.
+Because Mantle is not released to the public, only OpenGL and Direct3D 11 are compared.
+They are compared by targeting some of the features described in the specific \gls{API} sections,\todo{What sections? Ours or his?} and mesuring the performance when using the feature and when ignoring them.
 If there exist comparable features in both \glspl{API}, then the performance tests are grouped together, to compare the different approaches to the problem.
 In some cases, the results are verified by using third party \gls{API} tests.
 
@@ -110,13 +115,14 @@ We could continue his work by comparing specific features of Vulkan and Direct3D
 Evaluation of multi-threading in Vulkan \cite{blackert_2016_evaluation} is a master thesis that attempts at evaluating the multi-threading performance of Vulkan. It does so by comparing it to its predescor; OpenGL. 
 Additionally it also evaluates the programmability of Vulkan. 
 
-In the conclusion, the thesis states that Vulkan can give more throughput than OpenGL.
+In the conclusion, the thesis states that Vulkan can give more throughput than OpenGL. \todo{A bit weird how we go in a lot of detail with other papers, while this is described in a rather short form. Perhaps find a middleground in detail and stick with it.}
 Not all applications will gain a significant performance boost with using Vulkan over OpenGL. 
 This would be in cases where multi-threading is not needed, or if the application is not CPU bound. 
 No methodology was used in evaluating the programmability of Vulkan, it is based on the personal experience of the author, which is not a good enough method to evaluate an \gls{API} on. 
 It only states that Vulkan is more difficult to work with than OpenGL, because there is more overhead since Vulkan is at a lower abstraction level than OpenGL. 
 
 For future work the thesis encourages to further evaluate the performance of Vulkan multi-threading  capabilities by comparing it to Direct3D 12, and testing the portability of Vulkan on various operating systems and different \gls{GPU} manufactoreres.
+\todo{Should we do a critique of them comparing very different APIs?}
 
 \subsection{\gls{GPGPU}}
 This section will describe related work as to what GP\gls{GPU} are, what they are used for, and how they relate to the project.
