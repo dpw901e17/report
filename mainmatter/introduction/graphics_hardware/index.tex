@@ -16,7 +16,7 @@
 \subsection{GPU as a Concept}
 The \gls{GPU} has been developed with a specific domain in mind, as opposed to the CPU, which is for general purposes. 
 The domain of the \gls{GPU} was originally only image manipulation -- a field, where a \gls{SIMD} architecture has proven useful \todo{citation needed}.
-%In recent years, however, there has been a focus on using the \gls{GPU} for a broader spectrum of applications, the socalled \gls{GPGPU}. 
+%In recent years, however, there has been a fo\glss on using the \gls{GPU} for a broader spectrum of applications, the socalled \gls{GPGPU}. 
 
 \fig{figures/graphics_hdw_cpu_style_core}{\gls{CPU} style core \cite[p. 14]{intro_to_gpu_arch}}{cpuStyleCore}{1}
 
@@ -118,25 +118,28 @@ Figure \ref{fig:pascalGPU} shows a complete GP100 GPU in the Pascal Architecture
 Two \glspl{SM} are grouped into one \glspl{TPC}, and five \glspl{TPC} are grouped together into a \gls{GPC}. \\
 
 It should be noted that the NVIDIA GeForce GTX 1060 uses a GP106 chip, not the GP100 chip shown in \ref{fig:pascalGPU}. 
-The main difference between the two chips is the number of CUDA Cores: The GP100 has 3840 (60 \glspl{SM}, each with 64 CUDA Cores), and the GP106 only have 1280 (20 \glspl{SM}, each with 64 CUDA cores).
+The main difference between the two chips is the number of {CUDA Cores: The GP100 has 3840 (60 \glspl{SM}, each with 64 CUDA Cores), and the GP106 only have 1280 (20 \glspl{SM}, each with 64 CUDA cores).
 
 We were not able to find a whitepaper or similar report from reliable sources which detailed the GP106 chip, so that is why it is not used as the example. 
 
 
 \subsubsection{AMD}
-For this project we have a AMD Sapphire Radeon R9 280 3GB GDDR5 \gls{GPU} at our disposal. It uses the GCN 1.0 Architecture.
-GCN stands for Graphics Core Next, it is the first architecture AMD developed that would allow to use \glspl{GPU} as \glspl{GPGPU}.
+For this project we have a AMD Sapphire Radeon R9 280 3GB GDDR5 \gls{GPU} at our disposal. It uses the \gls{GCN} 1.0 Architecture.
+It is the first architecture AMD developed that would allow to use \glspl{GPU} as \glspl{GPGPU}.
 
-\fig{figures/GCN_compute_unit}{Hello World}{GCNCU}{1} 
+\fig{figures/\gls{GCN}_compute_unit}{Overview of the \gls{GCN} architecture}{\gls{GCN}CU}}{1} 
 
-In GCN Compute Units are the basic computational blocks of the GCN architecture, Figure \ref{fig:GCNCU} visualizes how each Compute Unit(CU) is structured in GCN.
-A wavefront consists of 64 threads that can be executed in parallel, these wavefronts are distributed amongst CUs. 
-Each CU consists of 4 separate SIMD units which all contain their own vector ALU, which is used for vector calculations.  
-Each SIMD unit has a buffer that can hold up to 10 wavefronts, meaning that each CU is able to work on up to 40 wavefronts in parallel during run time. 
-The more CU’s a GCN \gls{GPU} possesses the more workload parallelism it can achieve.
-In order to reduce overhead and make it easier to use GCN \glspl{GPU} as \glspl{GPGPU}, CU’s can communicate with one another through a inbuilt  L2 cache, additionally this approach is faster in terms of transferring data than to rely on off-chip memory.
+In \gls{GCN} Compute Units are the basic computational blocks of the \gls{GCN} architecture, Figure \ref{fig:\gls{GCN}CU}} visualizes how each \gls{CU} is structured in \gls{GCN}.
+\todo{make figure of wavefront-simd-CU relation}
+A wavefront consists of 64 threads that can be executed in parallel, these wavefronts are distributed amongst \gls{CU}s. 
+Each \gls{CU} consists of 4 separate SIMD units which all contain their own vector ALU, which is used for vector cal\gls{CU}lations.  
+Each SIMD unit has a buffer that can hold up to 10 wavefronts, meaning that each \gls{CU} is able to work on up to 40 wavefronts in parallel during run time (therefore a single CU can run 2560 threads in parallel). 
+The more \glspl{CU} a \gls{GCN} \gls{GPU} possesses the more workload parallelism it can achieve.
+In order to reduce overhead and make it easier to use \gls{GCN} \glspl{GPU} as \glspl{GPGPU}, \glspl{CU} can communicate with one another through a inbuilt L2 cache, additionally this approach is faster in terms of transferring data than to rely on off-chip memory.
 
-%formula for how many threads a GNC GPU can run in parallel: 40(a single CU) x number of CU’s x %64(wavefront). 
+%formula for how many threads a GNC GPU can run in parallel: 40(a single \gls{CU}) x number of \gls{CU}’s x %64(wavefront). 
+AMD Sapphire Radeon R9 280 3GB GDDR5 consist of 32 \glspl{CU}.
+This means it can run 81.920 threads in parallel. (40 x 64 x 32)
 \todo{cannot find a architecture picture of a AMD Sapphire Radeon R9 280 3GB GDDR5.}
 
 
