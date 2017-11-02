@@ -129,7 +129,7 @@ GCN stands for Graphics Core Next, it is the first architecture AMD developed th
 
 \fig{figures/GCN_compute_unit}{Hello World}{GCNCU}{1} 
 
-In GCN Compute Units are the basic computational blocks of the GCN architecture, Figure \todo{ref fig} visualizes how each Compute Unit(CU) is structured in GCN.
+In GCN Compute Units are the basic computational blocks of the GCN architecture, Figure \ref{fig:GCNCU} visualizes how each Compute Unit(CU) is structured in GCN.
 A wavefront consists of 64 threads that can be executed in parallel, these wavefronts are distributed amongst CUs. 
 Each CU consists of 4 separate SIMD units which all contain their own vector ALU, which is used for vector calculations.  
 Each SIMD unit has a buffer that can hold up to 10 wavefronts, meaning that each CU is able to work on up to 40 wavefronts in parallel during run time. 
