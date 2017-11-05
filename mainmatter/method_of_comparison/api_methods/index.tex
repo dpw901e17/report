@@ -1,0 +1,82 @@
+\section{\gls{API} Evaluation Methods}\label{sec:apimethods}
+The focus of this report is not only on benchmarking applications written in the two \glspl{API}, as performance is not the only factor weighing in on the adoption of a new programming tool.
+Programmability, the ease with which a programmer may wield a given tool, also has a big impact.
+
+As of now, no definitive methodology has emerged in how to asses the programmability of different tools.
+In the case of programming languages, a lot of design choices have no empirical grounding or are backed up by more dubious metrics such as \gls{LOC} \cite{markstrum2010staking}.
+Yet, in recent years more empirical studies of languages have cropped up.
+These are often performed as split tests in controlled settings, where each group of participants are tasked with completing a set number of tasks in a specific language.
+Such an approach was used in \cite{hanenberg2010experiment}, where a comparison of statically and dynamically typed languages was made.
+More substantial metrics than \gls{LOC} were collected from the experiment, such as the average time spent in different phases of development.
+There has also been attempts at analysing large sets of data pulled from online code repositories.
+The authors of \cite{ray2014large} compared 17 languages by pulling code from 728 popular github repositories.
+Each language was profiled and compared by the amount of errors they resulted in, as well as the type of error.
+
+While the amount of programming language literature is beginning to become substantial, equivalent literature in the area of \gls{API} design evaluation, has not reached the same point.
+In this section, we cover the three categories of evaluation commonly found in the literature.
+These being user tests, expert evaluations an program metrics.     
+
+The goal of looking deeper into these different types of evaluation is to put together a mixed-method approach.
+Such an approach was used in \cite{grill2012methods} to great effect, as the combined usage of methods was able to spot a larger amount of usability problems.
+
+
+\subsection{User Tests}
+A natural approach to evaluate the programmability of an \gls{API} is to observe how actual users wield the tool.
+Thus the group of methods presented here are heavily inspired by the field of \gls{HCI}. 
+
+In \cite{clarke2003using} they repurpose the original cognitive dimensions framework from \cite{wikiCognitiveDimensions} as to use it for \gls{API} evaluation.
+The new dimensions, as written directly in the paper, are given in \ref{tab:cogdims}.
+Using the dimension the evaluation of an \gls{API} is performed by first filming users as they perform some predefined tasks. 
+The recordings are then analysed by evaluators and interesting patterns of behaviour are noted as well as breakdowns in design.
+Based on the analysis the \gls{API} can then be rated in regards to the different dimensions.  
+
+
+\begin{table}[]
+\begin{tabularx}{\textwidth}{|l|X|}
+\hline
+\textbf{Dimension}                                               & \textbf{Description}                                                                                                                                          \\ \hline
+\begin{tabular}[c]{@{}l@{}}Abstraction\\ Level\end{tabular}      & What are the minimum and maximum levels of abstraction exposed by the API, and what are the minimum and maximum levels usable by a targeted developer.        \\ \hline
+\begin{tabular}[c]{@{}l@{}}Learning\\ Style\end{tabular}         & What are the learning requirements posed by the API, and what are the learning styles available to a targeted developer.                                      \\ \hline
+\begin{tabular}[c]{@{}l@{}}Working\\ Framework\end{tabular}      & What is the size of the conceptual chunk needed to work effectively                                                                                           \\ \hline
+\begin{tabular}[c]{@{}l@{}}Work-Step\\ Unit\end{tabular}         & How much of a programming task must/can be completed in a single step.                                                                                        \\ \hline
+\begin{tabular}[c]{@{}l@{}}Progressive\\ Evaluation\end{tabular} & To what extent can partially completed code be executed to obtain feedback on code behavior?                                                                  \\ \hline
+\begin{tabular}[c]{@{}l@{}}Premature\\ Commitment\end{tabular}   & To what extent does a developer have to make decisions before all the needed information is available?                                                        \\ \hline
+Penetrability                                                    & How does the API facilitate exploration, analysis, and understanding of its components, and how does a targeted developer go about retrieving what is needed? \\ \hline
+\begin{tabular}[c]{@{}l@{}}API\\ Elaboration\end{tabular}        & To what extent must the API be adapted to meet the needs of a targeted developer?                                                                             \\ \hline
+\begin{tabular}[c]{@{}l@{}}API\\ Viscosity.\end{tabular}         & What are the barriers to change inherent in the API, and how much effort does a targeted developer need to expend to make a change?                           \\ \hline
+Consistency                                                      & Once part of an API is learned, how much of the rest of it can be inferred?                                                                                   \\ \hline
+\begin{tabular}[c]{@{}l@{}}Role\\ Expressiveness\end{tabular}    & How apparent is the relationship between each component and the program as a whole?                                                                           \\ \hline
+\begin{tabular}[c]{@{}l@{}}Domain\\ Correspondence\end{tabular}  & How clearly do the API components map to the domain? Are there any special tricks?                                                                            \\ \hline
+\end{tabularx}
+\caption{Cognitive Dimensions for \gls{API} Evaluation.}
+\label{tab:cogdims}
+\end{table}
+
+\subsection{Expert Evaluation}
+
+\subsection{Program Metrics}
+Program metrics are recorded by statically analysing a program. Its greatest benefit is that once a system for collecting metrics have been set up, collecting data is very easy, requiring no real human involvement. 
+
+In \cite{de2009automatic} a system is developed to automatically asses and visualize the complexity of an \gls{API} specification. For assessment the object-oriented complexity metrics of \cite{bandi2003predicting} are used. A metric can be calculated for each method, and the metric of a class is the aggregate of the complexity of its methods.  The metrics are defined as follows:
+
+\begin{itemize}
+\item  Interface Size: Number of arguments + sum of parameter complexity
+\item Interaction Level: Number of interactions + sum of strength of interactions
+\item Operation Argument Complexity: Sum of parameter complexity
+\end{itemize} 
+
+Here the sum of parameter complexity is given by summing over the types of all method arguments, including the returning value.
+Each type is granted some level of numerical complexity such as 0 for boolean, 1 for integer etc.
+Interaction level is the most complex metric.
+An interaction occurs when one or more parameters is used to calculate the value of a field variable or vice versa.
+The strength of an interaction is the product of type complexity for each variable involved in the interaction.
+While \cite{de2009automatic} state that they pick these metrics as they require access to only the interface, it does not seem that Interaction Level can be meaningfully calculated without access to the underlying implementation. 
+
+The authors of \cite{alatalo2013comparative} expand on the previous approach by not only gathering metric from the interface structure, but also its usage in actual programs.
+They use the Object Point metric defined in \cite{sneed1995estimating}.
+The Object Point is defined as the sum of the static Class Point metric and the Message point metric.
+The Class Point metric is based on the number of classes in the \gls{API} as well as their number of attributes, relationships and methods.
+The Message point metric is based on the programs sampled, being defined by the amount of method calls as well as the types of calls.
+The advantage of this approach is that it also grants data about actual \gls{API} usage, in return for having to create some representative sample programs to calculate the Message Point from.
+
+In the case that programs are being written, it is also possible to use more traditional program metrics not restricted to interfaces. \todo{Find some traditional complexity metrics}
