@@ -12,24 +12,60 @@ There has also been attempts at analysing large sets of data pulled from online 
 The authors of \cite{ray2014large} compared 17 languages by pulling code from 728 popular github repositories.
 Each language was profiled and compared by the amount of errors they resulted in, as well as the type of error.
 
-While the amount of programming language literature is beginning to become substantial, equivalent literature in the area of \gls{API} design evaluation, has not reached the same point.
+While the amount of literature dealing with programming languages is beginning to become substantial, equivalent literature in the area of \gls{API} design evaluation, has not reached the same point.
 In this section, we cover the three categories of evaluation commonly found in the literature.
-These being user tests, expert evaluations an program metrics.     
+These being user tests, non-user evaluations and program metrics.     
 
-The goal of looking deeper into these different types of evaluation is to put together a mixed-method approach.
-Such an approach was used in \cite{grill2012methods} to great effect, as the combined usage of methods was able to spot a larger amount of usability problems.
-
+The goal of looking deeper into these different types of evaluation is to put together a mixed-method approach for evaluating Direct3D 12 and Vulkan.
+Such an approach was used in \cite{grill2012methods}\cite{beaton2008usability} to great effect, as the combined usage of methods was able to spot a larger amount of usability problems.
 
 \subsection{User Tests}
-A natural approach to evaluate the programmability of an \gls{API} is to observe how actual users wield the tool.
-Thus the group of methods presented here are heavily inspired by the field of \gls{HCI}. 
+A common approach to evaluate the programmability of an \gls{API} is to observe how actual users wield the tool.
+Thus, the group of methods presented here is heavily inspired by the field of \gls{HCI}.
 
-In \cite{clarke2003using} they repurpose the original cognitive dimensions framework from \cite{wikiCognitiveDimensions} as to use it for \gls{API} evaluation.
+Traditional user tests involve designers creating a list of tasks, which participating users should accomplish.
+Evaluators facilitate test sessions, where participants are asked to perform the tasks using think-aloud protocol.
+As a session progresses the actions and comments of users are recorded and noted down by evaluators.
+Following a session, participants are often interviewed or answer a questionnaire to post-usage data.
+The collected data is then analyzed to find and rate usability problems.
+
+An issue with this approach is that it can be rather expensive, depending on the number of participants and the type of tasks.
+In addition, the standard process is usually geared towards evaluating \glspl{GUI} and not tools like programming languages.
+Evaluating a programming language differs in that tasks can have wildly different solutions.
+There should also be accounted for learning required to understand a language.
+Language design is often iterative so that design decisions can be evaluated during development.
+This means that a compiler may not be implemented, when there is a need to perform a user test.
+The same problems appear in the development of an \gls{API}.
+
+\cite{kurtev2016discount} defines a discount evaluation method for programming languages.
+In addition to being comparatively light weight, using as few as five participants, the method gives a step by step guide as to evaluate a language.
+Broadly speaking, it follows the standard user test protocol as discussed above, but with a few tweaks.
+In addition to tasks, participants are provided with a sample sheet that describes the language through examples.
+This is to make up for the lack of feedback, which a compiler may otherwise supply.
+For the analysis each usability problem is rated as being cosmetic, serious or critical depending on how much it differs from an ideal working solution.
+While this method focuses on the evaluation of languages, nothing bars it from being used to evaluate \glspl{API}.
+
+This method provides a nice structure to work from, but as stated by the authors themselves, their method of analysis may be too informal.
+Thus it could be switched out with a more structured analysis guideline, such as one focusing on \gls{API} evaluation.
+Such an alternative is the method presented in \cite{clarke2003using}, which repurposes the cognitive dimensions framework \cite{wikiCognitiveDimensions} as to use it for \gls{API} evaluation.
 The new dimensions, as written directly in the paper, are given in \ref{tab:cogdims}.
-Using the dimension the evaluation of an \gls{API} is performed by first filming users as they perform some predefined tasks. 
-The recordings are then analysed by evaluators and interesting patterns of behaviour are noted as well as breakdowns in design.
-Based on the analysis the \gls{API} can then be rated in regards to the different dimensions.  
+Once test data has been gathered, the purpose of the analysis is to rate the \gls{API} according to each of the 12 dimensions.
+The guideline is meant to be a light weight way to evaluate the quality of a design, and is not used for a more in-depth description.
+Zibran’s usability factors provide a more fine-grained analysis when required \cite{zibran2011useful}.
+These can be seen in \ref{tab:zibran}.
+They are used more like traditional design heuristics, as each usability problem found through the analysis is categorized as being associated with one of the factors.
+Using only a subset of the factors, this is the method used in the mixed-method approach of \cite{grill2012methods}.
+In addition, each problem found is also coupled with a severity rating on a five-point likert scale\cite{wikiLikert}. 
+Besides the \gls{API}, users are also given the accompanying documentation during the test sessions. 
+This is done because the quality of documentation greatly impacts \gls{API} usage, and thus they are evaluated together. 
 
+Bringing users in to write their own programs from scratch may be too expensive.
+\cite{o2010api} presents a simple method for performing user tests.
+Instead of being given tasks, participants are given scripts of finished code, which they are asked to walkthrough step by step using think-aloud protocol.
+This cuts down on the time spent on each participant, but still gives evaluators an idea of their mental model.
+The method can be extended in two ways. 
+It can be used in a split test to compare different possible specification designs, having users walk through two different scripts.
+Alternatively, additional data can be collected about the user’s mental model, by having them write their own programs in pseudo code after doing a walkthrough.
 
 \begin{table}[]
 \begin{tabularx}{\textwidth}{|l|X|}
@@ -48,16 +84,78 @@ Consistency                                                      & Once part of 
 \begin{tabular}[c]{@{}l@{}}Role\\ Expressiveness\end{tabular}    & How apparent is the relationship between each component and the program as a whole?                                                                           \\ \hline
 \begin{tabular}[c]{@{}l@{}}Domain\\ Correspondence\end{tabular}  & How clearly do the API components map to the domain? Are there any special tricks?                                                                            \\ \hline
 \end{tabularx}
-\caption{Cognitive Dimensions for \gls{API} Evaluation.}
+\caption{Cognitive Dimensions for \gls{API} Evaluation \cite{clarke2003using}.}
 \label{tab:cogdims}
 \end{table}
 
-\subsection{Expert Evaluation}
+\begin{table}[]
+\centering
+\footnotesize
+\resizebox{\textwidth}{!}{%
+\begin{tabularx}{\textwidth}{|l|L{3cm}|X|}
+\hline
+Index & Usability Factor                        & Description                                                                                                                                                                   \\ \hline
+f-01  & Complexity                              & Increased size and complexity of the exposed features, concept, and architecture reduce usability.                                                                            \\ \hline
+f-02  & Naming                                  & Convention followed in the naming of interface level functions and variables. Descriptive namesare preferable to abbreviate names.                                            \\ \hline
+f-03  & Caller’s perspective                    & Explicitly how the caller will invoke functions or features should be clear/intuitive to the userfor better usability.                                                        \\ \hline
+f-04  & Documentation                           & Complete, clear, and up to date documentation and examples of usage increase usability.                                                                                       \\ \hline
+f-05  & Consistency                             & Consistency in the design and adherence with common conventions increase usability.                                                                                           \\ \hline
+f-06  & Conceptual correctness                  & Conceptual correctness in the design and naming of features is important for usability.                                                                                       \\ \hline
+f-07  & Parameter and return                    & The number and types of parameters to functions and the return types have significant impacton usability. Too many parameters reduce usability.                               \\ \hline
+f-08  & Constructor parameter                   & The default (parameterless) constructor is often easier than parameterized constructor toinstantiate objects, specially to the beginners and intermediate programmers.        \\ \hline
+f-09  & Factory pattern vs. constructor         & Programmers naturally expect constructor to instantiate object, rather than factory methods.Instantiating objects through factory methods sometimes cause difficulty.         \\ \hline
+f-10  & Data types                              & Types of the exposed objects and attributes. Data types should be chosen properly to avoidunnecessary type-casting, resource consumption, and loss of precision.              \\ \hline
+f-11  & Use of attributes                       & Dispersion and functional dependencies of attributes. Cohesive implementation of functionalityincreases usability.                                                            \\ \hline
+f-12  & Concurrency                             & Proper implementation of concurrency and exposer of mutable elements. Unnecessary exposerof mutable elements may raise thread-safety issues and increase pitfalls for misuse. \\ \hline
+f-13  & Error handling                          & Mechanism for error prevention by information hiding, as well as proper handling of error conditions through diagnosis information and mechanism for recovery.                                                                                                                                                                              \\ \hline
+f-14  & Leftovers for client                    & Availability of ready implementation of what the users may need reduces the users’ overhead.                                                                                  \\ \hline
+f-15  & Multiple ways to do onething            & Availability of multiple ways (e.g., several methods offering the same functionality) to do thesame thing may puzzle the users in choosing from the alternatives.             \\ \hline
+f-16  & Reference chain                         & Long chain of method calls or inheritance hierarchy are difficult to track, and reduce usability.                                                                             \\ \hline
+f-17  & Implementation vs. interface dependency & Interface dependencies between components provide more flexibility and so those are recommended over implementation dependencies.                                             \\ \hline
+f-18  & Memory management                       & Memory management (allocation and deallocation of memory) responsibilities left to the userreduces API usability.                                                             \\ \hline
+f-19  & Technical mismatch                      & Compatibility with the platform and other technologies in the functional environment isimportant for usability.                                                               \\ \hline
+f-20  & API change                              & Backward compatibility is needed for usability, while deprecation of common features maysurprise users.                                                                       \\ \hline
+f-21  & API aging                               & API aging occurs when the target platform changes but the API fails to keep pace with theplatform evolution, and consequently becomes unusable API.                           \\ \hline
+f-22  & Code intelligibility                    & Readability of the client code affects maintainability.                                                                                                                       \\ \hline
+\end{tabularx}%
+}
+\caption{Zibran's \gls{API} usability factors \cite{zibran2011useful}.}
+\label{tab:zibran}
+\end{table}
+
+\subsection{Non-user Evaluation}
+A downside to doing user tests is that the cost of handling several participants can be rather high. 
+
+Another option is to have experts inspect the \gls{API} simply by examining it and programs, which apply it.
+In the context of \glspl{API} an expert would be familiar with the tool as well as its application domain.
+
+To support data gathered from the user tests performed, \cite{grill2012methods} also brings in experts to inspect the given \gls{API} and its documentation.
+The four experts selected were tasked with finding usability problems and categorize them according to a subset of \ref{tab:zibran}.
+In their evaluation they found that inspection revealed two thirds of all discovered problems, though none of them related to runtime behavior of the \gls{API}.
+A similar approach was used in \cite{beaton2008usability}.
+Here they categorized problems according to a subset of \cite{nielsen1995} usability heuristics applicable to \glspl{API}, Consistency \& Standards, Error Prevention, and Help \& Documentation. 
+
+Using expert evaluations in this manner may yield results that are not always applicable to regular users.
+Thus, the authors of \cite{beaton2008usability} also do a cognitive walkthrough, in the same vain as \cite{o2010api}, where they try to get inside the head of regular users. 
+This requires evaluators to create personas for each possible user, along with a handful of broad programming tasks.
+Evaluators are then set to roleplay as a given user type, going through tasks step by step. 
+At each step the following questions should be asked: 
+\begin{itemize}
+\item The Goal of the user when presented with this scenario;
+\item  What option(s) are Perceived by the user;
+\item Which perceived option(s) seem most Action-able;
+\item What Result the user will conclude has occurred.
+\end{itemize}
+Through this, evaluators can gain some insight into how users might experience an \gls{API} without a more in-depth user test.
 
 \subsection{Program Metrics}
-Program metrics are recorded by statically analysing a program. Its greatest benefit is that once a system for collecting metrics have been set up, collecting data is very easy, requiring no real human involvement. 
+Program metrics are recorded by statically analysing a program.
+Its greatest benefit is that once a system for collecting metrics have been set up, collecting data is very easy, requiring no real human involvement. 
 
-In \cite{de2009automatic} a system is developed to automatically asses and visualize the complexity of an \gls{API} specification. For assessment the object-oriented complexity metrics of \cite{bandi2003predicting} are used. A metric can be calculated for each method, and the metric of a class is the aggregate of the complexity of its methods.  The metrics are defined as follows:
+In \cite{de2009automatic} a system is developed to automatically asses and visualize the complexity of an \gls{API} specification.
+For assessment the object-oriented complexity metrics of \cite{bandi2003predicting} are used. 
+A metric can be calculated directly for each method, and the metric of a class is the aggregate of the complexity of its methods. 
+The metrics are defined as follows:
 
 \begin{itemize}
 \item  Interface Size: Number of arguments + sum of parameter complexity
@@ -72,11 +170,15 @@ An interaction occurs when one or more parameters is used to calculate the value
 The strength of an interaction is the product of type complexity for each variable involved in the interaction.
 While \cite{de2009automatic} state that they pick these metrics as they require access to only the interface, it does not seem that Interaction Level can be meaningfully calculated without access to the underlying implementation. 
 
-The authors of \cite{alatalo2013comparative} expand on the previous approach by not only gathering metric from the interface structure, but also its usage in actual programs.
+The authors of \cite{alatalo2013comparative} take a different approach, by evaluating an \gls{API} based not on specification metrics, but metrics gathered from programs using the \gls{API}.
 They use the Object Point metric defined in \cite{sneed1995estimating}.
-The Object Point is defined as the sum of the static Class Point metric and the Message point metric.
+Object Point is defined as the sum of the static Class Point metric and the Message point metric.
 The Class Point metric is based on the number of classes in the \gls{API} as well as their number of attributes, relationships and methods.
 The Message point metric is based on the programs sampled, being defined by the amount of method calls as well as the types of calls.
-The advantage of this approach is that it also grants data about actual \gls{API} usage, in return for having to create some representative sample programs to calculate the Message Point from.
+An advantage of this approach is that it also grants data about actual \gls{API} usage, in return for having to create some representative sample programs to calculate the Message Point from.
 
-In the case that programs are being written, it is also possible to use more traditional program metrics not restricted to interfaces. \todo{Find some traditional complexity metrics}
+In the case that programs are being written, it is also possible to use more traditional program metrics not restricted to interfaces.
+For instance one could examine sample programs through cyclomatic complexity \cite{mccabe1976complexity}.
+
+\subsection{The Applied Mixed Method Approach}
+In this section we will describe which methods we use to build up our own mixed-method approach.
