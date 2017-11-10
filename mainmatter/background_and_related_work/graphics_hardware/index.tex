@@ -14,17 +14,17 @@
 
 
 \subsection{GPU as a Concept}
-The \gls{GPU} has been developed with a specific domain in mind, as opposed to the CPU, which is for general purposes. 
+The \gls{GPU} has been developed with a specific domain in mind, as opposed to the CPU, which is for general purpose computations. 
 The domain of the \gls{GPU} was originally only image manipulation -- a field, where a \gls{SIMD} architecture has proven useful \todo{citation needed}.
 %In recent years, however, there has been a fo\glss on using the \gls{GPU} for a broader spectrum of applications, the socalled \gls{GPGPU}. 
 
 \fig{figures/graphics_hdw_cpu_style_core}{\gls{CPU} style core \cite[p. 14]{intro_to_gpu_arch}}{cpuStyleCore}{1}
 
-Figure \ref{fig:cpuStyleCore} shows a visual representation of a \gls{CPU} style core. 
+\Cref{fig:cpuStyleCore} shows a visual representation of a \gls{CPU}-style core. 
 The red boxes "Out-of-order control logic", "Fancy branch predictor" and "Memory pre-fetcher" all have to do with predicting/preventing stalls in the \gls{CPU}.
-These features are not too important for the \gls{GPU}, since its main focus is throughput \todo{citation needed}. 
+These features are not too important for the \gls{GPU}, since its main focus is throughput \todo{citation needed}. \todo{Nævn at disse ellers bruges til at nedsætte latency.}
 Furthermore, a big cache would limit the amount of cores a single chip could hold, so this is not desirable for a \gls{GPU} either.
-The remaining components -- Fetch/Decode, \gls{ALU} and Execution Context -- is described below.
+The remaining components -- Fetch/Decode, \gls{ALU} and Execution Context -- are described below.
 
 \paragraph{The Fetch/Decode Component} handles retrieving data from memory and storing it in the Execution Context.
 
@@ -32,47 +32,48 @@ The remaining components -- Fetch/Decode, \gls{ALU} and Execution Context -- is 
 
 \paragraph{The Execution Context} contains local data, e.g. variables and conditions, needed to perform the current computation.
 
-\subsection{\acs{CPU} Style Core}
+\subsection{\acs{CPU} Style Core}\todo{Er der ikke tale om en GPU style core her?}
 As previously described, there are components in the \gls{CPU} style core which are not needed for the \gls{GPU} to achieve a high throughput.
-So the first idea presented by \citet{intro_to_gpu_arch} is to "slim down" the core by getting rid of these components.
-The result of slimming down the core can be seen in Figure \ref{fig:twoSlimCores}.
+The first idea presented by \citet{intro_to_gpu_arch} is to "slim down" the core by getting rid of these components.
+The result of slimming down the core can be seen in \cref{fig:twoSlimCores}.
 
 \fig{figures/graphics_hdw_two_cores}{Two slimmed down cores \cite[p. 16]{intro_to_gpu_arch}}{twoSlimCores}{1}
 
-\fig{figures/graphics_hdw_shader_code}{A closer look at the shader code in \ref{fig:twoSlimCores} - \citet[p. 22]{intro_to_gpu_arch}}{shaderCode}{0.5}
+\fig{figures/graphics_hdw_shader_code}{A closer look at the shader code in \cref{fig:twoSlimCores} - \citet[p. 22]{intro_to_gpu_arch}}{shaderCode}{0.5}
 
-Figure \ref{fig:twoSlimCores} presents two slimmed down cores running two fragments in parallel. 
+\Cref{fig:twoSlimCores} presents two slimmed down cores running two fragments in parallel. 
 Each core runs the same code, but since the contents of the Execution Contexts are different, we achieve the desired \gls{SIMD} effect; the two fragments are processed by the same code (Single Instruction), but the code refers to data through registers in the Execution Context, which is different for the two cores (Multiple Data).
 
-Figure \ref{fig:shaderCode} displays the shader code run on fragment 1 and 2 from \ref{fig:twoSlimCores}.
+\Cref{fig:shaderCode} displays the shader code run on fragment 1 and 2 from \cref{fig:twoSlimCores}.
 
 \subsection{Slimmed Down Core}
 Fetching data and instructions are a relatively time-costly activity for the core \todo{citation needed}.
 The second idea, to further the throughput of the \gls{GPU}, is to let multiple \glspl{ALU} share a single Fetch component.
-This way, the component need to retrieve more information at a time, less times, which is not as costly as retrieving small bits of information (data and instructions) for a single \gls{ALU}.
+This way, the component need to retrieve more information at a time, fewer times, which is not as costly as retrieving small bits of information (data and instructions) for a single \gls{ALU}.
 This means the actual instruction which needs to be run on each \gls{ALU} can be fetched only once per core instead of once per \gls{ALU}.
 
 \fig{figures/graphics_hdw_shared_fetch}{Fetch component shared by eight \glspl{ALU}. Note the instructions need to change to use vector operations on vector data as well \cite[p. 24]{intro_to_gpu_arch}}{sharedFetch}{1}
 
-Figure \ref{fig:sharedFetch} shows an example of a core with eight \glspl{ALU} sharing a single instruction stream (i.e. Fetch component).
+\Cref{fig:sharedFetch} shows an example of a core with eight \glspl{ALU} sharing a single instruction stream (i.e. Fetch component).
 Since the instructions need to be carried out on a vector of data (each element in the vector corresponding to data for a single \gls{ALU}).
-The instructions need to reflect this change from single data to vector of data -- hence the change from "mul" and "madd" from \ref{fig:twoSlimCores} to "VEC8\_mul" and "VEC8\_madd" in Figure \ref{fig:sharedFetch} in the shader.
+The instructions need to reflect this change from single data to vector of data -- hence the change from "mul" and "madd" from \cref{fig:twoSlimCores} to "VEC8\_mul" and "VEC8\_madd" in \Cref{fig:sharedFetch} in the shader.
 
 Since the core now contains multiple contexts, the Execution Context component will now be referred to as the \textbf{Shared Context component}.
 
 \subsection{Hiding Stalling}
 The final thing \glspl{GPU} do to achieve a high throughput is to hide stalling by storing multiple contexts for different fragments on a single core. 
 This allows the core to switch which fragment it works on once the current fragment stalls.
-Stalling occurs when the processing of a fragment group is dependent on another fragment group which is not done processing itself (recall the \glspl{ALU} each work on its own fragment, as per the slimmed down cores.  The fragments being worked on by the \glspl{ALU} at the same time constitutes a fragment group).
+Stalling occurs when the processing of a fragment group is dependent on another fragment group which is not done processing itself (recall the \glspl{ALU} each work on its own fragment, as per the slimmed down cores.
+The fragments being worked on by the \glspl{ALU} at the same time constitutes a fragment group).
 Because switching between contexts is faster than waiting for the context to come out of a stall, the amount of time the \gls{GPU} takes to perform a job is lessened by the hiding of stalls; the latency of the \gls{GPU} caused by stalling has been hidden, which is why this process is also known as latency hiding.
 
-This latency hiding through interleaving execution of groups of fragments is done because the first idea \todo{ref?} stripped the core of the means the \gls{CPU} uses to hide stalling.
+This latency hiding through interleaving execution of groups of fragments is done because the first idea \todo{ref?} stripped the core of the means the \gls{CPU} uses to hide stalling. \todo{Men er context switching ikke også noget CPUen gør?}
 
 \fig{figures/graphics_hdw_hiding_stalls_1}{The shared context data is split up to match the (here four) different fragment groups \cite[p. 35]{intro_to_gpu_arch}}{hidingStalls1}{1}
 
 \fig{figures/graphics_hdw_hiding_stalls_2}{When one fragment stalls, the \gls{GPU} switches to another stored context and continues on another fragment \cite[p. 37]{intro_to_gpu_arch}}{hidingStalls2}{1}
 
-The figures \ref{fig:hidingStalls1} and \ref{fig:hidingStalls2} shows the \gls{GPU} latency hiding process.
+\Cref{fig:hidingStalls1} and \cref{fig:hidingStalls2} show the \gls{GPU} latency hiding process.
 First the Shared Context component is divided into the number of fragment groups the core shall be able to process -- four in this example.
 Then the processing of the first fragment group is begun. 
 Once it stalls (or completes), the processing of the next fragment group can begin.
@@ -83,9 +84,9 @@ One last thing worth noting from \cite{intro_to_gpu_arch} is how \glspl{GPU} han
 
 \fig{figures/graphics_hdw_branching}{How \glspl{GPU} handle branching \cite[p. 29]{intro_to_gpu_arch}}{branching}{1}
 
-Figure \ref{fig:branching} shows how branching is handled within a single core: The instructions for both branches are executed (on different \glspl{ALU}), and later the correct result will be chosen.
+\Cref{fig:branching} shows how branching is handled within a single core: The instructions for both branches are executed (on different \glspl{ALU}), and later the correct result will be chosen.
 
-\subsection{Contemporary Graphics Cards}
+\subsection{Contemporary Graphics Cards} \todo{Vi skal have defineret forskellen melle grafik kort og GPU.}
 This subsection will describe the architecture of  contemporary NVIDIA, Intel and AMD graphics cards and compare the terminology used by these vendors to the terminology presented in this section.
 The selected graphics cards are:
 \begin{itemize}
@@ -94,18 +95,20 @@ The selected graphics cards are:
 	\item AMD Sapphire Radeon R9 280 3GB GDDR5
 \end{itemize}
 
+This selection of cards are chosen, as they are at our disposal, and will later be used to run both Direct3D 12 and Vulkan applications.
+
 \subsubsection{NVIDIA}
 The NVIDIA GeForce GTX 1060 graphics card is build with the NVIDIA Pascal architecture \cite{nvidia_gtx_1060}.
 
 \fig{figures/graphics_hdw_pascal_sm}{A Streaming Multiprocessor in the Pascal architecture. - \cite{nvidia_tesla_p100} p. 13}{pascalSM}{1}
 
-Figure \ref{fig:pascalSM} shows a \gls{SM} in the Pascal architecture.
+\Cref{fig:pascalSM} shows a \gls{SM} in the Pascal architecture.
 To translate the terminology from NVIDIA to what has been presented in this section, the small rectangles labelled "Core", "DP Unit", "LD/ST" and "SFU" all fall under the category \gls{ALU} as presented earlier (technically, each of these components consists of multiple \glspl{ALU}).
 These are in NVIDIA terminology collectively referred to as "CUDA Cores".
 
 The blue caches, textures and buffers are all part of the Shared Context component.
 
-The Fetch/Decode component is not visible in figure \ref{fig:pascalSM}.
+The Fetch/Decode component is not visible in \cref{fig:pascalSM}.
 
 From the above translation of terminology, the \gls{SM} seems to map quite well onto what has been presented as the "core".
 However, it is obvious that there exist a further grouping inside the \gls{SM}: The left-hand side and the right-hand side.
@@ -115,10 +118,10 @@ These sides are what is referred to as "Warps" in NVIDIA terminology.
 \fig{figures/graphics_hdw_pascal_gpu}{A 60 \gls{SM} units Pascal GP100 GPU - \cite{nvidia_tesla_p100} p. 10}{pascalGPU}{0.8}
 
 
-Figure \ref{fig:pascalGPU} shows a complete GP100 GPU in the Pascal Architecture.
+\Cref{fig:pascalGPU} shows a complete GP100 GPU in the Pascal Architecture.
 Two \glspl{SM} are grouped into one \glspl{TPC}, and five \glspl{TPC} are grouped together into a \gls{GPC}. \\
 
-It should be noted that the NVIDIA GeForce GTX 1060 uses a GP106 chip, not the GP100 chip shown in \ref{fig:pascalGPU}. 
+It should be noted that the NVIDIA GeForce GTX 1060 uses a GP106 chip, not the GP100 chip shown in \cref{fig:pascalGPU}. 
 The main difference between the two chips is the number of {CUDA Cores: The GP100 has 3840 (60 \glspl{SM}, each with 64 CUDA Cores), and the GP106 only have 1280 (20 \glspl{SM}, each with 64 CUDA cores).
 
 We were not able to find a whitepaper or similar report from reliable sources which detailed the GP106 chip, so that is why it is not used as the example. 
@@ -132,10 +135,10 @@ It is the first architecture AMD developed that would allow to use \glspl{GPU} a
 
 \todo{figure citation needed}
 
-In \gls{GCN} Compute Units are the basic computational blocks of the \gls{GCN} architecture, Figure \ref{fig:GCNCU} visualizes how each \gls{CU} is structured in \gls{GCN}.
+In \gls{GCN} Compute Units are the basic computational blocks of the \gls{GCN} architecture, \Cref{fig:GCNCU} visualizes how each \gls{CU} is structured in \gls{GCN}.
 \todo{make figure of wavefront-simd-CU relation}
 A wavefront consists of 64 threads that can be executed in parallel, these wavefronts are distributed amongst \gls{CU}s. 
-Each \gls{CU} consists of 4 separate SIMD units which all contain their own vector ALU, which is used for vector cal\gls{CU}lations.  
+Each \gls{CU} consists of 4 separate SIMD units which all contain their own vector ALU, which is used for vector calculations.  
 Each SIMD unit has a buffer that can hold up to 10 wavefronts, meaning that each \gls{CU} is able to work on up to 40 wavefronts in parallel during run time (therefore a single CU can run 2560 threads in parallel). 
 The more \glspl{CU} a \gls{GCN} \gls{GPU} possesses the more workload parallelism it can achieve.
 In order to reduce overhead and make it easier to use \gls{GCN} \glspl{GPU} as \glspl{GPGPU}, \glspl{CU} can communicate with one another through a inbuilt L2 cache, additionally this approach is faster in terms of transferring data than to rely on off-chip memory.
