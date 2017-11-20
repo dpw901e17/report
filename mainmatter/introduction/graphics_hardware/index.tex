@@ -130,9 +130,8 @@ It is the first architecture AMD developed that would allow to use \glspl{GPU} a
 
 \fig{figures/GCN_compute_unit}{Overview of the \gls{GCN} architecture}{GCNCU}{1} 
 
-\todo{figure citation needed}
+In \gls{GCN} Compute Units are the basic computational blocks of the \gls{GCN} architecture, Figure \ref{fig:GCNCU}} visualizes how each \gls{CU} is structured in \gls{GCN}.
 
-In \gls{GCN} Compute Units are the basic computational blocks of the \gls{GCN} architecture, Figure \ref{fig:GCNCU} visualizes how each \gls{CU} is structured in \gls{GCN}.
 \todo{make figure of wavefront-simd-CU relation}
 A wavefront consists of 64 threads that can be executed in parallel, these wavefronts are distributed amongst \gls{CU}s. 
 Each \gls{CU} consists of 4 separate SIMD units which all contain their own vector ALU, which is used for vector cal\gls{CU}lations.  
@@ -145,29 +144,62 @@ AMD Sapphire Radeon R9 280 3GB GDDR5 consist of 32 \glspl{CU}.
 This means it can run 81.920 threads in parallel. (40 x 64 x 32)
 \todo{cannot find a architecture picture of a AMD Sapphire Radeon R9 280 3GB GDDR5.}
 
-
-
-\subsubsection{Intel}
-Traditionally Intel only functioned as a \gls{CPU}, however overtime it was realized there was some performance gain to be had by incorporating inbuilt \glspl{GPU} into Intels \glspl{CPU}.
+\subsection{Intel}
+Traditionally Intel was a company that only produced \glspl{CPU}. However overtime it was realized there was some performance gain to be had by incorporating inbuilt \glspl{GPU} into Intels \glspl{CPU}.
 Intel introduced its first series of integrated graphics processors in 2010 and have since then kept releasing newer and more powerful once than the last generation. 
+
 These \glspl{CPU} are called Intel HD Graphics. 
-In 2013 Intel introduced Intel Iris Graphics and the Intel Iris Pro Graphics series in 2013 which also integrated a graphics processor. 
-They are better than their HD Graphics counterpart, they distinguish form their HD Graphics counterpart as they were the first series to include embedded DRAM into their \glspl{CPU}. 
-Additionally, Iris \glspl{CPU} are made for desktop computers, whereas HD Graphics \glspl{CPU} are made for laptop computers.
-Regardless of which Intel \glspl{GPU} integrated \glspl{CPU}, the inbuilt processing unit has the advantage of consuming less power than a Nvidia or AMD \glspl{GPU}.
-This comes at the cost of the \gls{GPU} not being able to give as much throughput as Nvidia or AMD. 
-However, there are technologies like Nvidia Optimus that tries to exploit this. 
-If some GPU command does not demand much \gls{GPU} throughput, it can automatically make use of the Intel inbuilt \gls{GPU} instead and thus save power.
-They have support for both Direct3D and OpenGL. Depending on the version, some are also supporting Vulkan.
-\todo{add Intel processor graphics overview}
-For this project we have a HD Graphics 4600 at our disposal, Figure X shows how Intel HD Graphics \glspl{CPU} are built, Intel calls it the SoC (system-on-a-chip) architecture. It is a modular and scalable architecture, meaning it can be tweaked to work differently if needed. HD Graphics 4600 is based on this architecture, and additionally built on the Haswell architecture. \todo{get more info on what haswell is}
 
-In order to communicate between \glspl{CPU}, caches, and the inbuilt \gls{GPU} SoC has a Ring Interconnect. It is a bi-directional ring with a 32-byte wide data bus. A system agent is associated to the ring and can send data between components. Addtionally, it is also used whenever the \gls{CPU} requests data that is located outside of the internal memory. 
-Some SoC based products may have an optinal internal DRAM installed with them, this gives the benefit of having DRAM directly connected to the chip and making it more efficient to store and retrieve data from.
-The base building block of the SoC architecture are Execution Units(EU). These EUs consists of a mix of simultaneous multi-threading and fine grained interleaved multi-threading. \todo{legit have issues with understanding how this works…}
-\todo{add execution unit}
-%HD Graphics 520 – Skylake %(claus’ cpu)
-%HD Graphics 4000 – Ivy Bridge (michaels cpu)
-%HD Graphics 4600 – Haswell &(anders’ cpu)
-%HD Graphics Family (brandborgs cpu)
+For this project we have a HD graphics 4600 and HD graphics 520 available for usage. Which means they run on different architectures, gen8 and gen9 respectively. This is known from the white papers on Intel gen8\cite{computegen8} and 9\cite{computegen9}.
 
+Before describing the architecture of the integrated \gls{GPU} the entire architecture of a Intel \gls{CPU} with a inbuilt \gls{GPU} will be presented.
+
+\fig{figures/SoC_architecture}{System-On-a-Chip architecture of a intel \gls{CPU} with a embedded \gls{GPU}. Figure taken from \cite{computegen9}}{IntelSoC}{1} 
+
+The architecture is partitioned into three parts; \gls{CPU} cores, Processor Graphics (\gls{GPU}), and a ring interconnect domain. 
+The \gls{SoC} architecture was designed to easily change the components out so it can be used to design for other devices than only desktop computers.
+The ring interconnect is vital for intel multi-core \glspl{CPU} as the cores use it to communicate to each other. 
+Embedded \glspl{GPU} are also connected to the rest of the Intel \gls{CPU} through this ring.
+The on-die ring interconnect bus is connected with the \gls{CPU} cores, caches, and embedded \gls{GPU}. 
+Each connected component has its own interface for how it should use the ring (additionally, each \gls{CPU} core is considered as its own unique component). 
+The \gls{SoC} ring interconnect is a bi-directional ring which has a 32-byte wide data bus.  
+When the \gls{CPU} needs to interact with off-chip systems, this is facilitated by the ring as well. 
+
+The architecture of Intel Processor Graphics was designed to be modular in order to make it more scalable. 
+This means it is possible to design Intel Graphics HD units that will work on other devices than desktop computers. 
+The architecture consists of compute components called execution units, execution units are clustered into groups called subslices, and subslices are clustered into slices. 
+Each component will be further explained.
+
+\fig{figures/Intel_ExecutionUnit}{Architecture of a execution unit, figure taken from \cite{computegen9}}{IntelEU}{1} 
+
+\ref{IntelEU} shows the fundamental building block of Generation 8 and 9 \gls{GPU} architecture, the execution unit. 
+The figure shows that each Execution Unit contains 7 threads, and each thread contains 128 general purpose 32-bit registers.  
+
+On each cycle an Execution Unit can issue up to four different instructions which are sourced from up to four different threads, the thread arbiter dispatches the instructions for execution.
+Each Execution Unit has a pair of \gls{FPU} used for computation (They support both Integer and Floatin-point computation despite being called FPUs).
+
+\fig{figures/Intel_SubSlice}{Architecture of a Subslice, figure taken from \cite{computegen9}}{IntelSS}{1}
+In this architecture(same for both gen8 and 9), arrays of Execution Units in groups are called a subslice. A subslice contains 8 Execution Units. 
+This means each subslice can run up to 56 threads simultaneously (7 threads times 8 Execution Units). 
+each subslice has its own local thread dispatcher, which is used to partition threads into the execution units in a subslice.
+The sampler is a read only memory fetch unit, used for sampling textures and images.
+The dataport is used to memory operations.
+
+\fig{figures/Intel_Slice}{Architecture of a Slice, figure taken from \cite{computegen9}}{IntelS}{1}
+Subslices grouped together are called slices. For most Generation 9 Intel Graphics HD \glspl{CPU} they are grouped as three.
+This means a gen8 and 9 with a slice containing three subslices can run at most 168 threads simultaneously (56 threads times 3 subslices).
+Besides grouping subslices together, a slice adds additional logic for thread dispatching and a level 3 cache.
+
+\fig{figures/Intel_Complete}{Putting each component in its place, figure taken from \cite{computegen9}}{IntelC}{1}
+It is worth to note that an Intel graphics HD \gls{CPU} may contain more than one slice to give a higher throughput.
+The figure shows some new components in the finally assembled Intel graphics HD \gls{CPU}. The Command Streamer, Global Thread Dispatcher and Graphics Technology Interface.
+The command streamer is used to parse commands given from driver stacks. 
+The Global thread dispatcher make sure to balance workload distribution across the device, it also works with the thread dispatchers that were previously mentioned when subslices were presented.
+Lastly, the Graphics Technology Interface is the component that connects the Gen8 and 9 Architecture to the rest of the SoC architecture. 
+It ensures that communication between the \gls{GPU} and \gls{CPU} can happen though the interconnect ring mentioned earlier.  
+Additionally, if there are more than one slice present there is a bus available to make communication between slices possible. 
+Architecturally, Gen8 \cite{computegen8} and Gen9 \cite{computegen9} are nearly identical. The differences are minimal and can be seen in their respective white papers. 
+
+Intel HD graphics 520 has one slice partitioned into three subslices, this means it has 24 execution units and can run 168 threads simultanously.
+Intel HD graphics 4600 has 20 execution units, which means it can run up to 140 threads simultanously. 
+This partially breaks the earlier mention archiecture, however this is because of Intel making use of their modular design and making changes to the their architecture as they have need of it.
