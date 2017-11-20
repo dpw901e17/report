@@ -143,18 +143,18 @@ This means it can run 81.920 threads in parallel. (40 x 64 x 32)
 \todo{cannot find a architecture picture of a AMD Sapphire Radeon R9 280 3GB GDDR5.}
 
 \subsection{Intel}
-Traditionally Intel was a company that only produced \glspl{CPU}. However overtime it was realized there was some performance gain to be had by incorporating inbuilt \glspl{GPU} into Intels \glspl{CPU}.
-Intel introduced its first series of integrated graphics processors in 2010 and have since then kept releasing newer and more powerful once than the last generation. 
+Traditionally, Intel was a company that only produced \glspl{CPU}. However over time it was realized there was some performance gain to be had by incorporating inbuilt \glspl{GPU} into Intels \glspl{CPU}.
+Intel introduced its first series of integrated graphics processors in 2010 and have since then kept releasing newer and more powerful ones than the last generation. 
 
 These \glspl{CPU} are called Intel HD Graphics. 
 
 For this project we have a HD graphics 4600 and HD graphics 520 available for usage. Which means they run on different architectures, gen8 and gen9 respectively.
 
-Before describing the architecture of the inbuilt \gls{GPU} the entire architecture of a Intel \gls{CPU} with a inbuilt \gls{GPU} will be presented.
+Before describing the architecture of the inbuilt \gls{GPU}, the entire architecture of an Intel \gls{CPU} with a inbuilt \gls{GPU} will be presented.
 
-\fig{figures/SoC_architecture}{System-On-a-Chip architecture of a intel \gls{CPU} with a embedded \gls{GPU}. Figure taken from \cite{computegen9}}{IntelSoC}{1} 
+\fig{figures/SoC_architecture}{System-On-a-Chip architecture of an Intel \gls{CPU} with a embedded \gls{GPU}. Figure taken from \cite{computegen9}}{IntelSoC}{1} 
 
-The architecture is partitioned into three parts; \gls{CPU} cores, Processor Graphics (\gls{GPU}), and a ring interconnect domain. 
+The architecture is partitioned into three parts: \gls{CPU} cores, Processor Graphics (\gls{GPU}), and a ring interconnect domain. 
 The SoC architecture was designed to easily change the components out so it can be used to design for other devices than only desktop computers.
 The ring interconnect is vital for intel multi-core \glspl{CPU} as they communicate to each other through the ring. 
 Embedded \glspl{GPU} are also connected to the rest of the Intel \gls{CPU} through this ring.
@@ -165,12 +165,14 @@ When the \gls{CPU} needs to interact with off-chip systems, this is facilitated 
 
 The architecture of Intel Processor Graphics was designed to be modular in order to make it more scalable. 
 This means it is possible to design Intel Graphics HD units that will work on other devices than desktop computers. 
-The architecture consists of compute components called execution units, execution units are clustered into groups called subslices, and subslices are clustered into slices. 
+The architecture consists of compute components called execution units.
+Execution units are clustered into groups called subslices and subslices are clustered into slices. 
 Each component will be further explained.
 
 \fig{figures/Intel_ExecutionUnit}{Architecture of a execution unit, figure taken from \cite{computegen9}}{IntelEU}{1} 
 
-\ref{IntelEU} shows the fundamental building block of Generation 8 and 9 \gls{GPU} architecture, the execution unit. 
+\todo{use cref here}
+\ref{fig:IntelEU} shows the fundamental building block of Generation 8 and 9 \gls{GPU} architecture, the execution unit. 
 The figure shows that each Execution Unit contains 7 threads, and each thread contains 128 SIMD 32-bit registers.  
 
 On each cycle an Execution Unit can issue up to four different instructions which are sourced from up to four different threads, the thread arbiter dispatches the instructions for execution.
