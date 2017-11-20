@@ -148,19 +148,19 @@ Intel introduced its first series of integrated graphics processors in 2010 and 
 
 These \glspl{CPU} are called Intel HD Graphics. 
 
-For this project we have a HD graphics 4600 and HD graphics 520 available for usage. Which means they run on different architectures, gen8 and gen9 respectively.
+For this project we have a HD graphics 4600 and HD graphics 520 available for usage. Which means they run on different architectures, gen8 and gen9 respectively. \todo{cite specs}
 
-Before describing the architecture of the inbuilt \gls{GPU} the entire architecture of a Intel \gls{CPU} with a inbuilt \gls{GPU} will be presented.
+Before describing the architecture of the integrated \gls{GPU} the entire architecture of a Intel \gls{CPU} with a inbuilt \gls{GPU} will be presented.
 
 \fig{figures/SoC_architecture}{System-On-a-Chip architecture of a intel \gls{CPU} with a embedded \gls{GPU}. Figure taken from \cite{computegen9}}{IntelSoC}{1} 
 
 The architecture is partitioned into three parts; \gls{CPU} cores, Processor Graphics (\gls{GPU}), and a ring interconnect domain. 
-The SoC architecture was designed to easily change the components out so it can be used to design for other devices than only desktop computers.
-The ring interconnect is vital for intel multi-core \glspl{CPU} as they communicate to each other through the ring. 
+The \gls{SoC} architecture was designed to easily change the components out so it can be used to design for other devices than only desktop computers.
+The ring interconnect is vital for intel multi-core \glspl{CPU} as the cores use it to communicate to each other. 
 Embedded \glspl{GPU} are also connected to the rest of the Intel \gls{CPU} through this ring.
-The on-die ring interconnect bus between the \gls{CPU} cores, caches, and embedded \gls{GPU}. 
+The on-die ring interconnect bus is connected with the \gls{CPU} cores, caches, and embedded \gls{GPU}. 
 Each connected component has its own interface for how it should use the ring (additionally, each \gls{CPU} core is considered as its own unique component). 
-The SoC ring interconnect is a bi-directional ring which has a 32-byte wide data bus.  
+The \gls{SoC} ring interconnect is a bi-directional ring which has a 32-byte wide data bus.  
 When the \gls{CPU} needs to interact with off-chip systems, this is facilitated by the ring as well. 
 
 The architecture of Intel Processor Graphics was designed to be modular in order to make it more scalable. 
@@ -171,26 +171,26 @@ Each component will be further explained.
 \fig{figures/Intel_ExecutionUnit}{Architecture of a execution unit, figure taken from \cite{computegen9}}{IntelEU}{1} 
 
 \ref{IntelEU} shows the fundamental building block of Generation 8 and 9 \gls{GPU} architecture, the execution unit. 
-The figure shows that each Execution Unit contains 7 threads, and each thread contains 128 SIMD 32-bit registers.  
+The figure shows that each Execution Unit contains 7 threads, and each thread contains 128 general purpose 32-bit registers.  
 
 On each cycle an Execution Unit can issue up to four different instructions which are sourced from up to four different threads, the thread arbiter dispatches the instructions for execution.
-Each Execution Unit has a pair of FPUs used for computation (They support both Integer and Floatin-point computation despite being called FPUs).
+Each Execution Unit has a pair of \gls{FPU} used for computation (They support both Integer and Floatin-point computation despite being called FPUs).
 
 \fig{figures/Intel_SubSlice}{Architecture of a Subslice, figure taken from \cite{computegen9}}{IntelSS}{1}
 In this architecture(same for both gen8 and 9), arrays of Execution Units in groups are called a subslice. A subslice contains 8 Execution Units. 
-This means each subslice can run up to 56 threads simultaneously. 
+This means each subslice can run up to 56 threads simultaneously (7 threads times 8 Execution Units). 
 each subslice has its own local thread dispatcher, which is used to partition threads into the execution units in a subslice.
 The sampler is a read only memory fetch unit, used for sampling textures and images.
 The dataport is used to memory operations.
 
 \fig{figures/Intel_Slice}{Architecture of a Slice, figure taken from \cite{computegen9}}{IntelS}{1}
 Subslices grouped together are called slices. For most Generation 9 Intel Graphics HD \glspl{CPU} they are grouped as three.
-This means a gen8 and 9 with a slice containing three subslices can run at most 168 threads simultaneously.
+This means a gen8 and 9 with a slice containing three subslices can run at most 168 threads simultaneously (56 threads times 3 subslices).
 Besides grouping subslices together, a slice adds additional logic for thread dispatching and a level 3 cache.
 
 \fig{figures/Intel_Complete}{Putting each component in its place, figure taken from \cite{computegen9}}{IntelC}{1}
-It is worth to note that an intel graphics HD \gls{CPU} may contain more than one slice to give a higher throughput.
-The figure shows some new components in the finally assembled Intel graphics HD \gls{CPU}. The Command streamer, Global thread dispatcher and Graphics Technology Interface.
+It is worth to note that an Intel graphics HD \gls{CPU} may contain more than one slice to give a higher throughput.
+The figure shows some new components in the finally assembled Intel graphics HD \gls{CPU}. The Command Streamer, Global Thread Dispatcher and Graphics Technology Interface.
 The command streamer is used to parse commands given from driver stacks. 
 The Global thread dispatcher make sure to balance workload distribution across the device, it also works with the thread dispatchers that were previously mentioned when subslices were presented.
 Lastly, the Graphics Technology Interface is the component that connects the Gen8 and 9 Architecture to the rest of the SoC architecture. 
@@ -198,6 +198,6 @@ It ensures that communication between the \gls{GPU} and \gls{CPU} can happen tho
 Additionally, if there are more than one slice present there is a bus available to make communication between slices possible. 
 Architecturally, Gen8 \cite{computegen8} and Gen9 \cite{computegen9} are nearly identical. The differences are minimal and can be seen in their respective white papers. 
 
-Intel HD graphics 520 has 1 slice partitioned into 3 subslices, this means it has 24 execution units and can run 168 threads simultanously.
-Intel HD graphics 4600 has 20 execution units, which means it can up to 140 threads simultanously. 
+Intel HD graphics 520 has one slice partitioned into three subslices, this means it has 24 execution units and can run 168 threads simultanously.
+Intel HD graphics 4600 has 20 execution units, which means it can run up to 140 threads simultanously. 
 This partially breaks the earlier mention archiecture, however this is because of Intel making use of their modular design and making changes to the their architecture as they have need of it.
