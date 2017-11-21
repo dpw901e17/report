@@ -9,9 +9,11 @@
 	They all refer to hardware designed to render 3D graphics.
 \end{sectionmeta}
 
+To give perspective to the eventual discussion of modern graphics \glspl{API}, we give a short history of graphics programming and \glspl{API} in this section.
+
 \subsection{Early Days of Consumer Graphics}
 
-In the early 80s, dedicated hardware for rendering images started to appear.
+In the early 1980s, dedicated hardware for rendering images started to appear.
 Back then, video cards were not expected to have their own video memory, and instead shared memory with the \gls{CPU} \cite{wikipedia????shared}.
 
 This was a problem because of the limited memory avaliable to the computer.
@@ -35,16 +37,16 @@ Regardless of which mode is used, the screen would use 8 kB of memory and palett
 
 To overcome the some of the limitations that color cells impose the developer could use sprites.
 Sprites are smaller bitmaps that are rendered independent from the rest of the bitmap, and can be placed anywhere on the screen.
-The Commodore 64s sprites were 24 by 21 pixels, 2 color bitmaps with one of colors being transparent.
+The Commodore 64's sprites were 24 by 21 pixels, 2 color bitmaps with one of the colors being transparent.
 The Commodore 64 could handle a maximum of eight sprites on each horizontal line of pixels \cite{commodore1983commodore}.
-Sprits were often used in games.
+Sprites were often used in games.
 
 Other systems such as the Nintendo Gameboy (released in Japan in 1989) and Nintendo Entertainment System (released in Japan in 1983) used similar methods with different restrictions.
 The Nintendo Gameboy supported 40 sprites, but they had to be 8 by 8 pixels, and only 10 could be on a single scanline \cite{nintendo1999gameboy}. 
 The screen was also smaller, 160 by 144 pixels, and always supported four colors, that had to be the infamous four shades of green \cite{nintendo1999gameboy}.
 
 To program graphics on the Commodore 64, the programmer would write to and read from the 47 graphics registers in the Commodore 64s address range 53,248 to 53,294 \cite{commodore1983commodore}.
-As an example, if you were to put a sprite into the top left corner of the screen after inserting the sprite data into the memory you would write the following BASIC commands; 
+As an example, if you were to put a sprite into the top left corner of the screen after inserting the sprite data into the memory you would write the following commands in the BASIC programming language; 
 
 \begin{lstlisting}[caption={Small BASIC program that sets the coordinate of sprite 0 to (0,0) (line 1-3), sets the color to green (line 4), and enables sprite 0 it (line 5). Line 5 is a bit mask telling the graphics chip which sprits should be shown.}]
 10 POKE 53248,0
@@ -53,18 +55,18 @@ As an example, if you were to put a sprite into the top left corner of the scree
 40 POKE 53287,5
 50 POKE 53269,1
 \end{lstlisting}
-This is fairly verbose, both because it is written in tha BASIC language, and because you had to write to specific hardcoded registers.
+This is fairly verbose, both because it is written in BASIC, and because you had to write to specific hardcoded registers.
 This was the way it was done before graphics \glspl{API} became prominent.
 
-As graphics chips became more capable, and memory became larger the full color and detail of the screen became available to the developers.
+As graphics chips became more capable and memory became larger, the full color and detail of the screen became available to the developers.
 The Commodore Amiga 4000 (released in 1992) had 2 mega bytes of build-in memory and up to 12 mega bytes of additional memory.
 It could also be upgraded by using the different slots.
 
 Wolfenstein 3D simulated 3D on the \gls{CPU} and told the graphics chip the color of each individual pixel.
 This was still done by writing memory addresses that the graphics chip would use when rendering to the screen.
-3D accelerators did exists back then, but was mostly used in arcades, so it was not expected that the average consumer had one.
+3D accelerators did exists back then, but were mostly used in arcades, so it was not expected that the average consumer had one.
 
-\Citet{helm1986declarative} observed that graphics processing such as the scaling done in Wolfenstein 3D would be better suited for dedicated hardware that worked in parallel.
+\Citet{helm1986declarative} observed that graphics processing such as the scaling done in Wolfenstein 3D would be better suited for dedicated hardware that worked in parallel. \todo{Maybe mentioned that helm was probably not the first to make this claim, and it wasn't made in regard to wolf3d}
 The interface to such hardware would then receive abstractions such as vertices instead of pixels, and calculate changed pixels from those.
 
 To program for such hardware, some sort of interface would be needed to ensure that the incoming data is well-formed.
@@ -76,7 +78,7 @@ And so, the need for graphics \glspl{API} was created.
 
 In January of 1992 Silicon Graphics, Inc. released the first version of OpenGL, which tried to streamline the process of 2D and 3D graphics development \cite{segal1994opengl}.
 It was based on their own proprietary graphics libary: \gls{IRIS GL}.
-The first version of OpenGL was far from perfect and did not gain popularity until late 1990s when version 1.1 came out \cite{kronos????history}, which introduced concepts such as vertex arrays and texture objects.
+The first version of OpenGL was far from perfect and did not gain popularity until late 1990s when version 1.1 came out \cite{kronos????history}\todo{Source not in bib}, which introduced concepts such as vertex arrays and texture objects.
 Listing \ref{lst:opengl10} is an example of an OpenGL 1.0 program using the immediate mode.
 OpenGL worked as a statemachine where calls to the \gls{API} modified the state, this is very clear in the Listing \ref{lst:opengl10} on line 7 and 10 where \texttt{glBegin} and \texttt{glEnd} which tells OpenGL to prepare for some triangle data and when it is finished.
 
@@ -124,7 +126,7 @@ It is designed as a high level, C-like language with extenstions to include some
 It also served as a way to decide which calculations should be performed in which render stages in the pipeline.
 This introduced some flexibility to the graphics pipeline \todo{Should introduce the graphics pipeline earlier}.
 
-OpenGL followed with their own shader language \gls{GLSL} in April 2004 \cite{wikipedia????opengl}. \todo{haven't introduced shaders before}
+OpenGL followed with their own shader language \gls{GLSL} in April 2004 \cite{wikipedia????opengl}. 
 Like \gls{HLSL}, \gls{GLSL} is a C-like language with some extensions to better support operations common to graphics rendering.
 
 \vspace{1em}
@@ -153,6 +155,7 @@ Where the vertices are placed and how many there are, is handled by the shaders.
 Later on, tessellation became the big topic, which is way to generate model details on the \gls{GPU}.
 The tessellation stage is a way achieve some of the things developers imagined was possible with geometry shaders, but was not feasible because of the performance overhead the shader had.
 
+\todo{The rest of the section could be incorporated in the section that follows.}
 The most recent trend is to lower the abstraction level of the \glspl{API} to enable more customization.
 This push can be seen in the most recent version of Direct3D; Direct3D 12, and the so called successor to OpenGL; Vulkan.
 The lower level abstract enables the developer to customize the \gls{GPU} usage to their needs.
