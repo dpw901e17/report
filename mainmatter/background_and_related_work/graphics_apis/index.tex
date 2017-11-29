@@ -22,7 +22,7 @@ The most popular low-level graphics \glspl{API} during the last game console gen
 The underlying driver is partially implemented by Microsoft in a closed common runtime, which communicates with the hardware vendors actual \gls{GPU} driver through the Direct3D \gls{DDI}\cite{dxDDI}.
 On the other hand, OpenGL is designed by several hardware and software vendors in coorperation, and requires that manufacturers write their own library from scratch. 
 
-A benefit of OpenGL is that manufacturers may provide extensions to the \gls{API} to give developers access to new hardware features \cite{openGLExtensions}.
+A benefit of OpenGL is that manufacturers may provide extensions to the \gls{API} to give developers access to new hardware features \cite{openGLExtensions} \todo{Is this always a benefit?}.
 With Direct3D, new hardware features are only provided to developers, when a new version of the \gls{API} is released by Microsoft. 
 One of the big differences between the two \glspl{API} is the extent of their platform support.
 Direct3D 11, being one of the latest releases, is supported on PCs running the Windows \gls{OS}, smartphones running the Windows Phone \gls{OS} as well as on Microsoft’s Xbox One.
@@ -53,7 +53,7 @@ Yet, even with this kind of support, OpenGL development has still not managed to
 
 Not a lot of academic work has been published comparing OpenGL and Direct3D.
 A lot of \gls{API} benchmarks performed by consumers are available online, yet they are not always performed with hard scientific rigor, and give only uncertain glimpses of \gls{API} performance.
-Examples include a performance benchmark between OpenGL 3.2 and Direct3D 12, \glspl{API} released 6 years apart and with different underlying design philosophies \cite{geek3DBenchmark}.
+Examples include a performance benchmark between OpenGL 3.2 and Direct3D 12, \glspl{API} released 6 years apart and with different underlying design philosophies \todo{What philosophies?} \cite{geek3DBenchmark}.
 Another example is the author not disclosing the specifications of the benchmark hardware \cite{gTrucBenchmark}.
 Even Valve have released a comparison of Direct3D and OpenGL, without disclosing the version used for any of the \glspl{API} \cite{valveBenchmark}.
 In the end, this lack of rigor and transparency leaves behind a lot of data of questionable quality.

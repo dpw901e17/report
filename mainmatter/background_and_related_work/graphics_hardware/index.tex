@@ -13,7 +13,7 @@
 \end{sectionmeta}
 
 
-\subsection{GPU as a Concept}
+\subsection{GPU as a Concept}\todo{Mention that this uses AMD terminology.}
 The \gls{GPU} has been developed with a specific domain in mind, as opposed to the CPU, which is for general purpose computations. 
 The domain of the \gls{GPU} was originally only image manipulation -- a field, where a \gls{SIMD} architecture has proven useful \todo{citation needed}.
 %In recent years, however, there has been a fo\glss on using the \gls{GPU} for a broader spectrum of applications, the socalled \gls{GPGPU}. 
@@ -21,16 +21,16 @@ The domain of the \gls{GPU} was originally only image manipulation -- a field, w
 \fig{figures/graphics_hdw_cpu_style_core}{\gls{CPU} style core \cite[p. 14]{intro_to_gpu_arch}}{cpuStyleCore}{1}
 
 \Cref{fig:cpuStyleCore} shows a visual representation of a \gls{CPU}-style core. 
-The red boxes "Out-of-order control logic", "Fancy branch predictor" and "Memory pre-fetcher" all have to do with predicting/preventing stalls in the \gls{CPU}.
-These features are not too important for the \gls{GPU}, since its main focus is throughput \todo{citation needed}. \todo{Nævn at disse ellers bruges til at nedsætte latency.}
+The red boxes "Out-of-order control logic", "Fancy branch predictor"\todo{explain word choice} and "Memory pre-fetcher" all have to do with predicting/preventing stalls\todo{explain what a stall is} in the \gls{CPU}.
+These features are not too important for the \gls{GPU}, since its main focus is throughput \todo{citation needed} \todo{aren't the aforementioned features also important for throughput? Memory fetching is also important on the GPU it just hides it by running another warp (context switch).}. \todo{Nævn at disse ellers bruges til at nedsætte latency.}
 Furthermore, a big cache would limit the amount of cores a single chip could hold, so this is not desirable for a \gls{GPU} either.
 The remaining components -- Fetch/Decode, \gls{ALU} and Execution Context -- are described below.
 
-\paragraph{The Fetch/Decode Component} handles retrieving data from memory and storing it in the Execution Context.
+\paragraph{The Fetch/Decode Component} handles retrieving data from memory and storing it in the Execution Context. \todo{Isn't this about program execution? Not a component maybe?}
 
 \paragraph{The \gls{ALU}} performs the actual computations on the fetched data. Any temporary variables or conditions (when handling branches) are stored or retrieved from the Execution Context.
 
-\paragraph{The Execution Context} contains local data, e.g. variables and conditions, needed to perform the current computation.
+\paragraph{The Execution Context} contains local data, e.g. variables and conditions, needed to perform the current computation. \todo{isn't it the registers that contain data? I think Bent is confused about terminology here.}
 
 \subsection{\acs{CPU} Style Core}\todo{Er der ikke tale om en GPU style core her?}
 As previously described, there are components in the \gls{CPU} style core which are not needed for the \gls{GPU} to achieve a high throughput.
@@ -39,7 +39,8 @@ The result of slimming down the core can be seen in \cref{fig:twoSlimCores}.
 
 \fig{figures/graphics_hdw_two_cores}{Two slimmed down cores \cite[p. 16]{intro_to_gpu_arch}}{twoSlimCores}{1}
 
-\fig{figures/graphics_hdw_shader_code}{A closer look at the shader code in \cref{fig:twoSlimCores} - \citet[p. 22]{intro_to_gpu_arch}}{shaderCode}{0.5}
+\fig{figures/graphics_hdw_shader_code}{A closer look at the shader code in \cref{fig:twoSlimCores} - \citet[p. 22]{intro_to_gpu_arch}}{shaderCode}{0.5}\todo{ Maybe show the AMD GPU source for the diffuse shader as shown in http://bps11.idav.ucdavis.edu/talks/04-realTimeRenderingArchitecture-BPS2011-houston.pdf
+. Right now we're just throwing out GPU code}
 
 \Cref{fig:twoSlimCores} presents two slimmed down cores running two fragments in parallel. 
 Each core runs the same code, but since the contents of the Execution Contexts are different, we achieve the desired \gls{SIMD} effect; the two fragments are processed by the same code (Single Instruction), but the code refers to data through registers in the Execution Context, which is different for the two cores (Multiple Data).
@@ -47,7 +48,7 @@ Each core runs the same code, but since the contents of the Execution Contexts a
 \Cref{fig:shaderCode} displays the shader code run on fragment 1 and 2 from \cref{fig:twoSlimCores}.
 
 \subsection{Slimmed Down Core}
-Fetching data and instructions are a relatively time-costly activity for the core \todo{citation needed}.
+Fetching data and instructions are a relatively time-costly activity for the core \todo{citation needed} \todo{So now we say that it is costly. But previously we say that memory waits are not important and thus we do away with some CPU features.}.
 The second idea, to further the throughput of the \gls{GPU}, is to let multiple \glspl{ALU} share a single Fetch component.
 This way, the component need to retrieve more information at a time, fewer times, which is not as costly as retrieving small bits of information (data and instructions) for a single \gls{ALU}.
 This means the actual instruction which needs to be run on each \gls{ALU} can be fetched only once per core instead of once per \gls{ALU}.
@@ -67,7 +68,7 @@ Stalling occurs when the processing of a fragment group is dependent on another 
 The fragments being worked on by the \glspl{ALU} at the same time constitutes a fragment group).
 Because switching between contexts is faster than waiting for the context to come out of a stall, the amount of time the \gls{GPU} takes to perform a job is lessened by the hiding of stalls; the latency of the \gls{GPU} caused by stalling has been hidden, which is why this process is also known as latency hiding.
 
-This latency hiding through interleaving execution of groups of fragments is done because the first idea \todo{ref?} stripped the core of the means the \gls{CPU} uses to hide stalling. \todo{Men er context switching ikke også noget CPUen gør?}
+This latency hiding through interleaving execution of groups of fragments is done because the first idea \todo{ref?} stripped the core of the means the \gls{CPU} uses to hide stalling. \todo{Mention that this is also done on the CPU just with less hardware threads. Usually just 2. Here we switch out entire warps.}
 
 \fig{figures/graphics_hdw_hiding_stalls_1}{The shared context data is split up to match the (here four) different fragment groups \cite[p. 35]{intro_to_gpu_arch}}{hidingStalls1}{1}
 
@@ -111,7 +112,7 @@ The blue caches, textures and buffers are all part of the Shared Context compone
 The Fetch/Decode component is not visible in \cref{fig:pascalSM}.
 
 From the above translation of terminology, the \gls{SM} seems to map quite well onto what has been presented as the "core".
-However, it is obvious that there exist a further grouping inside the \gls{SM}: The left-hand side and the right-hand side.
+However, it is obvious that there exist a further grouping inside the \gls{SM}: The left-hand side and the right-hand side \todo{Is this really obvious? Obvious is a bad word}.
 Even though the two sides share an instruction stream and some memory, they are still two distinct sides.
 These sides are what is referred to as "Warps" in NVIDIA terminology.
 
@@ -137,7 +138,7 @@ It is the first architecture AMD developed that would allow to use \glspl{GPU} a
 
 In \gls{GCN} Compute Units are the basic computational blocks of the \gls{GCN} architecture, \Cref{fig:GCNCU} visualizes how each \gls{CU} is structured in \gls{GCN}.
 \todo{make figure of wavefront-simd-CU relation}
-A wavefront consists of 64 threads that can be executed in parallel, these wavefronts are distributed amongst \gls{CU}s. 
+A wavefront\todo{introduce this new terminology} consists of 64 threads that can be executed in parallel, these wavefronts are distributed amongst \gls{CU}s. 
 Each \gls{CU} consists of 4 separate SIMD units which all contain their own vector ALU, which is used for vector calculations.  
 Each SIMD unit has a buffer that can hold up to 10 wavefronts, meaning that each \gls{CU} is able to work on up to 40 wavefronts in parallel during run time (therefore a single CU can run 2560 threads in parallel). 
 The more \glspl{CU} a \gls{GCN} \gls{GPU} possesses the more workload parallelism it can achieve.
@@ -151,7 +152,7 @@ This means it can run 81.920 threads in parallel. (40 x 64 x 32)
 
 
 \subsubsection{Intel}
-Traditionally Intel only functioned as a \gls{CPU}, however overtime it was realized there was some performance gain to be had by incorporating inbuilt \glspl{GPU} into Intels \glspl{CPU}.
+Traditionally Intel only functioned as a \gls{CPU}\todo{intel is a company, make it clear that we talk about hardware from intel here}, however overtime it was realized there was some performance gain to be had by incorporating inbuilt \glspl{GPU} into Intels \glspl{CPU}.
 Intel introduced its first series of integrated graphics processors in 2010 and have since then kept releasing newer and more powerful once than the last generation. 
 These \glspl{CPU} are called Intel HD Graphics. 
 In 2013 Intel introduced Intel Iris Graphics and the Intel Iris Pro Graphics series in 2013 which also integrated a graphics processor. 

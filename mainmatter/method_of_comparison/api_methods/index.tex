@@ -3,21 +3,21 @@ The focus of this report is not only on benchmarking applications written in the
 Programmability, the ease with which a programmer may wield a given tool, also has a big impact.
 
 As of now, no definitive methodology has emerged in how to asses the programmability of different tools.
-In the case of programming languages, a lot of design choices have no empirical grounding or are backed up by more dubious metrics such as \gls{LOC} \cite{markstrum2010staking}.
-In recent years more empirical studies of languages have cropped up.
+In the case of programming languages, a lot of design choices traditional have no empirical grounding or are backed up by more dubious metrics such as \gls{LOC} \cite{markstrum2010staking}.
+In recent years more empirical studies of languages have emerged.
 These are often performed as split tests in controlled settings, where each group of participants are tasked with completing a set number of tasks in a specific language.
-Such an approach was used in \citet{hanenberg2010experiment}, where a comparison of statically and dynamically typed languages was made.
+Such an approach was used in \citet{hanenberg2010experiment}, where a comparison of statically and dynamically typed languages was made. \todo{what did he conclude?}
 More substantial metrics than \gls{LOC} were collected from the experiment, such as the average time spent in different phases of development.
 There has also been attempts at analysing large sets of data pulled from online code repositories.
 \citet{ray2014large} compared 17 languages by pulling code from 728 popular GitHub repositories.
 Each language was profiled and compared by the amount of errors they resulted in, as well as the type of error.
-Errors were identified through bugfixes committed to the projects, and they were classified using a bug classifier trained on a section of the total number of commits. 
+Errors were identified through bugfixes committed to the projects, and they were classified using a bug classifier trained on a section of the total number of commits.  \todo{talk about HCI methods used in programming technology.}
 
 While the amount of literature dealing with programming languages is beginning to become substantial, equivalent literature in the area of \gls{API} design evaluation, has not reached the same point.
 In this section, we cover the three categories of evaluation commonly found in the literature.
 These being user tests, non-user evaluations and program metrics.     
 
-The goal of looking deeper into these different types of evaluation is to put together a mixed-method approach for evaluating Direct3D 12 and Vulkan.
+The goal of looking deeper into these different types of evaluation is to constructor a mixed-method approach for evaluating Direct3D 12 and Vulkan.
 Such an approach was used in \citet{grill2012methods, beaton2008usability} to great effect, as the combined usage of methods was able to spot a larger amount of usability problems.
 
 \subsection{User Tests}
@@ -45,10 +45,10 @@ In addition to tasks, participants are provided with a sample sheet that describ
 This is to make up for the lack of feedback, which a compiler may otherwise supply.
 As language design is very iterative, there may not yet be a compiler to provide feedback for the user when doing early tests.
 For the analysis each usability problem is rated as being cosmetic, serious or critical depending on how much it differs from an ideal working solution.
-While this method focuses on the evaluation of languages, nothing bars it from being used to evaluate \glspl{API}.
+While this method focuses on the evaluation of languages, nothing bars it from being used to evaluate \glspl{API}. \todo{this paragraph could be movedu p further.}
 
 This method provides a nice structure to work from, but as stated by the authors themselves, their method of analysis may be too informal.
-Thus, it could be switched out with a more structured analysis guideline, such as one focusing on \gls{API} evaluation.
+Thus, it could be augmented with a more structured analysis guideline, such as one focusing on \gls{API} evaluation.
 Such an alternative is the method presented in \citet{clarke2003using}, which repurposes the cognitive dimensions framework \cite{wikiCognitiveDimensions} as to use it for \gls{API} evaluation.
 The new dimensions, as written directly in the paper, are given in \cref{tab:cogdims}.
 Once test data has been gathered, the purpose of the analysis is to rate the \gls{API} according to each of the 12 dimensions.
