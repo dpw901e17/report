@@ -1,74 +1,92 @@
 \section{The Short History of Graphics \acs{API}s}\label{sec:short_history}
-\begin{sectionmeta}
-	This section gives an overview of the evolution of computer graphics with the focus being on the \glspl{API}.
-	First section will look at graphics before graphics \glspl{API}, the example given will be that of a Commodore 64.
-	After that, the early competition for getting the graphics \gls{API} market is described.
-	Lastly, we look at some of the more modern improvement that is made to the modern \glspl{API}.
-	
-	In this section, the term 3D accelerator is used interchangeably with graphics processor or \gls{GPU}, because this is the historically accurate term. 
-	They all refer to hardware designed to render 3D graphics.
-\end{sectionmeta}
-
-To give perspective to the eventual discussion of modern graphics \glspl{API}, we give a short history of graphics programming and \glspl{API} in this section.
+In this section, we describe the history of graphics programming up to and including the introduction of Direct3D 12 and Vulkan.
+This is done as to place these recent developments in the context of what came before.
 
 \subsection{Early Days of Consumer Graphics}
+In the early 1980s, dedicated hardware for rendering images became available on home PCs in the form of video display controllers \cite{wikiVideoDisplayController}.
+These devices were tasked with producing composite video signals to the computer’s CRT monitor.
+They often did not have their own memory, instead the video RAM was shared with the \gls{CPU} as part of its memory map \cite{wikipedia????shared}.
 
-In the early 1980s, dedicated hardware for rendering images started to appear.
-Back then, video cards were not expected to have their own video memory, and instead shared memory with the \gls{CPU} \cite{wikipedia????shared}.
 
-This was a problem because of the limited memory avaliable to the computer.
-For instance, the Commodore 64 (released in 1984) had 64 kilo bytes of memory, and supported a 320 by 200 pixels screen \cite{commodore1983commodore}.
-This meant that storing a full screen bitmap with four colors would take $$320\times 200\times 2 \text{ bits} = 128,000 \text{ bits} = 16,000 \text{ bytes of memory.}$$
-One quarter of the total 64 kilo bytes of memory for storing the bitmap.
-If the image is using 16 colors then half of the Commodore 64 memory would be used, which would leave little space for the program and I/O, which was memory mapped \cite{commodore1983commodore}.
+In its most basic form, an image would be rendered on screen by having the \gls{CPU} write a bitmap to the shared memory.
+A bitmap is an array containing a color value for each screen pixel.
+The size of the bitmap depends on the resolution of the screen and the color depth.
+Color depth refers to the range of colors a single pixel may be given in the bitmap.
+A range of two colors requires one bit, four colors require two and so on.
+Thus, the larger the range, the more bits are required to store the color of each pixel.
 
-The Commodore 64 used the MOS Technology VIC-II graphics chip \cite{commodore1983commodore}.
-The chip supports a 320 by 200 pixels video resolution, 16 colors, and 16 kB memory for screen, character, and sprites \cite{commodore1983commodore} \todo{include an explanation of sprites}.
-This means that a quater of the total memory is used by the graphics chip.
 
-But how could it fit 320 by 200 screen with 16 colors into 16 kB of memory?
-Using conventional methods, this was not possible.
+To give a concrete example of graphics programming at the time, we look at the Commodore 64 from 1984.
+The rest of this subsection will be based on \citet{commodore1983commodore}.
+It was originally released on the home computer market in 1984 with a total of 64 kilo bytes of memory, using the MOS Technology VIC-II graphics chip.
+The chip supported a 320 by 200 pixels video resolution, 16 colors, and 16 kB memory for screen, character, and sprites.
+In this context, a sprite a small bitmapped image, which can be manipulated and drawn on top of another image.
 
-Instead, the Commodore 64 used a technique known as color cells \cite{commodore1983commodore}, which were smaller screen segments that used a limited color palette.
-The Commodore 64 had two modes for displaying color cells: High resolution mode, where all 320 by 200 pixels were usable, but only two colors; and multi-color mode, where every second pixel was a repeat of the previous \cite{commodore1983commodore}.
-The benefit is that in multi-color mode you can use four colors instead of two.
-This was popular for games since color was more important than resolution \cite{bogdan2014games}.
-Regardless of which mode is used, the screen would use 8 kB of memory and palettes would use 1 kB memory, the rest of the memory was used for sprites \cite{commodore1983commodore}.
+However given this setup, storing a full screen bitmap with a color depth of 4 would take
+$$320\times 200\times 2 \text{ bits} = 128,000 \text{ bits} = 16,000 \text{ bytes of memory.}$$
 
-To overcome the some of the limitations that color cells impose the developer could use sprites.
-Sprites are smaller bitmaps that are rendered independent from the rest of the bitmap, and can be placed anywhere on the screen.
-The Commodore 64's sprites were 24 by 21 pixels, 2 color bitmaps with one of the colors being transparent.
-The Commodore 64 could handle a maximum of eight sprites on each horizontal line of pixels \cite{commodore1983commodore}.
-Sprites were often used in games.
+While this bitmap can be placed in the mapped memory of the video chip, it only has two colors.
+Storing a bitmap with a color depth of 16, which is what the chip can produce, would take up 32 kilo bytes.
+This is equals half of the 64 kilo bytes of memory accessible to the machine, leaving little space for the memory mapped I/O and regular computations.
 
-Other systems such as the Nintendo Gameboy (released in Japan in 1989) and Nintendo Entertainment System (released in Japan in 1983) used similar methods with different restrictions.
-The Nintendo Gameboy supported 40 sprites, but they had to be 8 by 8 pixels, and only 10 could be on a single scanline \cite{nintendo1999gameboy}. 
-The screen was also smaller, 160 by 144 pixels, and always supported four colors, that had to be the infamous four shades of green \cite{nintendo1999gameboy}.
 
-To program graphics on the Commodore 64, the programmer would write to and read from the 47 graphics registers in the Commodore 64s address range 53,248 to 53,294 \cite{commodore1983commodore}.
-As an example, if you were to put a sprite into the top left corner of the screen after inserting the sprite data into the memory you would write the following commands in the BASIC programming language; \todo{A bit difficult to understand the code. Bit more detail of how it works.}
+To output 16 color images, the Commodore 64 used a technique known as color cells, where the screen was partitioned into 40 by 25 screen segments of a limited color palette. 
+The Commodore 64 had two modes for displaying color cells: High resolution mode, where all 320 by 200 pixels were usable, but with a color depth of two; and multi-color mode, where every second pixel was a repeat of the previous allowing for a color depth of four.
+The latter mode was popular for games, since color was more important than resolution \cite{bogdan2014games}.
 
-\begin{lstlisting}[caption={Small BASIC program that sets the coordinate of sprite 0 to (0,0) (line 1-3), sets the color to green (line 4), and enables sprite 0 it (line 5). Line 5 is a bit mask telling the graphics chip which sprits should be shown.}]
+
+Regardless of which mode was used, the bitmap would consume 8 kB of memory and palettes would use 1 kB memory.
+In high resolution mode, each segment of the bitmap was colored according to its corresponding palette.
+The 0s in the bitmap segment were colored with the first color and the 1s with the second.
+Using the multi-color mode, the palettes were used in the same manner, while the additional third and fourth color were defined for the entire screen.
+
+
+The remaining 7 kB of memory were used for sprites.
+These small bitmaps were rendered on top of the main bitmap and could be placed anywhere on screen.
+hus, the main bitmap was often used for a background, while sprites were used for objects moving about on the screen.
+Each sprite measured 24 by 21 pixels, allowing for 56 addressable sprites to be stored in total.
+In high resolution mode, they had a color depth of 2, but in multi-color mode the lower resolution allowed for a color depth of 4.
+Yet, two of these colors were common to the maximum of 8 sprites, which could be drawn on each horizontal line of pixels.
+No matter the mode, one of the colors was always forced to be transparent.  
+
+Graphics programming on the Commodore 64 was done in the BASIC programming language.
+Using the PEAK and POKE commands, the programmer would read and write to the 47 graphics registers in the Commodore 64’s address range 53,248 to 53,294. 
+As an example, after having defined the main bitmap and loaded sprite 0 into the mapped memory, the sprite could be written to the top left of the screen in the following manner. 
+
+
+\begin{lstlisting}[caption={Small BASIC program that places sprite 0 in the top left part of the screen. }]
 10 POKE 53248,0
 20 POKE 53264,0
 30 POKE 53249,0
 40 POKE 53287,5
 50 POKE 53269,1
 \end{lstlisting}
-This is fairly verbose, both because it is written in BASIC, and because you had to write to specific hardcoded registers.
-This was the way it was done before graphics \glspl{API} became prominent.
+
+
+Line 1 sets the first 8 bits of the x coordinate and line 2 sets the 9th bit.
+This is required as only 256 values can be stored in a byte, and the screen is 320 pixels wide.
+Line 3 sets the y coordinate.
+Line 4 sets the local color of the sprite to green and finally line 5 shows the pixel.
+Note that the top left of the screen has coordinates (0,0), as opposed to this being the location of the bottom left in most coordinate systems.
+This is because the picture is drawn with scan lines that travel from left to right and start at the top of the screen for each frame. 
+Thus the top left is the first part of the screen to be drawn. This is a convention that has carried over into modern graphics programming.
+
+
+As can be seen, this type of graphics programming is very verbose, requiring the programmer to get close to the hardware. Yet this was how graphics programming was done before graphics \glspl{API} became prominent.
+
+Other systems such as the Nintendo Gameboy (released in Japan in 1989) and Nintendo Entertainment System (released in Japan in 1983) used similar methods with different restrictions.
+The Nintendo Gameboy supported 40 sprites, but they had to be 8 by 8 pixels, and only 10 could be on a single scanline \cite{nintendo1999gameboy}. 
+The screen was also smaller, 160 by 144 pixels, and always supported four colors, that had to be the infamous four shades of green \cite{nintendo1999gameboy}.
 
 As graphics chips became more capable and memory became larger, the full color and detail of the screen became available to the developers.
 The Commodore Amiga 4000 (released in 1992) had 2 mega bytes of build-in memory and up to 12 mega bytes of additional memory.
 It could also be upgraded by using the different slots.
-
 Wolfenstein 3D simulated 3D on the \gls{CPU} and told the graphics chip the color of each individual pixel.
 This was still done by writing memory addresses that the graphics chip would use when rendering to the screen.
 3D accelerators did exists back then, but were mostly used in arcades, so it was not expected that the average consumer had one.
 
 \Citet{helm1986declarative} observed that graphics processing such as the scaling done in Wolfenstein 3D would be better suited for dedicated hardware that worked in parallel. \todo{Maybe mentioned that helm was probably not the first to make this claim, and it wasn't made in regard to wolf3d}
 The interface to such hardware would then receive abstractions such as vertices instead of pixels, and calculate changed pixels from those.
-
 To program for such hardware, some sort of interface would be needed to ensure that the incoming data is well-formed.
 And so, the need for graphics \glspl{API} was created.
 
