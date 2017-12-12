@@ -1,38 +1,111 @@
-\chapter{Introduction}\label{ch:introduction} \todo{Perhaps write this so that we start from video game development, then narrow it down to graphics in this chapter.}
-In the early days of consumer electronics, computer visuals were mainly displayed as text.
-Yet, with the combined rise of microcomputers and \glspl{GUI} in the 80's, graphics and visuals became a hot topic for both developers and consumers.\todo{Some sources perhaps needed on the historical claims in general.} 
-In the 1990s, highly parallel graphics hardware in the form of \glspl{GPU} were introduced to render 3D models in real time.
-The first \gls{GPU} was created by Nvidia, its main purpose was to render 3D graphics better and faster than before. \cite{NvidiaFirstGPU} \todo{måske nævne hvilken GPU det er? Kunne diskutere om den nye GPU var så forskellig fra grafikkort fra tidligere}
-This piece of hardware has become a stable in modern consumer computers, either as an individual component or integrated the CPU.
+\chapter{Introduction}\label{ch:introduction} 
+Since their initial burst of arcade popularity arcades in the 1970’s and 80’s, video games have been moved into the homes of consumers and have become a mainstream avenue for entertainment.
+ 
+While these applications vary greatly, they are always structured around a game loop as shown in \cref{fig:gameLoop}. 
+Processing this loop, the game takes input from the player, such as button presses. 
+This input is used when updating the game world. 
+The updated world is then rendered visually on a screen. 
+For instance, if the player pushes the forward key, the position of their character will be updated, and the rendered image will show them to have moved forward. 
 
-%Computers and applications are no longer the niche market it was in its early days, and from that comes a need for intuitive interfaces for users. 
-%Around the 1970s the first computers with \glspl{GUI} started to appear to improve the user experience.
-To ease development of graphical applications, graphics \glspl{API} were created. 
-These allow developers to work with the GPU at a more abstract level, through an interface.
+\fig{figures/GameLoop.pdf}{The common video game loop.}{gameLoop}{1}
+
+The frequency at which the application passes through this loop is measured in \gls{FPS}.
+Games are commonly designed to be played at around 60 \gls{FPS}, which is the refresh rate of most computer monitors and TVs.
+To keep up, the game only has around 16 miliseconds to process each loop.
+If it takes longer, there is a risk of negatively impacting the game playing experience, because of lagging gameplay and visuals.
+ 
+Programming causal games like Tetris, 60 \gls{FPS} is not a difficult goal to reach.
+Yet, in the case of modern AAA-games the implementation of even the simplest subsystem becomes non-trivial.
+Entering the loop, the game may not only concern itself with the input from the player.
+It may also take input from an \gls{AI} system impacting the game world, such as controlling \glspl{NPC}. 
+Updating the game world involves processing many objects using a complex physics engine. 
+After an update a highly detailed model of each object must be rendered to screen and shaded using a lighting engine.  
+ 
+Each of these sub-processes are complex, and are all worthy of further investigation.
+Yet, to limit the scope of this report, we choose to focus only on the graphical rendering of the game world.
+This is because we have taken an interest in the tools used for graphics programming, both concerning their performance and programmability.
+To further narrow our scope, we focus only on graphics programming regarding video games.
+The topic of graphics programming is much broader than what is presented in this text, and includes for instance the rendering \gls{CGI}for modern movies. 
+The following section will give a breif overview of computer graphics.
+
+\section{A Breif Overview Of Computer Graphics}
+Unlike regular computations, graphical output is computed on a separate device known as the \gls{GPU}.
+While the \gls{CPU} expresses parallelism with a few hardware cores and an \gls{MIMD} architecture, the \gls{GPU} has 100s or 1000s of cores and a \gls{SIMD} architecture\cite{intro_to_gpu_arch}.
+The architecture fits well with the processing of graphical elements, as many individual components need to be processed using the same instruction.
+As an example, if we need to move a triangle to the left, the same translation instruction must be executed three times, one for each vertex in the triangle.
+While this simple example could also be processed by the \gls{CPU}, modern 3D models consist of thousands of vertices and require massive parallelism to be processed. 
+
+
+To program the rendering process on the \gls{GPU}, programmers use a graphics \gls{API}. 
+An \gls{API} is an interface, which developers use to access some underlying code library. 
+It allows developers to reuse code made by others, decreasing the amount of time spent on individual projects.
+In addition, by forcing developers to access the library through an interface, the risk of creating a large number of code dependencies in a project is lowered.
+These factors make \glspl{API} a common development tool today.\cite{apiEvaluation}
+In graphics, \glspl{API} and their associated libraries are categorized as being either low-level or high-level \cite{wikiGraphicsLibs}.
+The low-level \glspl{API} include Khrono’s OpenGL\cite{wikipedia????opengl} and Microsoft’s Direct3D\cite{wikipedia????directx}. Developers using these \glspl{API} are required to have an understanding of the inner-workings of the graphics pipeline, and how it is executed on the \gls{GPU}.
+High-level \glspl{API} abstract away hardware details, and allow graphics to be developed according to other programming models.
+Examples include the Aardvark platform \cite{aardvark}, where graphics can be programmed using a functional first approach in F\#, or OpenSceneGraph \cite{openSceneGraph}, which uses the concept of scene graphs as its underlying programming model. 
+
+
+This report focuses on low-level \glspl{API}, as they are often used in the development of AAA video games.
+In addition, the high-level \glspl{API} most often use the low-level \glspl{API} to do the heavy lifting.
+Therefore, developments at the lower level have wide spread consequences.
+
+
+Using an \gls{API} like OpenGL or Direct3D, the programmer can use a general-purpose programming language like C++ or Java to set the render state of the \gls{GPU} and place data into its video memory.
+This could, for instance, be the vertices of a model to be rendered. 
+Yet, the code to be executed on the \gls{GPU} is not defined by the \gls{API} but in an associated shader language.  
+A shader language is a domain-specific language, which allows for the writing of programs, shaders, to be executed on the \gls{GPU}.
+These describe how to process the data shipped over from the host code. 
+The shader language associated with Direct3D is \gls{HLSL}, while the one associated with OpenGL's is called \gls{GLSL}.
+Both are heavily inspired by C.
+
+
+Since the early 00's OpenGL and Direct3D have come to dominate graphics programming for games \cite{wikiGpu}.
+Yet, in recent years it has been claimed that these \glspl{API} are not able to take advantage of modern hardware.
+Especially in cases where \gls{CPU}-boundness is a concern.
+This occurs when the \gls{GPU} processes instructions faster than they can be submitted by the \gls{CPU}.
+The \gls{GPU} thus wastes cycles, which could otherwise be used on rendering more impressive graphics. 
+In response to this, AMD developed the Mantle \gls{API} in 2013, allowing for graphics programming at a lower level of abstraction \cite{wikiMantle}. 
+This was followed by Apple’s Metal \gls{API} in 2014 used exclusively for iOS and macOS development \cite{wikiMetal}. 
+Yet, in 2015 Mantle was discontinued with the introduction of Microsoft’s Direct3D 12\cite{wikipedia????directx} and Khrono’s Vulkan\cite{wikiVulkan}, the latter deriving directly from Mantle. 
+
+
+While both Metal, Direct3D 12 and Vulkan would be interesting to delve deeper into, we restrict this report to the inspection of Direct3D 12 and Vulkan.
+This is because their direct predecessors, Direct3D 11 and OpenGL 4 have had a large impact, and we expect these \glspl{API} may have a similar impact in the coming years.
+
+
+%In the early days of consumer electronics, computer visuals were mainly displayed as text.
+%Yet, with the combined rise of microcomputers and \glspl{GUI} in the 80's, graphics and visuals became a hot topic for both developers and consumers.\todo{Some sources perhaps needed on the historical claims in general.} 
+%In the 1990s, highly parallel graphics hardware in the form of \glspl{GPU} were introduced to render 3D models in real time.
+%The first \gls{GPU} was created by Nvidia, its main purpose was to render 3D graphics better and faster than before. \cite{NvidiaFirstGPU} \todo{måske nævne hvilken GPU det er? Kunne diskutere om den nye GPU var så forskellig fra grafikkort fra tidligere}
+%This piece of hardware has become a stable in modern consumer computers, either as an individual component or integrated the CPU.
+
+
+%To ease development of graphical applications, graphics \glspl{API} were created. 
+%These allow developers to work with the GPU at a more abstract level, through an interface.
 %But to develop these \glspl{GUI}, developers use a lot of time working with the graphics \glspl{API}.
-Developers have used these \glspl{API} to create impressive applications, such as modern video games, which render graphics in real time at 60 frames per second (at times more than that), as well as the graphically demanding \glspl{GUI} of modern operating systems.
+%Developers have used these \glspl{API} to create impressive applications, such as modern video games, which render graphics in real time at 60 frames per second (at times more than that), as well as the graphically demanding \glspl{GUI} of modern operating systems.
 
-%As hardware improves, so must the \gls{API} to better use the improvements.
-%Another function of the \gls{API} is to make it easier for the developers to use the hardware so improvement in that area is also interesting for the \gls{API} developers.
-Graphics \glspl{API} have to evolve alongside modern CPU and GPU architectures, to take advantage of new features. 
-Yet, academic research into the evaluation of \glspl{API} and how to improve them is limited though the litterature is growing.
-Even if the newer \glspl{API} supports operations that improve performance, if the feature is too difficult to use most developers will ignore it.
+%Graphics \glspl{API} have to evolve alongside modern CPU and GPU architectures, to take advantage of new features. 
+%Yet, academic research into the evaluation of \glspl{API} and how to improve them is limited though the litterature is growing.
+%Even if the newer \glspl{API} supports operations that improve performance, if the feature is too difficult to use most developers will ignore it.
 
-Video games have always had high demands on hardware, even before the introduction of \glspl{GPU}.
-Because of the constant demand from developers and consumers to render more demanding graphics in real time, \gls{GPU} manufacturers have continually made the \gls{GPU} throughput higher with each new \gls{GPU} release
+%Video games have always had high demands on hardware, even before the introduction of \glspl{GPU}.
+%Because of the constant demand from developers and consumers to render more demanding graphics in real time, \gls{GPU} manufacturers have continually made the \gls{GPU} throughput higher with each new \gls{GPU} release
 
-With the release of the most recent graphics \glspl{API}; Vulkan and Direct3D 12, there has been a push towards a more low-level API design, which gives the programmer more control over the graphics pipeline.
-Much of the functionality that was previously handled by the driver, should now be handled by application developers. 
-This has some advantages, which will be discussed in detail in the following chapter \cref{sec:graphics_apis}.
-Yet, the argument that lower levels of abstraction results in better \glspl{API} would suggest that writing in binary or assembly would provide the best \glspl{API}.\todo{Synes at der skal gås mere i detalje med den her linje, eller vi skal vente med den diskution til senere}
+%With the release of the most recent graphics \glspl{API}; Vulkan and Direct3D 12, there has been a push towards a more low-level API design, which gives the programmer more control over the graphics pipeline.
+%Much of the functionality that was previously handled by the driver, should now be handled by application developers. 
+%This has some advantages, which will be discussed in detail in the following chapter \cref{sec:graphics_apis}.
+%Yet, the argument that lower levels of abstraction results in better \glspl{API} would suggest that writing in binary or assembly would provide the best \glspl{API}.\todo{Synes at der skal gås mere i detalje med den her linje, eller vi skal vente med den diskution til senere}
 
-In this report, we are instested in how the newer \glspl{API} lower their abstraction-level, and what advantages and disadvantages this approach has both on performance and programability.
-The aim is to generate insight into the graphics \glspl{API}; Direct3D 12 and Vulkan, and to generate tools for future developers that can be used to evaluate and improve their \glspl{API}.\todo{Hvad er det for nogle tools vi taler om her?}
+%In this report, we are instested in how the newer \glspl{API} lower their abstraction-level, and what advantages and disadvantages this approach has both on performance and programability.
+%The aim is to generate insight into the graphics%The predesessors to these \glspl{API} (Direct3D 11 and OpenGL 4.5) are some of the most broadly used graphics \glspl{API} for realtime rendering, and we suspect that Direct3D 12 and Vulkan will have similar success in the comming years.
 
-Direct3D 12 and Vulkan are chosen, because they are released close to eachother (2015 and 2016 respecively), and have some overlapping ideas on how to improve graphics \glspl{API}, such as better multithread support on the CPU.
-The predesessors to these \glspl{API} (Direct3D 11 and OpenGL 4.5) are some of the most broadly used graphics \glspl{API} for realtime rendering, and we suspect that Direct3D 12 and Vulkan will have similar success in the comming years.
+%In the following section we will define the problem statement of the report in detail.
+%The reply to the questions presented will be the goal of the rest of the rest of the work presented here.
 
-In the following section we will define the problem statement of the report in detail.
-The reply to the questions presented will be the goal of the rest of the rest of the work presented here.
+%\glspl{API}; Direct3D 12 and Vulkan, and to generate tools for future developers that can be used to evaluate and improve their \glspl{API}.\todo{Hvad er det for nogle tools vi taler om her?}
 
+%Direct3D 12 and Vulkan are chosen, because they are released close to eachother (2015 and 2016 respecively), and have some overlapping ideas on how to improve graphics \glspl{API}, such as better multithread support on the CPU.
 \input{mainmatter/introduction/problem_statement/index.tex}
