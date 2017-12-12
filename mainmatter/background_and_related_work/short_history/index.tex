@@ -1,9 +1,10 @@
 \section{The Short History of Graphics \acs{API}s}\label{sec:short_history}
 In this section, we describe the history of graphics programming up to and including the introduction of Direct3D 12 and Vulkan.
 This is done as to place these recent developments in the context of what came before.
+The section will focus on consumer electronics as opposed to hardware used in arcades.
 
 \subsection{Early Days of Consumer Graphics}
-In the early 1980s, dedicated hardware for rendering images became available on home PCs in the form of video display controllers \cite{wikiVideoDisplayController}.
+In the early 1980's, dedicated hardware for rendering images became available on home PCs in the form of video display controllers \cite{wikiVideoDisplayController}.
 These devices were tasked with producing composite video signals to the computer’s CRT monitor.
 They often did not have their own memory, instead the video RAM was shared with the \gls{CPU} as part of its memory map \cite{wikipedia????shared}.
 
@@ -13,10 +14,9 @@ A bitmap is an array containing a color value for each screen pixel.
 The size of the bitmap depends on the resolution of the screen and the color depth.
 Color depth refers to the range of colors a single pixel may be given in the bitmap.
 A range of two colors requires one bit, four colors require two and so on.
-Thus, the larger the range, the more bits are required to store the color of each pixel.
 
 
-To give a concrete example of graphics programming at the time, we look at the Commodore 64 from 1984.
+To give a concrete example of graphics programming at the time, we look at the Commodore 64 released in 1984, although systems like the Nintendo Entertainment System and Nintendo Gameboy work in much the same manner.
 The rest of this subsection will be based on \citet{commodore1983commodore}.
 It was originally released on the home computer market in 1984 with a total of 64 kilo bytes of memory, using the MOS Technology VIC-II graphics chip.
 The chip supported a 320 by 200 pixels video resolution, 16 colors, and 16 kB memory for screen, character, and sprites.
@@ -25,7 +25,7 @@ In this context, a sprite a small bitmapped image, which can be manipulated and 
 However given this setup, storing a full screen bitmap with a color depth of 4 would take
 $$320\times 200\times 2 \text{ bits} = 128,000 \text{ bits} = 16,000 \text{ bytes of memory.}$$
 
-While this bitmap can be placed in the mapped memory of the video chip, it only has two colors.
+While this bitmap can fit into the mapped memory of the video chip, it only has two colors.
 Storing a bitmap with a color depth of 16, which is what the chip can produce, would take up 32 kilo bytes.
 This is equals half of the 64 kilo bytes of memory accessible to the machine, leaving little space for the memory mapped I/O and regular computations.
 
@@ -35,26 +35,30 @@ The Commodore 64 had two modes for displaying color cells: High resolution mode,
 The latter mode was popular for games, since color was more important than resolution \cite{bogdan2014games}.
 
 
-Regardless of which mode was used, the bitmap would consume 8 kB of memory and palettes would use 1 kB memory.
-In high resolution mode, each segment of the bitmap was colored according to its corresponding palette.
+Regardless of which mode was used, the bitmap would consume 8 kB of memory.
+In addition the palettes would use 1 kB memory, 1 byte for each screen segment, which 
+could store two colors picked from a range of 16.
+In high resolution mode, each segment of the bitmap was colored according to its corresponding palette byte.
 The 0s in the bitmap segment were colored with the first color and the 1s with the second.
-Using the multi-color mode, the palettes were used in the same manner, while the additional third and fourth color were defined for the entire screen.
+Using the multi-color mode, the palettes were used in the same manner, while the additional third and fourth color were defined for the entire screen outside of the palettes.
 
 
 The remaining 7 kB of memory were used for sprites.
-These small bitmaps were rendered on top of the main bitmap and could be placed anywhere on screen.
-hus, the main bitmap was often used for a background, while sprites were used for objects moving about on the screen.
+These small bitmaps were rendered on top of the main bitmap and could be placed anywhere on screen, although there was a limit of 8 sprites which could be written on a row of pixels.
+Thus, the main bitmap was often used for a background, while sprites were used for objects moving about on the screen.
 Each sprite measured 24 by 21 pixels, allowing for 56 addressable sprites to be stored in total.
-In high resolution mode, they had a color depth of 2, but in multi-color mode the lower resolution allowed for a color depth of 4.
-Yet, two of these colors were common to the maximum of 8 sprites, which could be drawn on each horizontal line of pixels.
-No matter the mode, one of the colors was always forced to be transparent.  
+In high resolution mode, they had a color depth of 2.
+One of the colors was forced to be transparent, and the second was chosen by the programmer when the sprite was to be drawn.
+In multi-color mode the lower resolution allowed for a color depth of 4.
+Yet, the additional two colors, set by the programmer, had to be common for the 8 sprites being drawn on the same row of pixels. 
+
 
 Graphics programming on the Commodore 64 was done in the BASIC programming language.
-Using the PEAK and POKE commands, the programmer would read and write to the 47 graphics registers in the Commodore 64’s address range 53,248 to 53,294. 
+Using the PEAK and POKE commands, the programmer would read and write to the 47 graphics registers in the Commodore 64’s address range; 53,248 to 53,294. 
 As an example, after having defined the main bitmap and loaded sprite 0 into the mapped memory, the sprite could be written to the top left of the screen in the following manner. 
 
 
-\begin{lstlisting}[caption={Small BASIC program that places sprite 0 in the top left part of the screen. }]
+\begin{lstlisting}[caption={Small BASIC program that places sprite 0 in the top left part of the screen.}]
 10 POKE 53248,0
 20 POKE 53264,0
 30 POKE 53249,0
@@ -66,45 +70,68 @@ As an example, after having defined the main bitmap and loaded sprite 0 into the
 Line 1 sets the first 8 bits of the x coordinate and line 2 sets the 9th bit.
 This is required as only 256 values can be stored in a byte, and the screen is 320 pixels wide.
 Line 3 sets the y coordinate.
-Line 4 sets the local color of the sprite to green and finally line 5 shows the pixel.
-Note that the top left of the screen has coordinates (0,0), as opposed to this being the location of the bottom left in most coordinate systems.
+Line 4 sets the local color of the sprite to green, and finally line 5 shows the sprite.
+Note that the top left of the screen has coordinates (0,0), as opposed to this being the location of the bottom left as in most coordinate systems.
 This is because the picture is drawn with scan lines that travel from left to right and start at the top of the screen for each frame. 
-Thus the top left is the first part of the screen to be drawn. This is a convention that has carried over into modern graphics programming.
+Thus the top left is the first part of the screen to be drawn.
+This is a convention that has carried over into modern graphics programming.
 
 
-As can be seen, this type of graphics programming is very verbose, requiring the programmer to get close to the hardware. Yet this was how graphics programming was done before graphics \glspl{API} became prominent.
+As can be seen, this type of graphics programming is very verbose, requiring the programmer to get close to the hardware.  
+Even with systems like the Commodore Amiga 4000 from 1992, which had 2 MB of built-in video memory and access to a much larger array of colors, this was a common way to program graphics \cite{wikiAmiga4000}.
+Early attempts at 3D games, such as Wolfenstein 3D from 1992, simulated 3D on the \gls{CPU}, while still writting bitmaps to video memory.
 
-Other systems such as the Nintendo Gameboy (released in Japan in 1989) and Nintendo Entertainment System (released in Japan in 1983) used similar methods with different restrictions.
-The Nintendo Gameboy supported 40 sprites, but they had to be 8 by 8 pixels, and only 10 could be on a single scanline \cite{nintendo1999gameboy}. 
-The screen was also smaller, 160 by 144 pixels, and always supported four colors, that had to be the infamous four shades of green \cite{nintendo1999gameboy}.
 
-As graphics chips became more capable and memory became larger, the full color and detail of the screen became available to the developers.
-The Commodore Amiga 4000 (released in 1992) had 2 mega bytes of build-in memory and up to 12 mega bytes of additional memory.
-It could also be upgraded by using the different slots.
-Wolfenstein 3D simulated 3D on the \gls{CPU} and told the graphics chip the color of each individual pixel.
-This was still done by writing memory addresses that the graphics chip would use when rendering to the screen.
+%As graphics chips became more capable and memory became larger, the full color and detail of the screen became available to the developers.
+%The Commodore Amiga 4000 (released in 1992) had 2 mega bytes of build-in memory and up to 12 mega bytes of additional memory.
+%It could also be upgraded by using the different slots.
+
+
+%Other systems such as the Nintendo Gameboy (released in Japan in 1989) and Nintendo Entertainment System (released in Japan in 1983) used similar methods with different restrictions.
+%The Nintendo Gameboy supported 40 sprites, but they had to be 8 by 8 pixels, and only 10 could be on a single scanline \cite{nintendo1999gameboy}. 
+%The screen was also smaller, 160 by 144 pixels, and always supported four colors, that had to be the infamous four shades of green \cite{nintendo1999gameboy}.
+
 3D accelerators did exists back then, but were mostly used in arcades, so it was not expected that the average consumer had one.
 
-\Citet{helm1986declarative} observed that graphics processing such as the scaling done in Wolfenstein 3D would be better suited for dedicated hardware that worked in parallel. \todo{Maybe mentioned that helm was probably not the first to make this claim, and it wasn't made in regard to wolf3d}
-The interface to such hardware would then receive abstractions such as vertices instead of pixels, and calculate changed pixels from those.
-To program for such hardware, some sort of interface would be needed to ensure that the incoming data is well-formed.
-And so, the need for graphics \glspl{API} was created.
+Yet this was how graphics programming was done before graphics \glspl{API} became prominent.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \subsection{The Rise of Graphics \acs{API}s} 
+While some programmers were still writing their own bitmaps using the \gls{CPU}, the early 90’s also saw the rise of 2D hardware acceleration with video cards like the S3 86C911, which was released in 1991.
+Cards like these were used as coprocessors and had built-in operations for tasks such as drawing lines and filling rectangles.
+This freed the \gls{CPU} from some graphics work. 
+Features such as these were common in most video cards around the middle of the 90’s. Instead of setting registers directly, \glspl{API} were being introduced to interact with video cards. 
+In the case of 2D graphics programming, DirectDraw, released in 1995 as part of Microsoft’s initial version of DirectX, was used for the development of hardware accelerated \glspl{GUI} and games. \cite{ wikiGpu}
 
-In January of 1992 Silicon Graphics, Inc. released the first version of OpenGL, which tried to streamline the process of 2D and 3D graphics development \cite{segal1994opengl}.
-It was based on their own proprietary graphics libary: \gls{IRIS GL}.
-The first version of OpenGL was far from perfect and did not gain popularity until late 1990s when version 1.1 came out \cite{kronos????history}\todo{Source not in bib}, which introduced concepts such as vertex arrays and texture objects.
-Listing \ref{lst:opengl10} is an example of an OpenGL 1.0 program using the immediate mode.
-OpenGL worked as a statemachine where calls to the \gls{API} modified the state, this is very clear in the Listing \ref{lst:opengl10} on line 7 and 10 where \texttt{glBegin} and \texttt{glEnd} which tells OpenGL to prepare for some triangle data and when it is finished.
 
-\begin{lstlisting}[language={[ANSI]C}, caption={OpenGL 1.0 program written in C, that renders a triangle with different colors on the points, and linear interpolation between the colors. This method uses the fixed pipeline to render the triangle. A method which has been deprecated since OpenGL 3.0.}, label={lst:opengl10}]
+Around the mid 90’s we also see the introduction of 3D acceleration in consumer video cards with products like the Voodoo 3dFX chip from 1996.
+This included a texture mapping unit to place 2D textures onto 3D models.
+However, operations on vertices were still done on the \gls{CPU}. 
+Alongside came the Glide \gls{API}, which was made specifically for usage with the voodoo video cards.
+It came to dominate graphics \glspl{API} in the second half of the 90's, but its popularity was surpassed by early versions of OpenGL and Direct3D in the tail-end of the decade. 
+Unlike Glide, OpenGL and Direct3D were made to be used with graphics cards from many different manufacturers. \cite{wiki3dfxInteractive}
+
+
+OpenGL was initially released for professional use with 3D workstations in January of 1992, shipping with both 2D and 3D accelerated features \cite{segal1994opengl}. 
+It was developed by Silicon Graphics, Inc. and based on their own proprietary graphics library: \gls{IRIS GL}. 
+Listing \ref{lst:opengl10} is an example of an OpenGL 1.0 program using the immediate mode. 
+Immediate mode means that \gls{API} calls directly cause graphics objects to be rendered on screen.
+
+
+OpenGL functioned around the idea of a state machine, where \gls{API} calls modified some underlying graphics state.
+This is very clear in listing \ref{lst:opengl10}.
+The init function would be called before any draw calls are made, and it is used to set the color to clear the framebuffer with. 
+Draw can then be called each frame to draw a triangle. 
+This involves first clearing the screen with the assigned color, creating a blank canvas. 
+Afterwards, the video card is made ready to receive vertices to draw a triangle. 
+Finally, these vertices are passed to \gls{API} along with a color attribute, the writing processes is closed, and the vertices are flushed to video memory to be drawn.
+
+
+\begin{lstlisting}[language={[ANSI]C}, caption={OpenGL 1.0 program written in C, that renders a triangle using immediate mode, with different colors for each point and linear interpolation between the colors. It is inspired by code examples from \citet{segal1994opengl}}, label={lst:opengl10}]
 void init() {
   glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 }
-
 void draw() {
   glClear(GL_COLOR_BUFFER_BIT);
   glBegin(GL_TRIANGLES);
@@ -116,75 +143,178 @@ void draw() {
 }
 \end{lstlisting}
 
-RenderMorphic tried to standardize an interface for writing games.
-They called it Reality Lab, and it quickly became one of the main \glspl{API} in the graphics \gls{API} market. 
-Just after a short time on the market, Microsoft bought both the company and the \gls{API} in Febuary of 1995 and it became the core for Microsoft's own 3D rendering \gls{API} \cite{1997crushed}; Direct3D.
-The first version of Direct3D shipped in June 1996 with DirectX 2.0 \cite{wikipedia????directx}. 
 
-Around the same time 3dfx's Brian Hook wrote Glide, a graphics API for the 3dfx Voodoo Graphics Accelerator \todo{Is this a GPU?}.
-Because of the ease of programming to Glide, and the popularity of the Voodoo graphics accelerators, Glide became the dominating graphics \gls{API} in the late 1990's.
+OpenGL did not did not gain widespread popularity until after 1997 when version 1.1 came out, introducing features such as vertex arrays\cite{kronos????history}.
+This allowed users to upload arrays of vertices and their attributes to video memory, retaining this data between frames.  
+In addition, a layer of indirection was added meaning that when the user made an \gls{API} draw call, the \gls{API} could structure the actual graphics commands in what it perceived to be the most optimal way. 
+This style of graphics programming is known as retained mode, and is the main mode of rendering used today.
 
-Glide's success was in part made possible by Microsoft's involvement in the Talisman project, which took some of resources from the DirectX team.
-The Talisman project was a new 3D architechture that could reduce the memory bandwidth needed by applying tiled rendering \cite{torborg1996talisman}.
-But as other 3D accelerators became more efficient and cheaper, Microsoft cancelled project Talisman and reverted their focus to Direct3D \cite{wikipedia????talisman}.
-The market share of the Windows operating system gave Microsoft the consumer base that the hardware specific \glspl{API} lacked, so developers soon started to focus their attention on Direct3D.
 
-John \citet{carmack1996plan} of Id Software critized Direct3D for being too verbose, after trying to port Quake to OpenGL and Direct3D \todo{show some opengl and direct3d code to better understand the critistism.} .
-So there were some resistance to Direct3D's market dominance, so some developers insisted on using OpenGL.
-And so the OpenGL and Direct3D became the dominant competitors in the 3D rendering. 
+Direct3D was derived from the Reality Lab \gls{API} after it and its creators, RenderMorphic, were acquired by Microsoft in 1995 \cite{1997crushed}. 
+It initially shipped as part of DirectX 2.0 in 1996 with both immediate and retained mode, competing with OpenGL and Glide\cite{wikipedia????directx}.
+As with OpenGL, Direct3D was also designed around an implicit render state.
+It has been difficult to find code examples for this initial version of Direct3D, \citet{carmack1996plan} supplied some pseudo code for drawing a triangle in immediate mode. This depicted in listing \ref{ lst:direct3d1}.
+As can be seen, this requires the construction of an execution buffer, to contain both data and commands. 
+While the idea is to get less procedure call overhead than in OpenGL, the process of drawing a triangle becomes less programmable in comparison. 
+\citet{carmack1996plan} uses this example to discuss the ease of development in early OpenGL contra Direct3D. 
 
-\subsection{Modern Graphics \acs{API}s}
 
-The early days of 3D programming was still very verbose and inflexible. 
-Fixed function pipelines were used, which meant you could not change how the graphics pipeline worked \cite{davidovic2014fixedfunction}.
+\begin{lstlisting}[language={[ANSI]C}, caption={Snippet of pseudocode for drawing a triangle  in Direct3D 1 using immediate mode. Note that this does not include the buffer setup. \cite{carmack1996plan} }, label={lst:direct3d1}]
+v = &buffer.vertexes[0];
+v->x = 0; v->y = 0; v->z = 0;
+v++;
+v->x = 1; v->y = 1; v->z = 0;
+v++;
+v->x = 2; v->y = 0; v->z = 0;
+c = &buffer.commands;
+c->operation = DRAW_TRIANGLE;
+c->vertexes[0] = 0;
+c->vertexes[1] = 1;
+c->vertexes[2] = 2;
+IssueExecuteBuffer (buffer);
+\end{lstlisting}
 
-In November 2000, Microsoft released their first version of \gls{HLSL} \todo{code example} together with DirectX 8 \cite{wikipedia????directx}.
-\Gls{HLSL} is a language for small programs that runs on the \gls{GPU} instead of the \gls{CPU}.
-It is designed as a high level, C-like language with extenstions to include some of the most used types such as vectors and matrices \cite{microsoft????hlsl}.
-It also served as a way to decide which calculations should be performed in which render stages in the pipeline.
-This introduced some flexibility to the graphics pipeline \todo{Should introduce the graphics pipeline earlier}.
 
-OpenGL followed with their own shader language \gls{GLSL} in April 2004 \cite{wikipedia????opengl}. 
-Like \gls{HLSL}, \gls{GLSL} is a C-like language with some extensions to better support operations common to graphics rendering.
+The slow development of early Direct3D versions can somewhat be attributed to the fact that much of the DirectX team were busy with the Talisman project. 
+This was a new 3D architecture that was supposed to reduce the memory bandwidth needed by 3D applications by applying tiled rendering, the composition of 2D sub images on screen \cite{torborg1996talisman}. 
+Had this project succeeded it would have allowed lower tier video cards to produce higher performance 3D graphics.
+Yet, as video cards became more efficient and cheaper towards the end of the 90’s the project was cancelled \cite{wikipedia????talisman}. 
 
-\vspace{1em}
 
-\noindent
-Because OpenGL and Direct3D is in direct competition with eachother, and operate on the same hardware, once a technology, or tool has been developed for one, the other usually follows soon after.
-Therefore, we look at the general graphics \gls{API} improvements in the following sections.
+Before the turn of the millennium, Nvidia released the GeForce 256 3D accelerator.
+It was marketed as the first \gls{GPU}, and helped popularize the term in later years, differing from earlier devices, like the Voodoo line of video cards, by including \gls{TCL} hardware.
+This allowed the device to manipulate and clip vertices as well as lighting 3D surfaces.
+As such, it is equivalent to later vertex shader units. 
+These types of operations had otherwise been done by the \gls{CPU}, and video cards had up to this point been used mainly for rasterizing 3D scenes computed by the \gls{CPU}. \cite{wikiGeforce256}
 
-\vspace{1em}
 
-\noindent
-Shaders have since then been improved with more features, such as changing model details with the geometry shader, and generating model details via a tessellation stage.
+Though not the first, the Geforce 256 also exemplifies how video cards evolved to have parallel SIMD architectures. 
+The possibility for parallel rendering of images had been known for a while, and already in 1986 it had been suggested how a parallel architecture could speed up execution of graphics commands \Citet{helm1986declarative}. 
+The transformed vertices from the \gls{TCL} hardware was passed onto the more standard rasterizing hardware, including 4 pixel pipelines, 4 texture mapping units and 4 render output units \cite{wikiNvidiaList}. 
+Pixel pipelines are equivalent with later fragment shader units, processing pixels and texels into their final color and depth value. 
+Texel information was used by the texture mapping units to look up the color of a pixel in a texture. 
+From the pixel pipeline, processed pixels were sent to render output units to be depth tested and blended into the frame buffer. 
 
-The geometry shader is placed between the vertex and fragment shader and operated on primitives; points, lines, or triangles, and returned zero or more primitives for rasterizing.
-Because the geometry shader could see multiple verticies at once, developers were excited for the oppotunities this would give \cite{kronos????geometry, microsoft????geometry}.
-A good example of using the geometry shader is particle effects, where the specifics of the four corners of the mesh is less important for the developer than the position of the particle.
-So instead, the developer can send the points of the particles to the \gls{GPU}, and have the geometry shader generate the corners in parallel.
-One big issue with geometry shaders is that their performance overhead is so large that naïvely using it would often hurt performance rather than improving it.
 
-The next change to the rendering pipeline was the introduction of a tessellation stage.
-This stage involves two shaders; a hull shader and a domain shader.
-It occurs after the vertex shader, but before the geometry shader.
-The tessellation stage generates more details to the model by adding even more vertices.
-Where the vertices are placed and how many there are, is handled by the shaders.
+The processing model of the Geforce 256 can be seen to fit with the non-extended graphics pipeline used today \cref{sec:pipeline}. 
+However, at this time neither the vertex or pixel shaders were programmable, instead being configured by \gls{API} calls.
+This is now referred to as a fixed graphics pipeline.
+Already in the year 2000, we begin to see a major change in graphics \glspl{API} with the move from the fixed graphics pipeline to the programmable graphics pipeline.
+In 2000, Microsoft released the first version of \gls{HLSL}\cite{wikiHlsl} followed by Khrono’s with \gls{GLSL} in 2002\cite{kronos????history}. 
+This allowed programmers to have larger control over what happened in the vertex shader and fragment shader units on the \gls{GPU}. 
+The introduction of shader languages meant that the fixed function style of programming ended up being deprecated at the end of the decade. 
 
-Later on, tessellation became the big topic, which is way to generate model details on the \gls{GPU}.
-The tessellation stage is a way achieve some of the things developers imagined was possible with geometry shaders, but was not feasible because of the performance overhead the shader had.
 
-\todo{The rest of the section could be incorporated in the section that follows.}
-The most recent trend is to lower the abstraction level of the \glspl{API} to enable more customization.
-This push can be seen in the most recent version of Direct3D; Direct3D 12, and the so called successor to OpenGL; Vulkan.
-The lower level abstract enables the developer to customize the \gls{GPU} usage to their needs.
-Removing this layer of abstraction also has the benefit of enabling multi-threaded \gls{GPU} calls, by eliminating the driver state.
-The drawback is that these lower levels of abstraction are more verbose, and thus increases the complexity of even the simple task of drawing a single triangle on screen.
+This also exemplifies how the two dominating \glspl{API}, OpenGL and Direct3D, were innovating at about the same rate.  
+For instance, the geometry and tessellation shaders were introduced in Direct3D in 2007 \cite{wikipedia????directx}, followed by geometry shaders in OpenGL 3.2 in 2009 and tesselation shaders in OpenGL 4.0 in 2010\cite{kronos????history}.
+At this time, we also see an innovation in \glspl{GPU} with the unified shader model \{ wikiUnifiedShaderModel}. 
+This meant that the work done by vertex, tessellation, geometry and fragment shaders began to be performed by the same units on the device.   
+Having now reached the modern day, we will discuss the current state of Direct3D and OpenGL in the following section. 
 
-For instance, Figure \ref{fig:vulkan_overview} is an overview of all the components that is required to render a similar triangle to the one rendered in Listing \ref{lst:opengl11}.
-The program was written by following a tutorial written by \citet{overvoorde2017vulkan}.
-The resulting program was approximatly 1000 lines of code.
 
-\fig{figures/VulkanTriangleOverview.jpg}{A diagram showing the component involved in displaying a triangle to the screen. Credits: reddit user pipsqueaker117. \todo[inline]{Lav bedre diagram når vi ved mere om vulkan.}}{vulkan_overview}{0.9}
+\subsection{State of Modern APIs}
+As has been the case previously, today the development of graphics \glspl{API} and the underlying driver libraries is done be separate companies, such as AMD or Nvidia.
+Often one company designs the \gls{API}, and hardware manufacturers can then decide to support the \gls{API} on their \glspl{GPU}.
+To add support for an \gls{API} on a specific \gls{GPU}, the manufacturer includes a library implementation as part of the device driver.
+Usually the driver must pass some tests and requirements, for the \gls{API} to be officially supported on the device.   
+In the case of modern Direct3D, the underlying driver is partially implemented by Microsoft in a closed common runtime, which communicates with the hardware vendors actual \gls{GPU} driver through the Direct3D \gls{DDI}\cite{dxDDI}.
+On the other hand, OpenGL is designed by several hardware and software vendors in cooperation, and requires that manufacturers write their own library from scratch. 
 
-The Vulkan implementation is far bigger than the OpenGL 1.0 version, the reason is because the Vulkan version gives more flexibility to the developer.
-One feature of Vulkan is that is gets rid of the statemachine from OpenGL, because when running multi-threaded applications it is error prone to use globally shared statemachines.
+
+A benefit of OpenGL is that manufacturers may provide extensions to the \gls{API} to give developers access to new hardware features \cite{openGLExtensions}. 
+Although this makes it more difficult to make code portable.
+With Direct3D, new hardware features are only provided to developers, when a new version of the \gls{API} is released by Microsoft. 
+One of the big differences between the two \glspl{API} is the extent of their platform support.
+Direct3D 11, being one of the latest releases from 2009, is supported on PCs running the Windows \gls{OS}, smartphones running the Windows Phone \gls{OS} as well as on Microsoft’s Xbox 360 and Xbox One.
+OpenGL, with OpenGL 4 being the latest major release from 2010, is considered cross platform.
+If a driver has been written, there is support for it on both Windows and Unix-based systems like macOS, iOS, Linux and Android. 
+
+
+Getting a clear picture of the market share of the two \glspl{API} is difficult.
+Though it seems that for many years Direct3D has had an upper hand.
+The people behind the popular Unity game engine collect system specifications on Unity users, as to help developers figure out what system configurations their games should support.
+Looking at the statistics from March 2017, only about 1\% of users use a non-Windows \gls{OS} \cite{unityStats}.
+Similar statistics are collected by Valve Corporation from users of their digital distribution platform, Steam.
+This shows a similar 3\% statistic for non-windows users\cite{steamStats}, implying that a large portion of gamers play on systems with some version of Direct3D enabled.
+
+
+This seems to indicate that Direct3D is a defacto-standard for graphics in games. 
+Exemplifying this, Wikipedia lists a total of \textasciitilde{200} games with OpenGL support \cite{wikiOpenGLGames}, while a total of \textasciitilde{500} games is listed with Direct3D 11 support \cite{wikiDX11Games}. 
+Note that these lists are incomplete, mostly limited to major titles, while the OpenGL list refers to games supporting any version of OpenGL.
+This opposed to the Direct3D list, which only contains games supporting Direct3D 11, which was released in 2009.
+However it must be mentioned there does not exist much data on the popularity between Direct3D and OpenGL, and it is therefore difficult to give precise numbers.
+   
+   
+Numbers like these have raised claims that manufacturers do not have the same incentive to maintain and optimize their OpenGL implementations.
+Rich Geldreich, a developer a Valve, describes how a vast landscape of drivers of varying quality, makes it difficult to ship AAA games using OpenGL \cite{openGLDriverQuality}.
+ 
+ 
+Despite this, many popular game engines, which are used to develop games, offer support for both Direct3D and OpenGL.
+This includes Valve’s Source engine 2 \cite{sourceEngine}, the Unity engine \cite{unityEngine} and Epic Game’s Unreal engine\cite{unrealEngine}.
+There is even Id Software’s Id Tech series of engines, which supports OpenGL exclusively in its recent iterations \cite{idTech}.
+Yet, even with this kind of support, OpenGL development has still not managed to catch on with game developers in the same way as Direct3D.  
+
+
+Not a lot of academic work has been published comparing OpenGL and Direct3D.
+A lot of \gls{API} benchmarks performed by consumers are available online, yet they are not always performed with hard scientific rigor, and give only uncertain glimpses of \gls{API} performance.
+Examples include a performance benchmark between OpenGL 3.2 and Direct3D 12, \glspl{API} released 6 years apart and with different underlying designs, with Direct3D 12 being much more low level than OpenGL\cite{geek3DBenchmark}.
+Another example is the author not disclosing the specifications of the benchmark hardware \cite{gTrucBenchmark}.
+Even Valve have released a comparison of Direct3D and OpenGL, without disclosing the version used for any of the \glspl{API} \cite{valveBenchmark}.
+In the end, this lack of rigor and transparency leaves behind a lot of data of questionable quality.
+
+
+\subsection{The Next Generation}
+In the previous subjection it was clear that Direct3D had an upper hand, when it came to the number of games using it.
+OpenGL’s cross-platform support does not matter to most gamer’s, as they mainly use Windows systems.
+Yet, this dynamic may change with the introduction of new \glspl{API}.
+
+
+Microsoft introduced the next version of Direct3D, Direct3D 12, alongside Windows 10 in 2015.
+As of now, this \gls{API} is exclusively supported on Windows 10 and Xbox One.
+According to a 2014 entry from the DirectX developer blog, this new version introduces a programming model that is “closer to the metal” and up to date with modern graphics hardware \cite{directXBlog}.
+Working at a lower level of abstraction, developers now must do a lot of work previously done by the graphics driver.
+Some applications are negatively affected by driver overhead, introduced by runtime error handling and memory allocation.
+By giving the developers more flexibility in return for lowering the level of abstraction, the hope is that they can squeeze more performance out of modern hardware.
+  
+  
+According to the same blog entry, Direct3D 12 promises to increase the performance of CPU-bound applications.
+An application is said to be \gls{CPU}-bound, if the \gls{GPU} completes tasks faster than it can receive draw calls from the \gls{CPU}.
+This leaves the \gls{GPU} idle in periods, where it would otherwise be able to render draw calls.
+This problem is alleviated by introducing multithreaded draw calls, taking advantage of the parallel architecture of modern \glspl{CPU}.
+Each draw call is defined in a command list, and each \gls{CPU} thread may submit command lists to a common command queue, which is shipped for execution on the \gls{GPU}.
+Parallel draw calls such as these are difficult to perform in Direct3D 11, as that \gls{API} has an implicit rendering state.
+The render state of a \gls{GPU} contains all the information that the device needs to transform a mesh into a shaded figure on screen.
+The state includes, amongst others, the compiled shaders, textures and allocated buffers.
+By keeping it implicit in Direct3D 11, the exact render state is only known when the draw call is made, meaning that the \gls{GPU} has no opportunity to pre-compute any commands in preparation.
+In Direct3D 12, the state is made explicit with a \glspl{PSO}, which contains all the state information.
+As each command list is associated with a \gls{PSO}, the \gls{GPU} may do pre-computations to gain performance.
+A downside is that each \gls{PSO} must be specified at compile time, meaning that the developer must have some foresight regarding the states being used.
+Yet, this allows for \gls{GPU} instructions and state to be set up at compile time, resulting in fast switches between states at runtime.  
+
+
+While Direct3D 12 builds on top of Direct3D 11, Khronos decided to create a whole new \gls{API} from scratch for very low-level graphics programming, Vulkan.
+This \gls{API} was released in early 2016 to compete with Direct3D 12.
+From the official overview released by Khronos at launch, Vulkan seems to follow the same design philosophy as Direct3D 12 \cite{vulkanPresentationFeb2016}.
+That is, making the developer responsible for more tasks in return for more flexibility.
+It too aims to lower driver overhead, allows for asynchronous draw calls, pushing computation to compile time, and making the render state explicit.
+
+
+Like OpenGL, Vulkan also focuses on cross-platform support.
+As of October 2017, Vulkan supports Android 7, Windows 7, 8 \& 10 as well as Ubuntu\cite{vulkanConformance}.
+The support for older versions of windows is important, as according to the steam survey referred to in the last subsection, only ~46\% of steam users have windows 10 installed out of the ~97\% that run Windows\cite{steamStats}.
+Especially Windows 7 remains popular at ~44\%. Yet, according to the survey ~84\% of users have modern \glspl{GPU} with Direct3D 12 support.
+This means that there is a sizeable portion of non-windows 10 users, who need to turn to Vulkan to get the best performance out of their modern \glspl{GPU} on newer games.
+Vulkan seems to be up for the task, already being supported on many \glspl{GPU}, including devices released by Intel, AMD and Nvidia \cite{vulkanConformance}.
+Additionally, companies like Valve have started backing Vulkan, because of its support for older windows versions along with Unix-based systems \cite{siggraph2015}.
+The amount of games supported by Direct3D 12 and Vulkan is also about the same according to Wikipedia listings, at about 30 games each \gls{API} \cite{wikiVulkanGames} \cite{wikiDX12Games}.
+
+
+Yet, the small amount of games in each case suggests a slow adoption of both \glspl{API}.
+This may be because the tools are at a very low-level of abstraction, and the performance that they grant is only needed for certain intensive games.
+At the same time Khronos continues development on OpenGL, releasing OpenGL 4.6 in July of 2017 \cite{wikiOpenGL}.
+They state that Vulkan is a tool for high-performance applications that risk being CPU-bound \cite{vulkanPresentationFeb2016}. 
+The fact that AAA games take several years to develop also seems to be a factor in the slow adoption of these new technologies.
+In the next section we will consider related works, especially publications trying to compare \glspl{API}. 
+
+
+\fig{figures/VulkanTriangleOverview.jpg}{A diagram showing the component involved in displaying a triangle to the screen. Credits: reddit user pipsqueaker117. \todo[inline]{Move to Vulkan section in next chapter.}}{vulkan_overview}{0.9}

@@ -36,20 +36,34 @@ As an example, if we need to move a triangle to the left, the same translation i
 While this simple example could also be processed by the \gls{CPU}, modern 3D models consist of thousands of vertices and require massive parallelism to be processed. 
 
 
-To program the rendering process on the \gls{GPU}, programmers use a combination of a graphic \gls{API} and a shader language.
-The \gls{API} allows the programmer to use a general-purpose programming language like C++ or Java to set the render state of the \gls{GPU} and place data into its VRAM.
+To program the rendering process on the \gls{GPU}, programmers use a graphics \gls{API}. 
+An \gls{API} is an interface, which developers use to access some underlying code library. 
+It allows developers to reuse code made by others, decreasing the amount of time spent on individual projects.
+In addition, by forcing developers to access the library through an interface, the risk of creating a large number of code dependencies in a project is lowered.
+These factors make \glspl{API} a common development tool today.\cite{apiEvaluation}
+In graphics, \glspl{API} and their associated libraries are categorized as being either low-level or high-level \cite{wikiGraphicsLibs}.
+The low-level \glspl{API} include Khrono’s OpenGL\cite{wikipedia????opengl} and Microsoft’s Direct3D\cite{wikipedia????directx}. Developers using these \glspl{API} are required to have an understanding of the inner-workings of the graphics pipeline, and how it is executed on the \gls{GPU}.
+High-level \glspl{API} abstract away hardware details, and allow graphics to be developed according to other programming models.
+Examples include the Aardvark platform \cite{aardvark}, where graphics can be programmed using a functional first approach in F\#, or OpenSceneGraph \cite{openSceneGraph}, which uses the concept of scene graphs as its underlying programming model. 
+
+
+This report focuses on low-level \glspl{API}, as they are often used in the development of AAA video games.
+In addition, the high-level \glspl{API} most often use the low-level \glspl{API} to do the heavy lifting.
+Therefore, developments at the lower level have wide spread consequences.
+
+
+Using an \gls{API} like OpenGL or Direct3D, the programmer can use a general-purpose programming language like C++ or Java to set the render state of the \gls{GPU} and place data into its video memory.
 This could, for instance, be the vertices of a model to be rendered. 
-The shader language is a domain-specific language, which allows for the writing of programs, shaders, to be executed on the \gls{GPU}.
+Yet, the code to be executed on the \gls{GPU} is not defined by the \gls{API} but in an associated shader language.  
+A shader language is a domain-specific language, which allows for the writing of programs, shaders, to be executed on the \gls{GPU}.
 These describe how to process the data shipped over from the host code. 
+The shader language associated with Direct3D is \gls{HLSL}, while the one associated with OpenGL's is called \gls{GLSL}.
+Both are heavily inspired by C.
 
 
-Two of the most popular graphics \glspl{API} today are Microsoft’s Direct3D\cite{wikipedia????directx} and Khrono’s OpenGL\cite{wikipedia????opengl}.
-Each has an associated C-like shading language, \gls{HLSL} for Direct3D and \gls{GLSL} for OpenGL.
-These \glspl{API} have come to dominate modern graphics programming. 
-
-
+Since the early 00's OpenGL and Direct3D have come to domminate graphics programming for games.
 Yet, in recent years it has been claimed that these \glspl{API} are not able to take advantage of modern hardware.
-Especially \gls{CPU}-boundness seemed to be a concern.
+Especially in cases where \gls{CPU}-boundness is a concern.
 This occurs when the \gls{GPU} processes instructions faster than they can be submitted by the \gls{CPU}.
 The \gls{GPU} thus wastes cycles, which could otherwise be used on rendering more impressive graphics. 
 In response to this, AMD developed the Mantle \gls{API} in 2013, allowing for graphics programming at a lower level of abstraction \cite{wikiMantle}. 
@@ -57,8 +71,8 @@ This was followed by Apple’s Metal \gls{API} in 2014 used exclusively for iOS 
 Yet, in 2015 Mantle was discontinued with the introduction of Microsoft’s Direct3D 12\cite{wikipedia????directx} and Khrono’s Vulkan\cite{wikiVulkan}, the latter deriving directly from Mantle. 
 
 
-While both Metal, Direct3D 12 and Vulkan would be interesting to delve deeper into, we constrict this report to the inspection of Direct3D 12 and Vulkan.
-This is because their direct predecessors, Direct3D 11 and OpenGL 4 have had a large impact, and we expect these \glspl{API} to have the same impact in the coming years.
+While both Metal, Direct3D 12 and Vulkan would be interesting to delve deeper into, we restrict this report to the inspection of Direct3D 12 and Vulkan.
+This is because their direct predecessors, Direct3D 11 and OpenGL 4 have had a large impact, and we expect these \glspl{API} may have a similar impact in the coming years.
 
 
 %In the early days of consumer electronics, computer visuals were mainly displayed as text.
