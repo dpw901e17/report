@@ -20,7 +20,7 @@ To give a concrete example of graphics programming at the time, we look at the C
 The rest of this subsection will be based on \citet{commodore1983commodore}.
 It was originally released on the home computer market in 1984 with a total of 64 kilo bytes of memory, using the MOS Technology VIC-II graphics chip.
 The chip supported a 320 by 200 pixels video resolution, 16 colors, and 16 kB memory for screen, character, and sprites.
-In this context, a sprite a small bitmapped image, which can be manipulated and drawn on top of another image.
+In this context, a sprite is a small bitmapped image, which can be manipulated and drawn on top of another image.
 
 However given this setup, storing a full screen bitmap with a color depth of 4 would take
 $$320\times 200\times 2 \text{ bits} = 128,000 \text{ bits} = 16,000 \text{ bytes of memory.}$$
@@ -79,7 +79,7 @@ This is a convention that has carried over into modern graphics programming.
 
 As can be seen, this type of graphics programming is very verbose, requiring the programmer to get close to the hardware.  
 Even with systems like the Commodore Amiga 4000 from 1992, which had 2 MB of built-in video memory and access to a much larger array of colors, this was a common way to program graphics \cite{wikiAmiga4000}.
-Early attempts at 3D games, such as Wolfenstein 3D from 1992, simulated 3D on the \gls{CPU}, while still writting bitmaps to video memory.
+Early attempts at 3D games, such as Wolfenstein 3D from 1992, simulated 3D on the \gls{CPU}, while still writting bitmaps to video memory \todo{Find a source for this}.
 
 
 %As graphics chips became more capable and memory became larger, the full color and detail of the screen became available to the developers.
@@ -119,13 +119,13 @@ Listing \ref{lst:opengl10} is an example of an OpenGL 1.0 program using the imme
 Immediate mode means that \gls{API} calls directly cause graphics objects to be rendered on screen.
 
 
-OpenGL functioned around the idea of a state machine, where \gls{API} calls modified some underlying graphics state.
+OpenGL functioned around the idea of a state machine, where \gls{API} calls modified some underlying graphics stat.
 This is very clear in listing \ref{lst:opengl10}.
 The init function would be called before any draw calls are made, and it is used to set the color to clear the framebuffer with. 
 Draw can then be called each frame to draw a triangle. 
 This involves first clearing the screen with the assigned color, creating a blank canvas. 
 Afterwards, the video card is made ready to receive vertices to draw a triangle. 
-Finally, these vertices are passed to \gls{API} along with a color attribute, the writing processes is closed, and the vertices are flushed to video memory to be drawn.
+Finally, these vertices are passed to \gls{API} along with a color attribute, the writing processes is closed, and the vertices are flushed to video memory to be drawn.\cite{segal1994opengl}
 
 
 \begin{lstlisting}[language={[ANSI]C}, caption={OpenGL 1.0 program written in C, that renders a triangle using immediate mode, with different colors for each point and linear interpolation between the colors. It is inspired by code examples from \citet{segal1994opengl}}, label={lst:opengl10}]
