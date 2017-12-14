@@ -1,5 +1,8 @@
 \chapter{Benchmark Results}\label{ch:test_results}
-In this chapter we present the results of benchmarking our two implementations.
+\begin{chaptermeta}
+In this chapter, we present the results of benchmarking our two implementations.
+\end{chaptermeta}
+
 To collect data, we have written our own test harness, which combines the data generated from several different sources.
 Cref{app:HW} discloses exactly where our data comes from.
 
@@ -11,11 +14,11 @@ Most likely because each \gls{GPU} vendor defines their own data interfaces for 
 This is a problem, as we wish to run benchmarks on \glspl{GPU} from different vendors.
 
 
-Luckily the third-party program Open Hardware Monitor can be used to act as a wrapper around the different interfaces.
+Luckily, the third-party program Open Hardware Monitor can be used to act as a wrapper around the different interfaces.
 Yet, it seems that it is only able to gather \gls{GPU} data from AMD and NVIDIA \glspl{GPU}, not the integrated cards provided by intel.
-However, this not a huge problem, as dedicated graphics cards like AMD and NVIDIA are usually the ones used for AAA gaming.
+However, this not a huge problem, as dedicated graphics cards like AMD and NVIDIA are usually the ones used for AAA gaming. \todo{Ikke enig, Intel kan give mere god data - Claus}
 While Open Hardware Monitor can gather both \gls{CPU} and \gls{GPU} data relating to processor load, clock rate, memory allocation etc. it cannot monitor individual processes.
-Instead it totals up the data over every process running on the devices. To get around this, we run as few background processes as possible during tests.
+Instead, it totals up the data over every process running on the devices. To get around this, we run as few background processes as possible during tests.
 In addition, we also record background data and subtract it from runtime data as to isolate the impact of our applications. 
 
 
@@ -24,11 +27,12 @@ The data presented in this chapter is based on averages of the bound variables, 
 As to minimize the impact of the benchmark applications themselves on the results, we run them separately on the application at different times.
 
 
-In addition to using performance monitor and Open Hardware Monitor, we also use the build in statistics functions of both \glspl{API} for extracting pipeline data.
+In addition to using performance monitor and Open Hardware Monitor, we also use the build in statistics functions of both \glspl{API} for extracting pipeline data. \todo{Hvordan gør vi dette?}
 This gets us static data about the amount of points drawn, number of shader invocations per frame and so on.
 
 
-In the sections below, we will present the data generated from our different benchmark tests. The hardware configurations of the computers used in the tests are summarized in \cref{app:HW}. For now we have only run the test on the Direct3D 12 application on one configuration.
+In the sections below, we will present the data generated from our different benchmark tests. The hardware configurations of the computers used in the tests are summarized in \cref{app:HW}. 
+\todo[inline]{For now we have only run the test on the Direct3D 12 application on one configuration.}
 
 \section{Increasing the load}
 In this section we present data on how our two implementations handle an increasing number of objects to be rendered on different hardware configurations. 
@@ -47,7 +51,8 @@ The data shows a negatively exponential growth in the number of cubes the applic
 \section{Multithreading}
 In this section we show performance benchmarks when rendering our maximum load from the previous section, 1728 cubes, using an increasing amount of threads for submitting drawing commands.
 Note that we always use at least 2 threads in our application, one for writing the first and last command list of the command queue, and one for submitting the actual draw commands.
-It is for this latter task that the amount of threads used is increased. Multithreading is implemented as a thread pool, meaning that we do not create and destroy threads at each frame.
+It is for this latter task that the amount of threads used is increased. 
+Multithreading is implemented as a thread pool, meaning that we do not create and destroy threads at each frame.
 
 
 \Cref{fig:threadGraph} shows the effect on \gls{FPS} as we increase the number of threads.
