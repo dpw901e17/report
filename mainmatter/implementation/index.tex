@@ -1,6 +1,59 @@
 \chapter{Implementation}\label{ch:implementation}
-\begin{chaptermeta}
-Having covered the technical details of both Direct3D and Vulkan, we wish to perform our own tests of the \glspl{API}.
-In this chapter we describe the applications we have developed for the purposed of testing.
-Both how and why they were implemented. 
-\end{chaptermeta}
+Having now discussed the technical details of the \glspl{API}, this chapter will describe how Direct3D and Vulkan were used to implement the same application. 
+By developing an application, we wish to get familiar with a considerable part of both \glspl{API}, while also testing some of the claims made by their developers.
+
+
+It was decided that the application should be able to render an arbitrary number of textured cubes in 3D space.
+Cubes were chosen, as they are the simplest model to define in 3D space. \todo{Er et punkt, en linje, en trekant og en tetraeder ikke simplere end en kasse?}
+Alternatively, we could have decided to render a more complex model.
+We chose to go with cubes, as this allowed us to keep our rendering system simpler. \todo{Virker som en gentagelse}
+Using a complex model, we would have to write a system to read vertex data from a model file. \todo{vi kunne have brugt et bibliotek til at gøre det for os}
+In addition, the process of rendering a cube versus a complex model are not that different as to make the additional effort worthwhile. 
+
+
+We have decided that \gls{GPU} commands should be constructed using multithreading.
+Both \glspl{API} promise that they can be used in the case of \gls{CPU}-bound applications, and we would like to test if this is the case. \todo{Begge APIer lover også at have lavere overhead i driverne som også skulle hjælpe CPU bound programmer}
+
+As both \glspl{API} expose their render state, rather than keeping it implicit, we want to test how to switch between predefined render pipelines during runtime. \todo{Gør vi dette?}
+We will consider how easy it is to work with pipeline objects, and how switching between them affects performance.
+As shaders are defined for each pipeline, this will be done by using different shaders for cubes in the same scene.
+
+ 
+For the application we keep the shaders rather simple.
+This is done as to focus on the use of the \glspl{API} rather than the shader languages.
+
+
+We decided to write the application in C++, as both Vulkan and Direct3D expose \gls{API} headers for use with C and C++.
+While bindings exist for unmanaged languages like C\# and Java, we choose to disregard them as they add a layer of indirection, which negatively affects performance.
+C++ was chosen over C because of our own familiarity with the language. 
+
+Both implementations render their frames to a Win32 window.
+We could have used a library like GLFW to create more portable code for handeling windows \cite{GLFW}. \todo{Skal vi citere værktøjer}
+Yet\todo{kan ikke lide brugen af yet - Claus}, to have more control \todo{hvordan giver det os mere kontrol. Vi valgte det udfra at programmerne skal være samlignlige og Direct3D ikke er understøttet på andet end Windows platformen. Derfor er ekstra lag af indirekthed ikke nødvendig for at skabe platform uafhængighed} over how our windows are handled, we decided to use Win32 windows directly.  
+
+\section{Direct3D 12}
+Our Direct3D 12 implementation can be found at \cite{DX12Git}.
+It builds on top of an application, we wrote following parts of \cite{DX12Tutorial}.
+
+For the implementation we have used the C++ interface provided by the d3d12.h header, with some helper functionality provided by the d3dx12.h header.
+Matrix and vector operations were provided by the DirectXMath library. 
+Shaders were written in \gls{HLSL}, and compilation methods were exposed by the D3Dcompiler.h header.
+Note that all headers are used as an interface to libraries in the Windows SDK. 
+The only non-windows library used was stb\_image for loading textures from files\cite{StbGit}.
+
+Different from the Vulkan implementation, we multiply the model, view and projection matrices together in the host code for each cube before sending them to the vertex shader. \todo{kommer lidt pluslig, og hvad er fordele og ulemper ved dette?}   
+
+
+\section{Vulkan}
+Our Vulkan implementation can be found at \cite{VulkanGit}.
+It builds on top of an application we wrote following some of \citet{DX12Tutorial}.
+
+For the implementation, we have used the Lunar SDK \cite{LunarSDK}. 
+It manages drivers and exposes both a C interface for Vulkan through the vulkan.h header and a C++ interface through the vulkan.hpp header. 
+It also provides compiler functionality for compiling \gls{GLSL} code into the SPIR-V code, which is used by Vulkan.
+In addition, it allows us to set up validation layers for runtime debugging. 
+Matrix and vector operations are provided by the GLM library \cite{GLM}. 
+As in the Direct3D 12 implementation, textures are loaded with the stb\_image library. 
+
+Different from the Direct3D 12 implementation the world-view-projection matrix is computed in the shaders rather than the host code.
+This means that one view and one projection matrix are loaded onto the \gls{GPU} in addition to one model matrix for each cube to be rendered.

@@ -1,0 +1,65 @@
+\chapter{Benchmark Results}\label{ch:test_results}
+\begin{chaptermeta}
+In this chapter, we present the results of benchmarking our two implementations.
+\end{chaptermeta}
+
+To collect data, we have written our own test harness, which combines the data generated from several different sources.
+Cref{app:HW} discloses exactly where our data comes from.
+
+
+Microsoft’s performance monitor is used to gather data specific to the executing process.
+This includes the amount of memory allocated to the process, the percentage of total \gls{CPU} time it uses etc.
+However, this tool does not grant us any \gls{GPU} data.
+Most likely because each \gls{GPU} vendor defines their own data interfaces for their devices.
+This is a problem, as we wish to run benchmarks on \glspl{GPU} from different vendors.
+
+
+Luckily, the third-party program Open Hardware Monitor can be used to act as a wrapper around the different interfaces.
+Yet, it seems that it is only able to gather \gls{GPU} data from AMD and NVIDIA \glspl{GPU}, not the integrated cards provided by intel.
+However, this not a huge problem, as dedicated graphics cards like AMD and NVIDIA are usually the ones used for AAA gaming. \todo{Ikke enig, Intel kan give mere god data - Claus}
+While Open Hardware Monitor can gather both \gls{CPU} and \gls{GPU} data relating to processor load, clock rate, memory allocation etc. it cannot monitor individual processes.
+Instead, it totals up the data over every process running on the devices. To get around this, we run as few background processes as possible during tests.
+In addition, we also record background data and subtract it from runtime data as to isolate the impact of our applications. 
+
+
+As we are only rendering a static scene, collected data such as processor load, size of memory allocation etc. will only fluctuate slightly as the program runs.
+The data presented in this chapter is based on averages of the bound variables, taken from recordings where we let the program run for one minute and recording a data point each second. 
+As to minimize the impact of the benchmark applications themselves on the results, we run them separately on the application at different times.
+
+
+In addition to using performance monitor and Open Hardware Monitor, we also use the build in statistics functions of both \glspl{API} for extracting pipeline data. \todo{Hvordan gør vi dette?}
+This gets us static data about the amount of points drawn, number of shader invocations per frame and so on.
+
+
+In the sections below, we will present the data generated from our different benchmark tests. The hardware configurations of the computers used in the tests are summarized in \cref{app:HW}. 
+\todo[inline]{For now we have only run the test on the Direct3D 12 application on one configuration.}
+
+\section{Increasing the load}
+In this section we present data on how our two implementations handle an increasing number of objects to be rendered on different hardware configurations. 
+To make this test easier, we have written a simple scene system that is able to render a 3-dimensional grid out of cubes.
+By altering the dimensions of this grid, we can increase the number of models that need to be rendered on screen. We also make sure to pull the camera back, so the entire grid is presented on screen and no triangles are culled. 
+
+
+\Cref{fig:cubeGraph} shows a graph of how the number of cubes affect \gls{FPS} for the Direct3D 12 application.
+This is good measure for the efficiency of a graphics program, as \gls{FPS} is positively proportional with the time it takes to render each image. 
+Only two threads were used for submitting commands to the command queue.
+The data shows a negatively exponential growth in the number of cubes the application needs to render. 
+ 
+\fig{figures/cubeGraph.pdf}{Decrease in \gls{FPS} of the Direct3D 12 application as the number of cubes to be rendered is increased.}{cubeGraph}{1}
+ 
+
+\section{Multithreading}
+In this section we show performance benchmarks when rendering our maximum load from the previous section, 1728 cubes, using an increasing amount of threads for submitting drawing commands.
+Note that we always use at least 2 threads in our application, one for writing the first and last command list of the command queue, and one for submitting the actual draw commands.
+It is for this latter task that the amount of threads used is increased. 
+Multithreading is implemented as a thread pool, meaning that we do not create and destroy threads at each frame.
+
+
+\Cref{fig:threadGraph} shows the effect on \gls{FPS} as we increase the number of threads.
+There is a positive linear increase of about 3 \gls{FPS} per added thread until we reach running six threads in total.
+At this point the \gls{FPS} plateaus and later begins to decrease.
+This makes sense as the hardware configuration used only has 8 logical cores, with some of them already being used to run background processes and the \gls{OS} itself.
+After the plateau it seems that the overhead of creating and scheduling the threads negatively impacts the speed at which images are rendered.
+
+\fig{figures/threadGraph.pdf}{Increase in \gls{FPS} of the Direct3D 12 application as the number of threads is increased.}{threadGraph}{1}
+
