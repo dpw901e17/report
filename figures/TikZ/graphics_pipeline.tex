@@ -1,12 +1,10 @@
 \begin{tikzpicture}[
     auto, node distance = 2em,
     every node/.style={font=\footnotesize, align=center},
-    box/.style = {draw, text width=2.3cm, minimum height=3em, drop shadow},
     fixed stage/.style={box, fill=orange!10},
     stage/.style={box, rounded corners=1em, fill=blue!10},
     optional stage/.style={box, fill=blue!5},
-    memory/.style={box, fill=green!10},
-    arrow/.style={draw, ->, thick, >=stealth, shorten >=1pt}]
+    memory/.style={box, fill=green!10}]
     
   \node[fixed stage](ia){Input\\Assembler};
   \node[stage, below=of ia](vs){Vertex Shader};

@@ -1,0 +1,61 @@
+\begin{tikzpicture}[
+    node distance=10mm and 2mm,
+    application/.style = {box, fill=yellow!30, text width=40mm},
+    command/.style = {box, fill=green!30, text width=, minimum height=0pt},
+    buffer/.style = {box, fill=orange!30, text width=15mm, minimum height=46mm},
+    queue/.style = {box, fill=black!30, minimum height=26mm},
+    device/.style = {box, text width=40mm},
+]
+    \node[application](a){Application};
+    
+    \node[below left=10mm and -13mm of a](command_set_left){};
+    \node[command, left=0mm of command_set_left] (c5) {C};
+    \node[command, right=0mm of command_set_left] (c6) {C};
+    \node[command, below=2mm of c5] (c7) {C};
+    \node[command, below=2mm of c6] (c8) {C};
+    \node[command, below=2mm of c7] (c9) {C};
+    
+    \node[below right=10mm and -13mm of a](command_set_right){};
+    \node[command, left=0mm of command_set_right] (c1) {C};
+    \node[command, right=0mm of command_set_right] (c2) {C};
+    \node[command, below=2mm of c1] (c3) {C};
+    \node[command, below=2mm of c2] (c4) {C};
+    
+    \node[fit=(c9)(c2)](command_set_area){};
+    
+    \node[buffer, below=25mm of command_set_left](b1){};
+    \node[below] at(b1.north) (b1l) {$Buffer_1$};
+    \node[command, below=2mm of b1l] (c10) {C};
+    \node[command, below=2mm of c10] (c11) {C};
+    \node[command, below=2mm of c11] (c12) {C};
+    \node[command, below=2mm of c12] (c13) {C};
+    \node[command, below=2mm of c13] (c14) {C};
+    
+    \node[buffer, below=25mm of command_set_right] (b2){};
+    \node[below] at (b2.north) (b2l) {$Buffer_2$};
+    \node[command, below=2mm of b2l] (c15) {C};
+    \node[command, below=2mm of c15] (c16) {C};
+    \node[command, below=2mm of c16] (c17) {C};
+    \node[command, below=2mm of c17] (c18) {C};
+    
+    \node[fit=(b1)(b2)](buffer_area){};
+    
+    \node[queue, below=of buffer_area] (q2){};
+    \node[below] at (q2.north) {$Queue_2$};
+    
+    \node[queue, left=of q2] (q1){};
+    \node[below] at (q1.north) (q1l) {$Queue_1$};
+    \node[buffer, minimum height=0, below=2mm of q1l] (b1s) {$Buffer_1$};
+    \node[buffer, minimum height=0, below=2mm of b1s] (b2s) {$Buffer_2$};
+    
+    \node[queue, right=of q2] (q3){};
+    \node[below] at (q3.north) {$Queue_3$};
+    \node[device, below=of q2] (d) {Device};
+    
+    \path[arrow](a)-- +(0, -13mm);
+    \path[arrow]($(command_set_left) + (0, -20mm)$) -- (b1);
+    \path[arrow]($(command_set_right) + (0, -20mm)$) -- (b2);
+    \path[arrow](b1) -- +(0, -29mm) -| (q1);
+    \path[arrow](b2) -- +(0, -29mm) -| (q1);
+    \path[arrow](q1) -- +(0, -18mm) -| (d);
+\end{tikzpicture}
