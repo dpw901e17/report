@@ -61,3 +61,21 @@ The framebuffer can then later be swapped for the image displayed on the screen 
 Other exceptions include Vulkan, where the pipeline is entirely configurable.
 Vulkan does not provide a pipeline, so the developer is free to design every aspect of how the rendering is performed. \todo{Måske flytte dette til sektionen om Vulkan?}
 \todo{Et tillæg til sektionen kunne være at vise hvordan data flyder igennem stages, og visuelt vise hvordan det ændres. Fra punkter til fuzzy bunny!} 
+
+\subsection{Geometry and Tessellation Shader}
+The geometry shader is placed between the vertex and fragment shader and operated on primitives; points, lines, or triangles, and returned zero or more primitives for rasterizing.
+Because the geometry shader could see multiple verticies at once, developers were excited for the oppotunities this would give \cite{kronos????geometry, microsoft????geometry}.
+A good example of using the geometry shader is particle effects, where the specifics of the four corners of the mesh is less important for the developer than the position of the particle.
+So instead, the developer can send the points of the particles to the \gls{GPU}, and have the geometry shader generate the corners in parallel.
+One big issue with geometry shaders is that their performance overhead is so large that naïvely using it would often hurt performance rather than improving it.
+
+The next change to the rendering pipeline was the introduction of a tessellation stage.
+This stage involves two shaders; a hull shader and a domain shader.
+It occurs after the vertex shader, but before the geometry shader.
+The tessellation stage generates more details to the model by adding even more vertices.
+Where the vertices are placed and how many there are, is handled by the shaders.
+
+Later on, tessellation became the big topic, which is way to generate model details on the \gls{GPU}.
+The tessellation stage is a way achieve some of the things developers imagined was possible with geometry shaders, but was not feasible because of the performance overhead the shader had.
+
+After the year 2000 \glspl{GPU} began turning into massively parallel architectures, while Direct3D and OpenGL dominated the \gls{API} market. 

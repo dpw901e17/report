@@ -1,16 +1,15 @@
 \section{Problem Statement}\label{sec:problem_statement}
-Modern graphics \glspl{API}, Vulkan \& Direct3D 12, are becoming more low-level relative to their predecessors. 
-As of yet no clear advantage of picking one of the \glspl{API} over another has appeared.
-While upgrading to one of these \glspl{API} is expected to yield better potential performance, there is a risk that this will happen at the expense of programmability. 
-To look into this, we endeavor to compare the two \glspl{API} on both performance as well as programmability. 
-This comparison should give us an insight into modern \glspl{API} as well as lay the groundwork for a new API, which builds on top of either Direct3D 12 or Vulkan. \todo{Skal vi vente med vores egen API til noget future work?}
+Modern graphics \glspl{API}, Vulkan \& Direct3D 12, are said to take better advantage of modern hardware.
+Both promise that programmers upgrading to them will be able to increase the performance of their applications. 
+However, as of now it is not clear which yields the best performance.
+At the same time, both are lowering their level of abstraction as to get closer to hardware, but with this there is a risk that performance will come at the expense of programmability. 
+To investigate, we endeavor to compare the two \glspl{API} on both performance as well as programmability. 
 This is formalized in the following problem statement:
-\\ 
+\\  \\
 \textit{How does Direct3D 12 and Vulkan compare on performance and programmability? How are these \glspl{API} similar, and how do they differ from each other?  And are they succeeding in the purpose?}
-\\ 
+\\  \\
 The rest of this report will try to answer these questions, and they will be brought up again at the conclusion. 
 In the following chapter, we describe some of the background, which is needed to understand the rest of the report.
-There will also be a discussion of related work, placing our efforts in the context of earlier undertakings.
 
 % How does Direct3D 12 and Vulkan compare on Performance and Programmability?
 % How does Direct3D 12 and Vulkan try to improve on graphics processing, and are they succeeding?
