@@ -3,6 +3,7 @@
 The Vulkan \gls{API} was build when members of the Khronos group expressed a desire for a next generation cross platform graphics \gls{API}.
 The new \gls{API} should be explicit, streamlined, portable, and extensible.
 This section describes how Vulkan tries to reach these goals and where it diverges from other graphics \glspl{API}.
+\todo{Didn't they also want a better API for mobile phones? (whenever they show off the power of Vulkan, it was on phones during the early days of Vulkan}
 The information contained in this Section is based on the official specifications \cite{khronos2017vulkan} and several articles, guides, and books \cite{singh2016learning, blackert_2016_evaluation, overvoorde2017vulkan}.
 \end{sectionmeta}
 
@@ -29,6 +30,7 @@ But with no way of knowing when the application is done submitting commands, Ope
 Because the details of when the buffers are submitted to the queue can differ between drivers, this results in drops in performance depending on the hardware, and with the amount of different hardware on the market today, it is not feasible that developers test all configurations.
 
 Vulkan avoid this by being explicit when it comes to when the commands are submitted to the queue.
+\todo{"avoid" did you mean "avoids"? && "when it comes to when the commands" replace one 1 "when" please }
 This gives the programmer the ability to determine and control when commands are sent to be executed.
 This was one of the reasonings behind having a more explicit \gls{API}.
 
@@ -45,7 +47,11 @@ The purpose of these is to be used in the future so that \texttt{pNext} can poin
 Because Vulkan is still in version 1.0 these features have limited use, but in the future, this should enable better support for extending the \gls{API}.
 
 Whether Vulkan can run depends on the hardware in the computer and the operating system.
+\todo{Perhaps we could add which of the oldest generation GPU from Nvidia and AMD cards supports Vulkan.}
 Currently, Android, Linux, and Microsoft Windows have support for Vulkan.
 This leaves out iOS and macOS by Apple who, as of writing this, has not announced any plans for supporting Vulkan.
 To expand on the portability Khronos recently launched the Vulkan Portability Initiative \cite{trevett2017khronos}}.
+\todo{I would rather use the word annouced rather than launched}
 The idea is to define a subset of Vulkan which can be ported to Vulkan, Metal, and Direct3D 12, making Vulkan available on most modern devices.
+
+\todo{alot more general than DX12, but easier to follow. Not sure if this is good enough or if we need to go more in depth like with DX12}
