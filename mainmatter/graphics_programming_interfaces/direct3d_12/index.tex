@@ -1,4 +1,180 @@
 \section{Direct3D 12}\label{sec:direct3d_12}
-\begin{sectionmeta}
-\todo[inline]{Write metatext}
-\end{sectionmeta}
+This section of the report will explain the architectural design of Direct3D12, not everything will be covered but all the parts that are relevant to this project will be. The section is based on the official documentation from Microsoft \cite{D3D12MicrosoftDocumentation}
+
+
+Direct3D12 is the newest iteration of Direct3D, it provides an API for developers which enables them to utilize \glspl{GPU} for their applications, however it is restricted to only function on computers using Windows 10 as their operating system.
+
+
+The D3D12 architectural build up:
+
+\todo{architecture picture here?}
+
+The Device class is a virtual adapter which represents the physical GPU component. 
+Firstly, it is needed in order to use the \gls{GPU}, making it possible to send and receive data from it.
+Additionally, the Device class is needed to create the following components: 
+\begin{itemize}
+\item Pipeline State Objects
+\item Command Lists
+\item Root Signatures 
+\item Command Allocators 
+\item Command Queues 
+\item Fences 
+\item Resources 
+\item Descriptors 
+\item Descriptor Heaps
+\end{itemize}
+
+All of which will be further elaborated upon. 
+
+The \gls{PSO} is what holds and binds all the information an application needs to know in order to render something, in order to create a pipeline state object a D3D12\_GRAPHICS\_PIPELINE\_STATE\_DESC structure must be filled out.
+
+
+A D3D12\_GRAPHICS\_PIPELINE\_STATE\_DESC structure consists of the following values:
+\begin{itemize}
+\item Shader bytecode:
+After the source shader code for a given shader has been compiled.
+The shader byte code is set here.
+In the case of this project it will only be the Vertex and Pixel shader code.
+However the bytecode of other shaders (which we do not use) would also be set here.
+
+\item Stream output buffer: 
+Provides data a geometry shader needs in a buffer.
+This will not be elaborated upon as the functionality it provides is not used for this project and is therefore out of focus scope.
+
+\item Blend state: ...
+
+\item Rasterizer state: 
+Determines how to render 3D data like position, color and texture to a 2D surface.
+This process requires to map the 3D data into 2D vertices using world, view and projection transforms to calculate the final vertex positions.
+In order to reduce processing, only the parts that are visible to the view are processed and the rest gets culled away.
+
+\item Depth/stencil state:
+It is needed to set as without depth/stencil testing, objects will be shown in the order they have been rendered in rather than on a perspective base.
+This means that a object that is supposed to be behind another object, could overwrite the object that is in front of it.
+
+\item Input layout:
+Describes how the input assembler should read vertices from the vertex buffer.
+This is done by specifying how large each data type is, and from which index number it should start reading from.
+
+\item Primitive topology:
+Describes how the vertices should be represented when the \gls{PSO} gets input data.
+They can be represented and set as Point List, Line List, Line Strip, Triangle List, and Triangle Strip. \todo{add figure to explain difference?}
+
+\item Number of render targets: The developer can choose to implement double or triple buffering.
+
+\item RootSignature: ...
+
+\item Render target view formats: ...
+
+\item Depth stencil view format: ...
+
+\item Sample description: ...
+\end{itemize}
+
+A D3D12 application will usually have many \glspl{PSO}, for each different combinations of shaders, blend states, rasterizer states, topology types or render targets a new \gls{PSO} must be made.
+
+
+\glspl{PSO} are the reason for why D3D12 is more efficient than its previous iterations. During initialization several \gls{PSO} can be generated.
+Thus making it easy to change between the \glspl{PSO} during runtime, since the only thing that needs to be changed is a pointer for the \gls{GPU} in order to use a different \gls{PSO}. 
+
+Root signatures define the resources (data) that shaders will access (shaders can only get data from resources, or root signatures), this could for example be texture data that will go through a shader and then finally be applied to a model. 
+
+
+A Root signature consists of the following variables:
+\begin{itemize}
+\item Root constants:
+Consists of 32-bit values, this can be used to store data for the shader to use which is expected to change frequently, because the abstraction of resources is removed when using root constants it is very fast to access the data it hold.
+\item Root descriptors: ...
+\item Descriptor tables: ... 
+\end{itemize}
+
+In order to explain what Descriptor tables are, some other terms have to be introduced first.
+
+
+Resources: contain the data needed to build scenes.
+They are chunks of memory containing geometry, textures and shader data, it is from here the graphics pipeline can access them.
+They are stored on the \gls{GPU}, but created from the \gls{CPU} side, so it all needs to be transferred to VRAM via a memcpy function after initialization.
+
+Descriptors: They are structures which are used to tell shaders where to find the data they need in the memory and how it should be interpreted.
+Descriptors can only be stored in descriptor tables.
+A descriptor has a pointer to what it points to in memory, how many bytes it has in size, and what format it is.
+Descriptors are placed in Descriptor Heaps, therefore in order to access them, it has to be done through a Descriptor Table.
+
+
+Descriptor heaps:
+They contain descriptors.
+Descriptor Heaps can be set to be shader visible or non-shader visible in order to restrict data that a shader does not need to know about. 
+
+
+Descriptor Tables:
+Are arrays of descriptors in a Descriptor Heap.
+It contains a offset and a length into a descriptor heap.
+Thus giving access to a range of descriptors a shader can use, for each descriptor table available to the \gls{PSO}.
+
+Command lists are used to allocate commands to be executed on the \gls{GPU}. Commands may do the following:
+\begin{itemize}
+\item setting pipeline state
+\item setting resources
+\item transitioning resource states (resource barriers)
+\item setting vertex/index buffer
+\item rendering
+\item clearing render target
+\item setting render target view
+\item executing bundles (group of commands)
+\end{itemize}
+
+Command lists are associated with command allocators.
+They store commands from the command lists (at the gls{CPU} side) over to the \gls{GPU}.
+After a command list has been created it is immediately set in the recording state, meaning that currently it is possible to add commands to it.
+Once the commands the developer desires the command list to contain, recording has to end by calling the Close function. 
+Commands lists can at later stages be then reused by calling a Reset function and fill out the Command list with new commands. 
+
+
+However Command Lists are only used to create commands and not for execution.
+In order to execution a set of commands in a command list a Command Allocator must be specified and allocated at the GPU.
+Once that is done, the contents of a Command List may be sent over to the GPU via the Command Allocator and then executed once put into the command queue.
+\todo{unsure if I understood this right.}
+
+Additionally, commands in a command allocator may be bundled together into a bundle, it will execute all of the commands in the bundle when telling the GPU to execute the bundle. This can be used in order to make it easier to reuse commands.
+
+
+Command queue: this is where commands can be executed. Once the GPU has received its commands from the command lists or bundles, they will be in the command queue and will execute once the GPU is done with whatever it is currently working on. 
+
+
+Fences, as soon as a command queue is send to start execution on the GPU we can immediately start working on the CPU again.
+However we need to make sure that we do not overwrite anything the GPU is currently using, therefor fences are put into place.
+They let developers know where the GPU is currently at its execution of the command queue, this is done by setting up FenceEvents that get called depending on where the developer wants the GPU to be in its execution, once it reaches it, the GPU will signal to that event. \todo{Why is this useful?}
+
+
+Multithreading:
+Direct3D 12 was designed with multi-threading in mind, the way it works in D3D12 is that for a given number of models that are to be rendered, threads can be set to work for a certain amount of models in parallel.
+This means that each thread gets its own Pipeline StateObject (which has its own shaders, root signatures, command lists etc.) and based from that knows how it should render the models it has been assigned to work with. 
+It must be noted that command lists and command allocators are not free-threaded and is the reason for why each thread gets its own \gls{PSO}.
+The command queue however is free-threaded and therefore one is enough, each thread will submit their commands to the one command queue.
+
+
+Resource Barriers: 
+Are used to change the state of a resource, implemented in a multi-threaded friendly way. Resource barriers are used to synchronize data between threads.
+There are three types of resource barriers in D3D12:
+
+\begin{itemize}
+\item Transition Barrier: This is used when a developer wants to change the state of a resource to a new state. 
+\item Aliasing Barrier: …
+\item Unordered Access View Barrier:  This is used to make sure that all Read/Write operation on the GPU are finished by the time this barrier is called. This can be used ensure that a GPU has finished a particular task before using its results.
+\end{itemize}
+
+DirectX Graphics Infrastructure is a separate API that is used alongside with Direct3D applications, it is developed by Microsoft.
+The reason for this separation is because Direct2D and 3D share some common needs, and instead of duplicating code into both APIs it is a separate API.
+DXGI provides functionalities like SwapChain(changing between view buffers), Display Adapter(finding the physical GPU in the system), system information(Can be used to detect what version of D3 should be used), etc.
+
+
+\todo{SwapChain works the same for both Vulkan and D3D12, and its not even unique to these APIs but also present in OpenGL and older D3D versions. Should probably move this.}
+SwapChain:
+In order to avoid flickering in frames, it is best to draw entire frames to a backbuffer, and once finished rendering it, present it to the viewer by setting said backbuffer to a front buffer.
+The previous front buffer will then be used as a backbuffer until rendering on it has been completed.
+This is an example of how double buffering works, however nowadays triple buffering is often utilized instead.
+The difference between the two buffering methods is that there is another buffer that can be used to draw and display with, the 3rd buffer is being drawn to if the \gls{GPU} is done drawing the 2nd buffer before the monitor needs to change the 1st buffer with the 2nd buffer.
+Thus the \gls{GPU} does not waste time on waiting for the \gls{CPU} since it does not have to wait for the front buffer to be freed.
+
+\todo{Buffering figure? Visual explanation for this would seem ideal.}
+

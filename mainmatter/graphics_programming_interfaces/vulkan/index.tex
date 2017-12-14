@@ -1,4 +1,51 @@
 \section{Vulkan}\label{sec:vulkan}
 \begin{sectionmeta}
-\todo[inline]{Write metatext}
+The Vulkan \gls{API} was build when members of the Khronos group expressed a desire for a next generation cross platform graphics \gls{API}.
+The new \gls{API} should be explicit, streamlined, portable, and extensible.
+This section describes how Vulkan tries to reach these goals and where it diverges from other graphics \glspl{API}.
+The information contained in this Section is based on the official specifications \cite{khronos2017vulkan} and several articles, guides, and books \cite{singh2016learning, blackert_2016_evaluation, overvoorde2017vulkan}.
 \end{sectionmeta}
+
+Unlike Direct3D 12, Vulkan has a separation between the physical devices and logical devices. 
+A physical device usually refers to a \gls{GPU}, and its supporting components.
+A logical device is a specialized representation of the physical device used by the application.
+It tells Vulkan what features of the \gls{GPU} that the application is going to use, and thus should be enabled.
+It also tells the Vulkan which queues are going to be used.
+For instance, the physical device might contain mutiple queues with different responsibilities.
+Some common examples of queues on the physical device the graphics queue, compute queue, and transfer queue.
+
+One of the features of both Vulkan and Direct3D 12 is multithreaded scalability.
+Vulkan achieves this by having the different threads record different commands into command buffers.
+The command buffers are then submitted to a queue where the device then reads and executes commands from the queue.
+A visual representation of this process can be seen in \cref{fig:vulkan_command_flow}, where the application issues commands and records them into multiple command buffers.
+The buffers are then submitted to a queue which is read by the hardware.
+There needs to be at least one command buffer per framebuffer because the buffer also contains the render target.
+
+\tikzfig{figures/TikZ/vulkan_command_flow.tex}{Overview of the flow that commands goes through in Vulkan. In the figure, yellow represents an application, green Vulkan commands, orange command buffers, grey queues, and blue is the hardware. The figure is based on a figure in the book Learning Vulkan \cite[p. 39]{singh2016learning}.}{vulkan_command_flow}
+
+This differs from older \glspl{API} such as OpenGL by the fact that the application is responsible for the command buffers and queue, and when data is moved between them.
+In OpenGL the drivers handled this, and to optimize performance the driver often batched the commands together.
+But with no way of knowing when the application is done submitting commands, OpenGL's drivers often executed them just before the data is required.
+Because the details of when the buffers are submitted to the queue can differ between drivers, this results in drops in performance depending on the hardware, and with the amount of different hardware on the market today, it is not feasible that developers test all configurations.
+
+Vulkan avoid this by being explicit when it comes to when the commands are submitted to the queue.
+This gives the programmer the ability to determine and control when commands are sent to be executed.
+This was one of the reasonings behind having a more explicit \gls{API}.
+
+The Vulkan platform is extensible by having every object creation follow a similar pattern.
+Each \texttt{vkCreate*} methods take in some sort of \texttt{Vk*Create\-Info} object where \texttt{*} is a place holder for different things that can be created.
+
+For instance \texttt{vkCreateDevice} which creates a logical device from a physical device, has the following call structure: \texttt{VkResult vkCreateDevice(VkPhysicalDevice, const VkDeviceCreateInfo*, const VkAllocationCallbacks*, VkDevice*)}.
+In the call structure we can see how the function takes a handle to a physical device and outputs to a logical device pointer.
+The allocation callbacks is a structure of functions which is used to control allocations and deallocations on the host, and can be a null pointer if the default implementation is good enough.
+The device create info is a struct that contains information about how the object should be created and contains specific information for creating a logical device.
+
+The general information that is always contained in a \texttt{Vk*CreateInfo} struct is a \texttt{sType} and a \texttt{pNext} member.
+The purpose of these is to be used in the future so that \texttt{pNext} can point to an extension-specific structure and its \texttt{sType} can tell Vulkan which specific structure it is working on.
+Because Vulkan is still in version 1.0 these features have limited use, but in the future, this should enable better support for extending the \gls{API}.
+
+Whether Vulkan can run depends on the hardware in the computer and the operating system.
+Currently, Android, Linux, and Microsoft Windows have support for Vulkan.
+This leaves out iOS and macOS by Apple who, as of writing this, has not announced any plans for supporting Vulkan.
+To expand on the portability Khronos recently launched the Vulkan Portability Initiative \cite{trevett2017khronos}.
+The idea is to define a subset of Vulkan which can be ported to Vulkan, Metal, and Direct3D 12, making Vulkan available on most modern devices.
