@@ -58,29 +58,48 @@ It is suggested that this could be built on top of Vulkan, as this is more of a 
 While only an opinion piece, it does describe a handful of relevant issues that impact programmability of modern \glspl{API}.
 
 
+\subsubsection{An Incremental Rendering VM} 
+\citet{haaser_2015_incremental} does not focus on programmability explicitly, but instead on how to design efficient middleware between a high-level \glspl{API} like OpenSceneGraph and a low-level \glspl{API} like OpenGL. 
 
-\subsubsection{An Incremental Rendering VM} \todo{The main thing to take away from here is that render order is important, and that building on top of OpenGL is an option. This should perhaps be more clear.}
 
-\noindent \citet{haaser_2015_incremental} suggest a new way of looking at rendering. 
-They observe that most of the graphics and associated draw commands used for rendering one frame, can be reused for the next frame with great likelihood.
+During rendering, we can increase performance by minimizing how often we switch between render stages.
+For this publication, the authors only concern themselves with the parts of the render state, which are most costly to change.
+These are the shaders, textures and buffers used when drawing an object with a draw call.
+In an OpenGL or Direct3D program, the programmer takes advantage of this by manually sorting the objects to be rendered in such a way that the render state changes infrequently.
+Computing the render order is done for each frame. 
 
-To use this knowledge they develop a high-level abstraction over the draw calls where the render task are organized using a trie, where each leaf is a render state and a bucket of render objects. \todo{Maybe add a picture of the trie?}
-Objects in the same bucket can be rendered without switching between render states.
 
-The program takes this trie and compiles it into virtual machine code, that is translated into OpenGL draw calls.
-The translated OpenGL code is kept between frames, to avoid compiling unchanged code.
-In other words, this is a just-in-time compilation.
+The authors observe that most of the draw calls used for rendering one frame, can be reused for the next frame with great likelihood.
+This means that we do not have to recompute the render order for each frame. 
 
-The advantage they get from using virtual machine code as an intermediate representation, is that they can do some optimization before translating to OpenGL draw-calls.
-This optimization only has to be performed once for every change in the render task.
-And they defragment the representation to reduce cache misses, which increases performance even further. \todo{Do we need this level of detail?}
+\fig{figures/trie.pdf}{Example of a trie, used to manage sorted draw call code.\cite{haaser_2015_incremental}}{trie}{1}
 
-When changes occur in the picture to be rendered, they group the change into two types: incremental changes and structural changes.
-Incremental changes to a render object, such as changing the color or the entire shader, is handled by moving the object between buckets.
-Structural changes, such as removing and adding render objects to the scene, is handled by adding or removing objects to or from the buckets.
-This moving, adding and removing rendering objects makes the defragmentation vital to ensure performance equal to other rendering methods.
+To take advantage of this, they construct an incremental rendering \gls{VM}, which holds onto executable rendering code between frames, and only updates it when needed.
+For this they use a trie as shown in \cref{fig:trie}, which is used to sort objects into different state buckets at the trie’s leafs.
+Each object has some memory allocated for the virtual machine code, which uses OpenGL to draw it on screen. 
+Code blocks of objects in the same bucket are rendered sequentially, as to only change states, when we start drawing objects from another bucket. 
 
-They show in benchmarks that the overhead the virtual machine introduces are negligible, and that rendering speed depended on the size of the change being applied. \todo{Need something about how we can build a more abstract API on top of this}
+
+The \gls{VM} initially takes this trie and compiles it into virtual machine code, which is placed in a continuous part of memory.
+Both the trie and the code are retained between frames. 
+
+
+As the scene changes, the trie must be updated.
+Incremental changes impact how an object in the trie is to be rendered.
+If this affects the render state to be used, the object may need to be placed in another bucket.
+Structural changes occur when objects are added or removed from the scene, meaning that insertion and removal from the trie must be performed.
+No matter the change, when a new object lands in a bucket, its executing code is compiled in a \gls{JIT} manner and inserted into a newly allocated part of memory.
+As these changes occur, memory for the code blocks must be allocated and deallocated. 
+This leads to the memory becoming fragmented.
+As this impacts performance negatively because of cache misses, the \gls{VM} also makes sure to defragment its memory occasionally.
+
+ 
+At the end of the publication, this system is benchmarked against a handful of direct OpenGL and Direct3D 11 implementations. 
+This shows that the system introduces no significant overhead and outperforms implementations with no state sorting. 
+Thus, high-level \glspl{API} do not need to underperform, if they use good middleware to communicate with the underlying low-level \gls{API}. 
+While we are looking at low level \glspl{API} in this report, this does not mean that the field of high-level graphics \glspl{API} is not interesting either. 
+Especially if it can still yield good performance.
+
 
 \subsection{Comparison} \todo{Find out whether to refer to authors directly as he/she}
 There are several options in terms of what \gls{GPU} \gls{API} that can be used when a developer needs to render graphics in an application.
