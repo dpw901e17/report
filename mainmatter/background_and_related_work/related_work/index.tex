@@ -1,82 +1,105 @@
 \section{Related Works}\label{sec:related_works}
-\begin{sectionmeta}
-This section will describe the related works within this project.
-From these papers it was discovered that a \gls{GPU} is used for two kinds of operation: 
-The first purpose for the \gls{GPU} is for rendering graphics, this is used in video games, video rendering and overall graphical visualization in any kind of application. 
-Secondly as a GP\gls{GPU}, meaning using the \gls{GPU} for general purpose programing and utilizing its massive parallelism.
-The following sections will further explain the related works, and why they are relevant.
-\end{sectionmeta}
+Having listed the relevant background knowledge regarding our work, we wrap up this chapter by discussing some related publications.
+This is done as to put our own efforts in an academic context. 
 
-Having now listed some background knowledge about graphics programming and the role of graphics \glspl{API}, the final section of this chapter will discuss works related to our own.
-This is done as to place our own work in an academeic context, and introduce the landscape of current publications. 
 
-\subsection{Graphics}
-This section will describe how \glspl{GPU} are used in terms of rendering graphics, and elaborate on what kind of issues that can be encountered whilst working with rendering graphics.
+\subsection{Graphics Programmability}
+Research focusing on the programmability of graphics programming tools is very sparse.
+Programmability research seem to focus on more widely used technologies such as general-purpose programming languages.
+This subsection will present a few of the publications that discuss programmability in the field of graphics programming. 
 
-\vspace{1em}
 
 \subsubsection{Let's Fix OpenGL}
+\citet{fix_opengl} is a critique of modern OpenGL and by extension Direct3D.
+The author has not been extensivly involved with graphics programming, so this publication provides an outsider’s perspective.
+Although it should be noted that the statements discussed are based on the author’s personal experiences and not any empiric research. 
+As opposed to our work, which focuses strictly on the graphics \gls{API}, the critique focuses mostly on shader programming.
 
-\citet{fix_opengl} attempts to expose the shortcommings of OpenGL, and suggests research topics to improve the \gls{API}. 
-The issues mentioned also applies to Direct3D according to the author. 
-He identifies six issues: 
 
-\begin{enumerate}
-\item Programmers must juggle between C/C++ and \gls{HLSL} and \gls{GLSL}.
-Meaning they have to switch between coding the renderer in a general purpose language and coding the shaders in a shader language.
+The first issue presented, is that C-like shader languages are not clean extensions of either C nor C++.
+As an example, from \gls{GLSL}, the type declared by struct t \{…\} is referred to as t like in C++, not as struct t like in C.
+Yet as in C, variables cannot be declared within if statements. This means that programmers need to be aware of the subtle differences between host and shader code.
 
-\item The communication between \gls{CPU} and \gls{GPU} is brittle. 
-They communicate to share data through commands written in the application, there is no way to statically check if the variable name in the application and shader match.
-This is a error-prone approach, as such bugs can first be found during runtime of the application. 
-\todo{This point is a bit vauge. What communication are we talking about?}
+\fig{figures/openglShaders.pdf}{Example vertex and fragment shader in \gls{GLSL}.\cite{fix_opengl}}{openglShaders}{1}
+  
+\cref{fig:openglShaders} presents some \gls{GLSL} code for both a vertex and fragment shader.
+These will either be represented by strings in the host code or in separate files.
+Even though \gls{GLSL} is a strongly typed language, errors will only be found when the shaders are compiled during execution of the host code.
+This brings up the issue that the compiler can not make any static analysis, of how the host code communicates with the shaders, or how the shaders communicate with each other.
 
-\item Massive meta-programming. 
-There can be generated thousands of varients of a shader program, this is not good as it comes at a performance cost \todo{what type of variants?}. 
-\todo{We always have to write a lot of shaders, the problem is that there's no support for scaling up}
 
-\item Different semantics for each shader stage. 
-This contributes to the issue of having to keep track of semantics depending on what kind of shader is being worked on.
-\todo{Give an example of how semantics are mismatched}
-It makes it more difficult to use OpenGL, and increases the learning curve. 
+The shaders in \cref{fig:openglShaders} communicate using the fragPos variable, but if this name does not match in the two programs, we are only informed of this error at runtime. 
+While the shaders in \cref{fig:openglShaders} are rather simple, a graphics application often needs many different types of shaders. To make the use of shaders flexible, metaprogramming is used to combine snippets of \gls{GLSL} code as to construct the needed shaders. This is done using the \#define and \#ifdef directives, but as the amount of shaders needed scales up the programs created becomes unmanageable.
 
-\item No type system for vectors when converting between spaces. 
-\todo{We have to remember to talk about spaces}
-It has to be done manually, it should be possible to simply standardize such an approach.
 
-\item Diffcult to verify correctness of a graphics application. 
-There is no way to test whether whatever an application renders, is the actual desired result.
-\end{enumerate}
+The different kinds of shader stages have different execution semantics, which can make it difficult to understand how the stages relate to each other.
+For instance, the fragment shader runs multiple times for each vertex shader invocation.
+In addition, values passed between the two stages are interpolated during rasterization.
+In the case of \cref{fig:openglShaders}, the fragPos variable will include the vertex position in the vertexShader, but fragPos in the fragment shader represents the interpolation of several vertex positions.
 
-In the conclusion, the article mentions Vulkan and that it might be the solution to some of the issues in OpenGL. 
-Additionally, it also encourages development of new frameworks to rival OpenGL. 
-However a shortcomming of the article is that all the listed issues is only based on the authors opinion that he has discussed with his collegues, and not used a proper methodology to collect this data. 
-Although they do reveal that OpenGL is not a \gls{API} without flaws.
+\fig{figures/openglLighting.pdf}{Excerpt from vertex shader implementing the phong lighting model. \cite{fix_opengl}}{lighting}{1}
 
-The value of this article is that it gives insight as to how a good graphics \gls{API} should work.
-These are good arguments to take into consideration when trying to evaluate an \gls{API}.
+The vertex shader by itself could also benefit from better static type checking. In this shader we convert points in model space to world space, then to camera space and finally to projection space.
+This creates four versions of the same point in different spaces.
+For some lighting algorithms, we need to perform operations on a point while it is in a certain space. 
+This is depicted in \cref{fig:lighting}, where we need to compute the angle of light hitting the vertex by subtracting its position in world space from the light position, which is also in world space. 
+It would not make sense to mix the spaces by using the vertex position in camera space instead, but no system is in place to ensure that this does not occur.
 
-\subsubsection{An Incremental Rendering VM} \todo{The main thing to take away from here is that render order is important, and that building on top of OpenGL is an option. This should perhaps be more clear.}
+\fig{figures/teapot.pdf}{Buggy and non-buggy output of the phong lighting model.\cite{fix_opengl}}{shaderBug}{1}   
 
-\noindent \citet{haaser_2015_incremental} suggest a new way of looking at rendering. 
-They observe that most of the graphics and associated draw commands used for rendering one frame, can be reused for the next frame with great likelihood.
+The lack of such type checks meant that the author himself mixed spaces, while writing his shader.
+However, this bug was not immediately apparent as can be seen from \cref{fig:shaderBug} which compares the shader with and without this bug.
+This brings up the difficulty of determining the correctness of graphics programs in general.
+No tools exist yet to assist in this rather complex task. 
+ 
+ 
+Considering these issues, the author calls for a better \gls{API} to be written, which can rival OpenGL and Direct3D.
+It is suggested that this could be built on top of Vulkan, as this is more of a hardware abstraction than OpenGL itself.
+While only an opinion piece, it does describe a handful of relevant issues that impact programmability of modern \glspl{API}.
 
-To use this knowledge they develop a high-level abstraction over the draw calls where the render task are organized using a trie, where each leaf is a render state and a bucket of render objects. \todo{Maybe add a picture of the trie?}
-Objects in the same bucket can be rendered without switching between render states.
 
-The program takes this trie and compiles it into virtual machine code, that is translated into OpenGL draw calls.
-The translated OpenGL code is kept between frames, to avoid compiling unchanged code.
-In other words, this is a just-in-time compilation.
+\subsubsection{An Incremental Rendering VM} 
+\citet{haaser_2015_incremental} does not focus on programmability explicitly, but instead on how to design efficient middleware between a high-level \glspl{API} like OpenSceneGraph and a low-level \glspl{API} like OpenGL. 
 
-The advantage they get from using virtual machine code as an intermediate representation, is that they can do some optimization before translating to OpenGL draw-calls.
-This optimization only has to be performed once for every change in the render task.
-And they defragment the representation to reduce cache misses, which increases performance even further. \todo{Do we need this level of detail?}
 
-When changes occur in the picture to be rendered, they group the change into two types: incremental changes and structural changes.
-Incremental changes to a render object, such as changing the color or the entire shader, is handled by moving the object between buckets.
-Structural changes, such as removing and adding render objects to the scene, is handled by adding or removing objects to or from the buckets.
-This moving, adding and removing rendering objects makes the defragmentation vital to ensure performance equal to other rendering methods.
+During rendering, we can increase performance by minimizing how often we switch between render stages.
+For this publication, the authors only concern themselves with the parts of the render state, which are most costly to change.
+These are the shaders, textures and buffers used when drawing an object with a draw call.
+In an OpenGL or Direct3D program, the programmer takes advantage of this by manually sorting the objects to be rendered in such a way that the render state changes infrequently.
+Computing the render order is done for each frame. 
 
-They show in benchmarks that the overhead the virtual machine introduces are negligible, and that rendering speed depended on the size of the change being applied. \todo{Need something about how we can build a more abstract API on top of this}
+
+The authors observe that most of the draw calls used for rendering one frame, can be reused for the next frame with great likelihood.
+This means that we do not have to recompute the render order for each frame. 
+
+\fig{figures/trie.pdf}{Example of a trie, used to manage sorted draw call code.\cite{haaser_2015_incremental}}{trie}{1}
+
+To take advantage of this, they construct an incremental rendering \gls{VM}, which holds onto executable rendering code between frames, and only updates it when needed.
+For this they use a trie as shown in \cref{fig:trie}, which is used to sort objects into different state buckets at the trie’s leafs.
+Each object has some memory allocated for the virtual machine code, which uses OpenGL to draw it on screen. 
+Code blocks of objects in the same bucket are rendered sequentially, as to only change states, when we start drawing objects from another bucket. 
+
+
+The \gls{VM} initially takes this trie and compiles it into virtual machine code, which is placed in a continuous part of memory.
+Both the trie and the code are retained between frames. 
+
+
+As the scene changes, the trie must be updated.
+Incremental changes impact how an object in the trie is to be rendered.
+If this affects the render state to be used, the object may need to be placed in another bucket.
+Structural changes occur when objects are added or removed from the scene, meaning that insertion and removal from the trie must be performed.
+No matter the change, when a new object lands in a bucket, its executing code is compiled in a \gls{JIT} manner and inserted into a newly allocated part of memory.
+As these changes occur, memory for the code blocks must be allocated and deallocated. 
+This leads to the memory becoming fragmented.
+As this impacts performance negatively because of cache misses, the \gls{VM} also makes sure to defragment its memory occasionally.
+
+ 
+At the end of the publication, this system is benchmarked against a handful of direct OpenGL and Direct3D 11 implementations. 
+This shows that the system introduces no significant overhead and outperforms implementations with no state sorting. 
+Thus, high-level \glspl{API} do not need to underperform, if they use good middleware to communicate with the underlying low-level \gls{API}. 
+While we are looking at low level \glspl{API} in this report, this does not mean that the field of high-level graphics \glspl{API} is not interesting either. 
+Especially if it can still yield good performance.
+
 
 \subsection{Comparison} \todo{Find out whether to refer to authors directly as he/she}
 There are several options in terms of what \gls{GPU} \gls{API} that can be used when a developer needs to render graphics in an application.
