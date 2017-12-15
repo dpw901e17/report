@@ -1,59 +1,63 @@
 \section{Related Works}\label{sec:related_works}
-\begin{sectionmeta}
-This section will describe the related works within this project.
-From these papers it was discovered that a \gls{GPU} is used for two kinds of operation: 
-The first purpose for the \gls{GPU} is for rendering graphics, this is used in video games, video rendering and overall graphical visualization in any kind of application. 
-Secondly as a GP\gls{GPU}, meaning using the \gls{GPU} for general purpose programing and utilizing its massive parallelism.
-The following sections will further explain the related works, and why they are relevant.
-\end{sectionmeta}
+Having listed the relevant background knowledge regarding our work, we wrap up this chapter by discussing some related publications.
+This is done as to put our own efforts in an academic context. 
 
-Having now listed some background knowledge about graphics programming and the role of graphics \glspl{API}, the final section of this chapter will discuss works related to our own.
-This is done as to place our own work in an academeic context, and introduce the landscape of current publications. 
 
-\subsection{Graphics}
-This section will describe how \glspl{GPU} are used in terms of rendering graphics, and elaborate on what kind of issues that can be encountered whilst working with rendering graphics.
+\subsection{Graphics Programmability}
+Research focusing on the programmability of graphics programming tools is very sparse.
+Programmability research seem to focus on more widely used technologies such as general-purpose programming languages.
+This subsection will present a few of the publications that discuss programmability in the field of graphics programming. 
 
-\vspace{1em}
 
 \subsubsection{Let's Fix OpenGL}
+\citet{fix_opengl} is a critique of modern OpenGL and by extension Direct3D.
+The author has not been extensivly involved with graphics programming, so this publication provides an outsider’s perspective.
+Although it should be noted that the statements discussed are based on the author’s personal experiences and not any empiric research. 
+As opposed to our work, which focuses strictly on the graphics \gls{API}, the critique focuses mostly on shader programming.
 
-\citet{fix_opengl} attempts to expose the shortcommings of OpenGL, and suggests research topics to improve the \gls{API}. 
-The issues mentioned also applies to Direct3D according to the author. 
-He identifies six issues: 
 
-\begin{enumerate}
-\item Programmers must juggle between C/C++ and \gls{HLSL} and \gls{GLSL}.
-Meaning they have to switch between coding the renderer in a general purpose language and coding the shaders in a shader language.
+The first issue presented, is that C-like shader languages are not clean extensions of either C nor C++.
+As an example, from \gls{GLSL}, the type declared by struct t \{…\} is referred to as t like in C++, not as struct t like in C.
+Yet as in C, variables cannot be declared within if statements. This means that programmers need to be aware of the subtle differences between host and shader code.
 
-\item The communication between \gls{CPU} and \gls{GPU} is brittle. 
-They communicate to share data through commands written in the application, there is no way to statically check if the variable name in the application and shader match.
-This is a error-prone approach, as such bugs can first be found during runtime of the application. 
-\todo{This point is a bit vauge. What communication are we talking about?}
+\fig{figures/openglShaders.pdf}{Example vertex and fragment shader in \gls{GLSL}.\cite{fix_opengl}}{openglShaders}{1}
+  
+\cref{fig:openglShaders} presents some \gls{GLSL} code for both a vertex and fragment shader.
+These will either be represented by strings in the host code or in separate files.
+Even though \gls{GLSL} is a strongly typed language, errors will only be found when the shaders are compiled during execution of the host code.
+This brings up the issue that the compiler can not make any static analysis, of how the host code communicates with the shaders, or how the shaders communicate with each other.
 
-\item Massive meta-programming. 
-There can be generated thousands of varients of a shader program, this is not good as it comes at a performance cost \todo{what type of variants?}. 
-\todo{We always have to write a lot of shaders, the problem is that there's no support for scaling up}
 
-\item Different semantics for each shader stage. 
-This contributes to the issue of having to keep track of semantics depending on what kind of shader is being worked on.
-\todo{Give an example of how semantics are mismatched}
-It makes it more difficult to use OpenGL, and increases the learning curve. 
+The shaders in \cref{fig:openglShaders} communicate using the fragPos variable, but if this name does not match in the two programs, we are only informed of this error at runtime. 
+While the shaders in \cref{fig:openglShaders} are rather simple, a graphics application often needs many different types of shaders. To make the use of shaders flexible, metaprogramming is used to combine snippets of \gls{GLSL} code as to construct the needed shaders. This is done using the \#define and \#ifdef directives, but as the amount of shaders needed scales up the programs created becomes unmanageable.
 
-\item No type system for vectors when converting between spaces. 
-\todo{We have to remember to talk about spaces}
-It has to be done manually, it should be possible to simply standardize such an approach.
 
-\item Diffcult to verify correctness of a graphics application. 
-There is no way to test whether whatever an application renders, is the actual desired result.
-\end{enumerate}
+The different kinds of shader stages have different execution semantics, which can make it difficult to understand how the stages relate to each other.
+For instance, the fragment shader runs multiple times for each vertex shader invocation.
+In addition, values passed between the two stages are interpolated during rasterization.
+In the case of \cref{fig:openglShaders}, the fragPos variable will include the vertex position in the vertexShader, but fragPos in the fragment shader represents the interpolation of several vertex positions.
 
-In the conclusion, the article mentions Vulkan and that it might be the solution to some of the issues in OpenGL. 
-Additionally, it also encourages development of new frameworks to rival OpenGL. 
-However a shortcomming of the article is that all the listed issues is only based on the authors opinion that he has discussed with his collegues, and not used a proper methodology to collect this data. 
-Although they do reveal that OpenGL is not a \gls{API} without flaws.
+\fig{figures/openglLighting.pdf}{Excerpt from vertex shader implementing the phong lighting model. \cite{fix_opengl}}{lighting}{1}
 
-The value of this article is that it gives insight as to how a good graphics \gls{API} should work.
-These are good arguments to take into consideration when trying to evaluate an \gls{API}.
+The vertex shader by itself could also benefit from better static type checking. In this shader we convert points in model space to world space, then to camera space and finally to projection space.
+This creates four versions of the same point in different spaces.
+For some lighting algorithms, we need to perform operations on a point while it is in a certain space. 
+This is depicted in \cref{fig:lighting}, where we need to compute the angle of light hitting the vertex by subtracting its position in world space from the light position, which is also in world space. 
+It would not make sense to mix the spaces by using the vertex position in camera space instead, but no system is in place to ensure that this does not occur.
+
+\fig{figures/teapot.pdf}{Buggy and non-buggy output of the phong lighting model.\cite{fix_opengl}}{shaderBug}{1}   
+
+The lack of such type checks meant that the author himself mixed spaces, while writing his shader.
+However, this bug was not immediately apparent as can be seen from \cref{fig:shaderBug} which compares the shader with and without this bug.
+This brings up the difficulty of determining the correctness of graphics programs in general.
+No tools exist yet to assist in this rather complex task. 
+ 
+ 
+Considering these issues, the author calls for a better \gls{API} to be written, which can rival OpenGL and Direct3D.
+It is suggested that this could be built on top of Vulkan, as this is more of a hardware abstraction than OpenGL itself.
+While only an opinion piece, it does describe a handful of relevant issues that impact programmability of modern \glspl{API}.
+
+
 
 \subsubsection{An Incremental Rendering VM} \todo{The main thing to take away from here is that render order is important, and that building on top of OpenGL is an option. This should perhaps be more clear.}
 
