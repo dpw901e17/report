@@ -29,7 +29,9 @@ This brings up the issue that the compiler can not make any static analysis, of 
 
 
 The shaders in \cref{fig:openglShaders} communicate using the fragPos variable, but if this name does not match in the two programs, we are only informed of this error at runtime. 
-While the shaders in \cref{fig:openglShaders} are rather simple, a graphics application often needs many different types of shaders. To make the use of shaders flexible, metaprogramming is used to combine snippets of \gls{GLSL} code as to construct the needed shaders. This is done using the \#define and \#ifdef directives, but as the amount of shaders needed scales up the programs created becomes unmanageable.
+While the shaders in \cref{fig:openglShaders} are rather simple, a graphics application often needs many different types of shaders.
+To make the use of shaders flexible, metaprogramming is used to combine snippets of \gls{GLSL} code as to construct the needed shaders. 
+This is done using the \#define and \#ifdef directives, but as the amount of shaders needed scales up the programs created becomes unmanageable.
 
 
 The different kinds of shader stages have different execution semantics, which can make it difficult to understand how the stages relate to each other.
@@ -183,45 +185,34 @@ Our work differs from this publication, as we place more of a focus upon \gls{AP
 Here it is discussed as opinions of the author, rather than any deep empirical work being presented.
 
 \subsection{\gls{GPGPU}}
-This section will describe related work as to what GP\gls{GPU} are, what they are used for, and how they relate to the project.
+This subsection discusses the related field of \gls{GPGPU} programming.
+As mentioned in \cref{sec:short_history}, during the 00’s \glspl{GPU} evolved into highly parallel devices with general purpose computation units.
+This lead programmers to use tools like Direct3D and OpenGL for solving embarrassingly parallel problems, which were not related to rendering images to screen.
+In 2007 Nvidia introduced the CUDA programming model for use with C, C++ and Fortran, followed up by Khronos with the similar OpenCL model in 2009.
 
-Designing efficient sorting algorithms for Manycore \glspl{GPU} \cite{satish_2009_designing} is an article which describes the development of a custom implemented radix sort and a merge sort, and prove the capabilites of CUDA and \glspl{GPGPU} parallarism, by running several Nvidia \glspl{GPU} for comparrison. 
-This article demonstrates how much throughput there is to be gained from \glspl{GPGPU}, and how a comparison can be done. 
-A critique of the paper though is that mege sort and radix sort starts to show strange performance spike patterns when working with large workload. 
-This is never explained as to why, it should have been elaborated or at the least given a guess.
-The article demonstrates how powerful the \gls{GPU} is when it is able to do some things better than a \glspl{CPU}.
 
-The GPU Computing Era \cite{gpu_computing_era} is an article, which discusses the benefits of utilizing \gls{GPU} parallarism to run applications that previously were deemed too time consuming to use in practice. 
-The article claims that single-threaded applications no longer perform well enough up against multi-threaded applications, and the industry should adapt to GP\gls{GPU} technology. 
-It also mentions, how the \gls{GPU} becomes more powerful all the time by doubling up on its transistors for every 18th month. 
-One way of utilizing \gls{GPGPU} is through CUDA. (Nvidia implementation of a gls{GPGPU} gls{API}.)
-CUDA programs are very scalable according to the article, and it is thus an excellent tool to utilize \gls{GPGPU} functionality, and encourages more ussage of \gls{GPGPU}.
-It is important to note that the authors of this article are from Nvidia, and they are likely biased towards how much power a \gls{GPGPU} can provide, and how good CUDA is. 
+\citet{gpu_computing_era} is a publication from Nvidia, explaining the benefits of \gls{GPGPU} programming and CUDA itself. 
+CUDA allows for both regular sequential programming, but also supports writing procedures, kernels, to be run in parallel on the \gls{GPU}.
+In a way they are like shaders, but the programmer must specify the amount of threads needed for execution.
+Furthermore, these threads must be separated into thread blocks.
+Threads within the same block can synchronize via local shared memory, and threads within different blocks must communicate through global memory, which is slower.
+This is an instance of programmers needing to be very familiar with the \gls{GPU} architecture to get optimal performance out of \gls{GPGPU}. 
 
-This article is revevant as it shows an alternative use of the \gls{GPU}, it is also explains how it achieves the parallarism which contributes to a better \gls{GPU} throughput than a \gls{CPU} can provide.
 
-There have been made a number of tools in order to make utilization of GPGU easier, these Higher Level GP\gls{GPU}'s tool includes the following: Firepile (Scala) \cite{2011_firepile}, OCaml GP\gls{GPU} \cite{bourgoin_2017_high}, PyCuda and PyOpenCL \cite{2012_pycuda_pyopencl} and Chestnut \cite{stromme_2012_chestnut}.
-It is important to mention that these \glspl{API} are only some of the tools that provide higher abstraction level GPGPU programming. 
-Additionally these tools are mostly academeic experiements.
+Nvidia’s article claims to get 100x speedups in performance for some problems, when compared to regular multithreading on the \gls{CPU}.
+Yet, later we see Intel attempting to debunk these numbers in \cite{lee_2010_debunking}.
+This publication shows benchmarks, where \gls{GPGPU} programming only yields a 2.5x speedup on average.
 
-These tools were made in order to make it easier and less error prone to utilize GP\gls{GPU} for less skilled developers.
-As it can be difficult to work with the low level \gls{API} (eg. CUDA).
-The value in these articles lies in how the developers expose lower level \glspl{API} to a custom made higher level \gls{API}, and whether or not they are easier to use than their lower-level counterparts. 
-Addtionally, it is also interesting to see how well these higher level abstraction compare performance-wise to the lower level ones. 
-However, a pitfall the four papers has is that they do not have a proper methodology to test out the programmability of these \glspl{API}, which is highly desired when the goal of these tools is to be easier and more intuitive to use than their lower-level counterparts.
-The articles attempts to show the programmability of their \glspl{API} by exemplifying what kind of issues their \gls{API} can solve, the syntax of using the \gls{API} and sometimes with a performance evaulation.
-However it all comes down to just the authors opinion.
 
-Debunking the 100x \gls{GPU} vs. \gls{CPU} Myth \cite{lee_2010_debunking} claims that GP\glspl{GPU} are not that much better than \glspl{CPU}. 
-It references several papers that claim \glspl{GPU} can be 100 (or more) times better than a \gls{CPU}, and attempts to debunk them. 
-With the data that the article collects it concludes that \glspl{GPU} are only 2x times better on average than the \glspl{CPU}. 
-The testing was done by writing several algorithms and implement them for both the \gls{GPU} and \gls{CPU}, running the algorithms, observing the performance, and then comparing the results. 
-However the \gls{CPU} implementation is highly optimized as the authors and software writers are from Intel, whilst the GP\gls{GPU} implementation for the algorithms is not optimized to its fullest. 
-Data from an article like this would have been more meaningful if the GP\gls{GPU} implementation was written some of the best people from Nvidia (since they tested with a Nvidia card) instead of someone from Intel.
+Even with some discussion of the performance benefits of \gls{GPGPU}, we see research into creating efficient \gls{GPGPU} algorithms. 
+For instance, \cite{satish_2009_designing} presents both a radix sort and a merge sort, which outperform other \gls{GPGPU} sorting algorithms.
 
-\paragraph{}
-From these sources it is possible to form a better overview of what is currently going on in the area of \glspl{GPU} in the scientific community. 
-Based on these sources, it can be concluded that not many articles are looking into the programmability of \gls{GPU} \glspl{API}. 
-The thesis papers were the only once that made an attempt at evaluating Vulkan and DirectX12.
 
-Aditionally there seems to be a lack on papers discussing Direct3D 12 and Vulkan, and should therefore be considered a field that is worthwhile looking into.
+A particularly active area of \gls{GPGPU} has been the development of new programming tools. 
+This includes language extensions such as OpenACC, where the programmer simply tags parts of their code for \gls{GPGPU} execution \cite{wienke2012openacc}.
+A handful of libraries have also been released including Firepile for Scala \cite{2011_firepile}, OCaml GP for OCaml\cite{bourgoin_2017_high}, as well as PyCuda and PyOpenCL for Python\cite{2012_pycuda_pyopencl}.
+We even see entire languages for \gls{GPGPU} programming being developed with Chestnut \cite{stromme_2012_chestnut}.
+Note that the tools presented vary in their state of development and popularity.
+Common to all, is that the publications introducing them contain no empiric evidence for their programmability.
+This is a problem as most of them claim to be easier to use than the low level CUDA and OpenCL tools.
+Their programmability is mostly backed up by the author’s own claims, sometimes backed up by the showcase of some example programs. 
