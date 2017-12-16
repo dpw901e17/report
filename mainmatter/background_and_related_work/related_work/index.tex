@@ -104,9 +104,37 @@ Especially if it can still yield good performance.
 \subsection{Comparison}
 This subsection will discuss publications that compare modern graphics \glspl{API}.
 This work is very much related to our own. Each paper is written as a master thesis and has recently been published.
-They mostly focus on benchmarking the performance of applications written in different \glspl{API} and comparing them. 
-Programmability does not seem to be a big focus, although it is occasionally mentioned in passing. 
+They mostly focus on benchmarking the performance of applications written in different \glspl{API} and comparing them.
+From what we have found, it does not seem that any in-depth comparison of Direct3D 12 and Vulkan has been published. 
 
+
+\subsubsection{Reducing Driver Overhead in OpenGL, Direct3D and Mantle}
+\citet{dobersberger_2015_reducing} brings up how Mantle, at the time, was said to remove driver overhead. 
+The author sets out to examine the actual impact of driver overhead, and whether this is important to account for.
+This is done through a comparison of OpenGL and Direct3D 11 and how their performance changes, when using new features for limiting driver overhead.
+Mantle does not itself figure in the comparison, as it is not released to the public.
+
+
+Some of the features tested, such as instancing, appear in both \glspl{API}.
+Instancing allows for the same model to be drawn several times on screen with a single draw call.
+OpenGL’s Multi draw indirect and Direct3D 11’s deferred context are features comparable to each other.
+These allow for rendering commands to be stored before execution, opening the door for multithreaded command submission.
+The publication also looks at a feature unique to OpenGL, Direct State Access.
+Modern OpenGL allows direct access to buffers and textures without binding them.
+In older versions, the programmer was forced to switch states, if they wanted to operate on a texture or a buffer.
+
+
+To test these features, a base application is made, where both \glspl{API} are made to render many cubes on screen.
+The features being researched are then enabled or disabled for different tests, performance benchmarks are made, and feature comparisons are made where applicable.
+A few tests using third-party graphics software are also made.
+
+
+The author finds these new features, which limit driver overhead, introduce a significant amount of additional performance to graphics applications.
+Using features like instancing, and multithreaded command submission we see a performance increase by an order of magnitude.
+
+
+At the end of the text, the author states how features such as these will be central in the design of Direct3D 12 and Vulkan.
+Thus, this is relevant to our own efforts, where we consider the performance of both \glspl{API}.
 
 \subsubsection{Direct3D 11 vs 12 A Performance Comparison Using Basic Geometry}
 \citet{2016_direct3d} presents a benchmark study comparing the performance of Direct3D 11 and Direct3D 12.
@@ -124,39 +152,35 @@ This is not the case for Direct3D 12, where the programmer is tasked with more o
 In general, we believe this publication to be problematic, as Direct3D 12 is not used to its full extend.
 In our work we strive to make a fairer comparison of Direct3D and Vulkan with more equivalent applications.
 
-
-\subsubsection{Reducing Driver Overhead in OpenGL, Direct3D and Mantle}
-
-\citet{dobersberger_2015_reducing} covered three different graphics \gls{API} as part of his master thesis. 
-He looked at the different ways the \glspl{API} enable the developer to reduce the overhead of using their \gls{API}. 
-He then uses that knowledge to conclude something about the individual \glspl{API} such as; Direct3D focuses on multithreaded rendering, and Mantle's low-level api reduces \gls{CPU} usage and memory overhead.
-
-Because Mantle is not released to the public, only OpenGL and Direct3D 11 are compared.
-They are compared by targeting some of the features described in the specific \gls{API} sections,\todo{What sections? Ours or his?} and mesuring the performance when using the feature and when ignoring them.
-If there exist comparable features in both \glspl{API}, then the performance tests are grouped together, to compare the different approaches to the problem.
-In some cases, the results are verified by using third party \gls{API} tests.
-
-The final conclusion states that overhead \glspl{API} introduces is significant, and that developers should be aware of the trade-off they make when using one feature over another.
-Often the trade-off is flexibility for performance.
-The author is optimistic about Vulkan and Direct3D 12, as some of the features proposed are gonna reduce the overhead.
-
-It is releavant to this project \todo{vend det med de andre om vi kalder det et projekt} since both Vulkan and Direct3D 12 tries to reduce the \gls{API} overhead.
-One way that this tries to achive this is by making the developer responsible for defining the pipeline.
-We could continue his work by comparing specific features of Vulkan and Direct3D 12 on how they work and how much they reduce the \gls{API} overhead, if at all.
-
 \subsubsection{Evaluation of multi-threading in Vulkan}
+\citet{blackert_2016_evaluation} presents a comparison of OpenGL and Vulkan, being a publication like \cite{2016_direct3d}.
+It focuses on looking at the performance yielded by multithreaded command submissions in Vulkan as well as state switching.
+For this a test application like the one found in \cite{dobersberger_2015_reducing} is written using both OpenGL and Vulkan.
+A difference being that the models rendered can be either low-detail cubes or high detail teapots.
 
-Evaluation of multi-threading in Vulkan \cite{blackert_2016_evaluation} is a master thesis that attempts at evaluating the multi-threading performance of Vulkan. It does so by comparing it to its predescor; OpenGL. 
-Additionally it also evaluates the programmability of Vulkan. 
 
-In the conclusion, the thesis states that Vulkan can give more throughput than OpenGL. \todo{A bit weird how we go in a lot of detail with other papers, while this is described in a rather short form. Perhaps find a middleground in detail and stick with it.}
-Not all applications will gain a significant performance boost with using Vulkan over OpenGL. 
-This would be in cases where multi-threading is not needed, or if the application is not CPU bound. 
-No methodology was used in evaluating the programmability of Vulkan, it is based on the personal experience of the author, which is not a good enough method to evaluate an \gls{API} on. 
-It only states that Vulkan is more difficult to work with than OpenGL, because there is more overhead since Vulkan is at a lower abstraction level than OpenGL. 
+Looking at multithreading, the author experienced a 69\% performance increase with multithreaded Vulkan, when using four threads to render a lot of low-detail cubes.
+Yet, when rendering higher-detail models, OpenGL seemed to get the upper hand.
+Increasing the number of threads in Vulkan did not affect the performance a lot in this case.
+This is most likely because the application becomes \gls{GPU}-bound when switching to models of higher detail.
+Thus, we see how Vulkan seems to be most useful for CPU-bound applications.
 
-For future work the thesis encourages to further evaluate the performance of Vulkan multi-threading  capabilities by comparing it to Direct3D 12, and testing the portability of Vulkan on various operating systems and different \gls{GPU} manufactoreres.
-\todo{Should we do a critique of them comparing very different APIs?}
+
+They also look at the change in performance, when changing the render state for each object to be rendered.
+In the case of Vulkan, render state objects are defined at compile time.
+This should make it faster to switch states, as opposed to OpenGL where state switching has a larger associated runtime cost.
+However, when changing only some parts of the state, like enabling and disabling the culling of faces, OpenGL performs faster by 63\%.
+Yet, when also making heavier state changes with more associated safety checks, like changing the vertex shader, Vulkan performs 160\% faster.
+
+
+After testing, the author also brings up the programmability of Vulkan. 
+He mentions how the removal of driver assistance, means that a lot more work must be done by the programmer. 
+For instance, when updating a \gls{GPU} resource, you cannot use an \gls{API} call, instead you have to memory map the resource onto the \gls{CPU} and memcpy data into it yourself. 
+Yet, it is also conceited that once the programmer has an initial code base set up and starts writing their own wrappers, this task becomes less daunting.
+
+
+Our work differs from this publication, as we place more of a focus upon \gls{API} programmability.
+Here it is discussed as opinions of the author, rather than any deep empirical work being presented.
 
 \subsection{\gls{GPGPU}}
 This section will describe related work as to what GP\gls{GPU} are, what they are used for, and how they relate to the project.
