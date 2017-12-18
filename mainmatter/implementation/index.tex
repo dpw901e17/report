@@ -24,7 +24,7 @@ This is done as to focus on the use of the \glspl{API} rather than the shader la
 
 
 We decided to write the application in C++, as both Vulkan and Direct3D expose \gls{API} headers for use with C and C++.
-While bindings exist for unmanaged languages like C\# and Java, we choose to disregard them as they add a layer of indirection, which negatively affects performance.
+While bindings exist for unmanaged languages like C\# and Java, we choose to disregard them as they \todo{MOST LIKELY add, we don't know.} add a layer of indirection, which negatively affects performance.
 C++ was chosen over C because of our own familiarity with the language. 
 
 Both implementations render their frames to a Win32 window.
@@ -46,11 +46,11 @@ Different from the Vulkan implementation, we multiply the model, view and projec
 
 \section{Vulkan}
 Our Vulkan implementation can be found at \cite{VulkanGit}.
-It builds on top of an application we wrote following some of \citet{DX12Tutorial}.
+It builds on top of an application we wrote following some of \citet{DX12Tutorial}. \todo{DX12? Surely we mean Vulkan.}
 
 For the implementation, we have used the Lunar SDK \cite{LunarSDK}. 
 It manages drivers and exposes both a C interface for Vulkan through the vulkan.h header and a C++ interface through the vulkan.hpp header. 
-It also provides compiler functionality for compiling \gls{GLSL} code into the SPIR-V code, which is used by Vulkan.
+It also provides compiler functionality for compiling \gls{GLSL} code into SPIR-V code, which is used by Vulkan.
 In addition, it allows us to set up validation layers for runtime debugging. 
 Matrix and vector operations are provided by the GLM library \cite{GLM}. 
 As in the Direct3D 12 implementation, textures are loaded with the stb\_image library. 

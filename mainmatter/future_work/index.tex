@@ -3,5 +3,48 @@
 \todo[inline]{Write metatext}
 \end{chaptermeta}
 
+Whilst working on this project several other interesting areas worth of looking into were taken notice of, these areas will be now be elaborated and further explained. Furthermore...
+
 \input{mainmatter/future_work/improvements/index.tex}
 \input{mainmatter/future_work/abstraction_layer/index.tex}
+\input{mainmatter/future_work/game_engine/index.tex}
+
+\section{test}
+
+
+Game Engine:
+
+Based on the knowledge with Direct3D12 and Vulkan it would now be possible to build a game engine built on either one of the \glspl{API}. 
+
+The reason to build a game engine from scratch is usually when a already existing engine does not provide a certain functionality. For this purpose there are a few ways a game engine could be built based on Direct3D12 and Vulkan:
+
+Attempting to utilize the compute shader in Direct3D12 and Vulkan in order to achieve higher performance. It is not unlikely that some engines already do utilize this, but most commercialized engines are still experimenting with their Vulkan and Direct3D12 implementations as of writing this.
+Attempting to make a purely GPGPU based game engine in order to anaylyze how viable such a engine would be. There exists a article (ref) which attempts this, but does so in a horrible manner, we believe we could do it better and get more conclusive results. 
+Using “An incremental rendering VM” to make a VM which should result in higher performance. \todo{article ref}
+A distributed game engine across several computers.
+
+Incremental evaluation of graphics programming:
+
+Safety Critical Rendering \glspl{API}: 
+
+Cloud Vulkan/D3D12 computing: 
+Graphics programming is very demanding from \glspl{GPU} and not everyone has a powerful enough \gls{GPU} to run D3D12 and Vulkan, a proposal to fix this issue would be through cloud computing. Through cloud computing it would be possible to let devices with weaker hardware which would be unable to use D3D12 and Vulkan to suddenly be able to use it. This could especially be useful for smartphones as they are limited by their battery life time, and more demanding computations drains the battery faster. 
+
+In 3D Graphic On The Web: A survey \url{http://www.sciencedirect.com/science/article/pii/S0097849314000260} there are three ways mentioned of doing this:
+
+Pixels: Render everything server side, and send the result to the Client.
+
+Upside: The client will not have to do any graphics computations at all
+Downside: All input has to go through via the internet to reach the server, this can be horrendous for the FPS and cause input lag. Additionally, sending each frame over the internet might be slow depending on the quality of the frame,
+
+Primitives/Vectors: Do the heavy graphics computations on the graphics side, let the client compute the easy parts.
+
+Upside: The heavy computations of graphics programming has already been done for the client, the last steps dont get executed on the server but are sent for the client to execute themselves. It is supposedly less computationally demanding to run through the rest of the pipline past the primitive and vector shader stage. 
+Downside: The client will have to do some computation, and therefor this will not work on all devices. But it does enable lower end devices to do more than what they would be able on their own.
+
+Commands: Let the Client GPUs do the computations, but use the server to generate the GPU commands needed.
+
+Upside: There are not big requirements from the server, it simply generates the commands and just sends them out to the Clients.
+Downside: This most likely won’t work well with lower end devices, as it they are required to do all of the computation.
+
+
