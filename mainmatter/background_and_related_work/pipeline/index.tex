@@ -7,7 +7,7 @@ It aims to give the reader a basic understanding in the stages and processes inv
 
 Graphics pipelines can be compared to the \gls{CPU} pipeline in the way it is a number of stages each command goes through.
 Because the \gls{GPU} is based on a \gls{SIMD} architechture, the command is executed on a number of data simultaneously.
-The the data is also not guranteed to be the same size from stage to stage.
+The data is also not guranteed to be the same size from stage to stage.
 For instance, a triangle can be defined by three vertices and cover many pixels, which both are input in different stages of the pipeline.
 
 A simple pipeline can be seen in \cref{fig:pipeline02}, where a triangle is rendered using two shader programs: a vertex shader and a fragment shader.
@@ -17,7 +17,7 @@ These shaders are the variable parts of this pipeline as they can be changed if 
 
 The output of the pipeline in \cref{fig:pipeline02} is just an example, the effect could be achieved using the \gls{GLSL} programs in \cref{lst:pipeline_vertex_shader,lst:pipeline_fragment_shader}, and the right vertex data input.
 
-Lets explain what is happening in \cref{lst:pipeline_vertex_shader,lst:pipeline_fragment_shader}.
+Lets explain what is happening in \cref{lst:pipeline_vertex_shader,lst:pipeline_fragment_shader}. \todo{tale sprog.}
 The \texttt{main} functions are the entry points for the shaders just as expected in languages such as C and C++, where \gls{GLSL} gets much of its syntax from.
 
 The \texttt{\#version 330} line tells the \gls{GLSL} compiler that we are using version 3.3.0 of the language standard that came with OpenGL 3.3.
@@ -26,12 +26,12 @@ The reason for this is that the keywords changed between the versions, older sta
 
 The \texttt{in} variables are the input for the shader, for the vertex shader this is the attributes in the vertex data which in this case is the position and texture coordinate. 
 For the fragment shader, the input is the output of previous shader stages and we can see that the \texttt{texture\_coordinate} is coming from the vertex shader, because the names match.
-The \texttt{uniform} keyword if for variables which are shared amoung the entire model, in this case it is the sampler for the texture, but can also be used for positions of light or matricies for transformations or many other things.
+The \texttt{uniform} keyword is for variables which are shared amoung the entire model, in this case it is the sampler for the texture, but can also be used for positions of light or matricies for transformations or many other things.
 
 In OpenGL, the \texttt{gl\_Position} is the position used by the triangle assembly seen in \cref{fig:pipeline02}, and the \texttt{gl\_FragColor} is the color used for blending.
 
 \begin{figure}[H]
-\begin{lstlisting}[caption={This vertex shader takes in a position and a texture coordinate. It parses the position into the standard \texttt{gl\_Position} vector which is used internally by OpenGL. The texture coordinate is parsed through to the output and will be liniar interpolated between output from other verticies. (GLSL)},label={lst:pipeline_vertex_shader}]
+\begin{lstlisting}[caption={This vertex shader takes in a position and a texture coordinate. It parses the position into the standard \texttt{gl\_Position} vector which is used internally by OpenGL. The texture coordinate is parsed through to the output and will be linear interpolated between output from other verticies. (GLSL)},label={lst:pipeline_vertex_shader}]
 #version 330
 in vec3 model_position;
 in vec2 model_texture_coordinate;
@@ -48,6 +48,8 @@ void main()
 
 \begin{figure}[H]
 \begin{lstlisting}[caption={This fragment shader takes a linear interpolated texture coordinate and finds the corrosponding color in a texture using a texture sampler. The sampler determine what strategy to use for super- and sub-sampling, popular strategies include linear interpolating, bilinear interpolating and nearest-neighbor. The output is then set to a standard \texttt{gl\_FragColor} vector which is used by OpenGL internally. (GLSL)}, label={lst:pipeline_fragment_shader}]
+\todo{maybe further explain what super, sub sampling.}
+\todo{maybe further explain linear interpolating, bilinear, interpolating and nearest-neighbor.}
 #version 330
 in vec2 texture_coordinate;
 
